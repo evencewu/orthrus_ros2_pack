@@ -8,6 +8,7 @@
 #define IMU2 2
 #define IMU3 4
 #define IMU4 6
+#define IMU5 8
 
 namespace orthrus_ecat
 {

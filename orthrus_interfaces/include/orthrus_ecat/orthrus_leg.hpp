@@ -3,9 +3,14 @@
 #include <inttypes.h>
 
 #include "orthrus_ecat/ecat_typedef.hpp"
-
 #include "orthrus_ecat/orthrus_imu.hpp"
 #include "orthrus_ecat/orthrus_angle.hpp"
+
+
+#define USART1 0
+#define USART2 1
+#define USART3 2
+#define USART6 3
 
 namespace orthrus_ecat
 {

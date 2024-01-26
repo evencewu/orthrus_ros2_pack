@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(orthrus_ecat)
+project(orthrus_interfaces)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -20,7 +20,7 @@ find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(test_sensor
-  src/test_sensor.cpp
+  src/test/test_sensor.cpp
   src/orthrus_ecat/ecat_base.cpp
   src/orthrus_ecat/orthrus_imu.cpp
   src/orthrus_ecat/orthrus_angle.cpp
