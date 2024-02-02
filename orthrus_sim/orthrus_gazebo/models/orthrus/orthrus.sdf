@@ -3,38 +3,20 @@
 <sdf version="1.5">
   <model name="orthrus">
     <static>true</static>
-    <link name="link">
+
+    <link name="hip">
       <collision name="surface">
-        <pose>0 0 0.755 0 0 0</pose>
+        <pose>1 0 0 0 0 0</pose>
         <geometry>
-          <box>
-            <size>0.913 0.913 0.04</size>
-          </box>
+          <mesh>
+            <uri>model://orthrus/meshes/hip.dae</uri>
+          </mesh>
         </geometry>
       </collision>
-
-      <collision name="column">
-        <pose>0 0 0.37 0 0 0</pose>
-        <geometry>
-          <box>
-            <size>0.042 0.042 0.74</size>
-          </box>
-        </geometry>
-      </collision>
-
-      <collision name="base">
-        <pose>0 0 0.02 0 0 0</pose>
-        <geometry>
-          <box>
-            <size>0.56 0.56 0.04</size>
-          </box>
-        </geometry>
-      </collision>
-
       <visual name="visual">
         <geometry>
           <mesh>
-            <uri>model://cafe_table/meshes/cafe_table.dae</uri>
+            <uri>model://orthrus/meshes/hip.dae</uri>
           </mesh>
         </geometry>
       </visual>
