@@ -2,21 +2,19 @@
 
 <sdf version="1.5">
   <model name="orthrus">
-    <static>true</static>
-
-    <link name="hip">
+    <link name="body">
       <collision name="surface">
         <pose>1 0 0 0 0 0</pose>
         <geometry>
           <mesh>
-            <uri>model://orthrus/meshes/hip.dae</uri>
+            <uri>model://orthrus/meshes/body.dae</uri>
           </mesh>
         </geometry>
       </collision>
       <visual name="visual">
         <geometry>
           <mesh>
-            <uri>model://orthrus/meshes/hip.dae</uri>
+            <uri>model://orthrus/meshes/body.dae</uri>
           </mesh>
         </geometry>
       </visual>
