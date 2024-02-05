@@ -2,15 +2,23 @@
 
 <sdf version="1.5">
   <model name="orthrus">
+<<<<<<< HEAD
 
     <!-- LINK BODY -->
     <link name="body">
       <pose>0 0 0 1.5708 0 0</pose>
+=======
+    <link name="body">
+>>>>>>> 2eda7cc84b8c6c271877ad9fa2dc1fb0eb7fcb0d
       <collision name="surface">
         <pose>-0.10 -0.05 -0.1385 0 0 0</pose>
         <geometry>
           <mesh>
+<<<<<<< HEAD
             <uri>model://orthrus/meshes/body.STL</uri>
+=======
+            <uri>model://orthrus/meshes/body.dae</uri>
+>>>>>>> 2eda7cc84b8c6c271877ad9fa2dc1fb0eb7fcb0d
           </mesh>
         </geometry>
       </collision>
@@ -19,7 +27,11 @@
         <pose>-0.10 -0.05 -0.1385 0 0 0</pose>
         <geometry>
           <mesh>
+<<<<<<< HEAD
             <uri>model://orthrus/meshes/body.STL</uri>
+=======
+            <uri>model://orthrus/meshes/body.dae</uri>
+>>>>>>> 2eda7cc84b8c6c271877ad9fa2dc1fb0eb7fcb0d
           </mesh>
         </geometry>
       </visual>
