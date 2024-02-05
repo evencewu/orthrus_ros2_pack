@@ -2,24 +2,470 @@
 
 <sdf version="1.5">
   <model name="orthrus">
-    <static>true</static>
 
-    <link name="hip">
+    <!-- LINK BODY -->
+    <link name="body">
+      <pose>0 0 0 1.5708 0 0</pose>
       <collision name="surface">
-        <pose>1 0 0 0 0 0</pose>
+        <pose>-0.10 -0.05 -0.1385 0 0 0</pose>
         <geometry>
           <mesh>
-            <uri>model://orthrus/meshes/hip.dae</uri>
+            <uri>model://orthrus/meshes/body.STL</uri>
           </mesh>
         </geometry>
       </collision>
+
       <visual name="visual">
+        <pose>-0.10 -0.05 -0.1385 0 0 0</pose>
         <geometry>
           <mesh>
-            <uri>model://orthrus/meshes/hip.dae</uri>
+            <uri>model://orthrus/meshes/body.STL</uri>
           </mesh>
         </geometry>
       </visual>
     </link>
+
+    <!-- LINK HIP -->
+    <link name="hip_RB">
+      <pose>-0.05 0.20 0 1.5708 3.1415 0</pose>
+      <collision name="surface">
+        <pose>-0.02 -0.05 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/hip.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>-0.02 -0.05 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/hip.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="hip_LB">
+      <pose>0.05 0.20 0 1.5708 0 0</pose>
+      <collision name="surface">
+        <pose>-0.02 -0.05 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/hip.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>-0.02 -0.05 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/hip.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="hip_RF">
+      <pose>-0.05 -0.20 0 -1.5708 3.1415 0</pose>
+      <collision name="surface">
+        <pose>-0.02 -0.05 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/hip.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>-0.02 -0.05 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/hip.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="hip_LF">
+      <pose>0.05 -0.20 0 -1.5708 0 0</pose>
+      <collision name="surface">
+        <pose>-0.02 -0.05 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://orthrus/meshes/hip.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>-0.02 -0.05 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/hip.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <!-- LINK LEG1 -->
+    <link name="leg1_RB">
+      <pose>-0.1 0.20 0 3.1415 3.1415 0</pose>
+      <collision name="surface">
+        <pose>0 -0.2 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg1.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>0 -0.2 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg1.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="leg1_LB">
+      <pose>0.1 0.20 0 3.1415 0 0</pose>
+      <collision name="surface">
+        <pose>0 -0.2 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg1.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>0 -0.2 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg1.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="leg1_RF">
+      <pose>-0.1 -0.20 0 0 0 3.1415</pose>
+      <collision name="surface">
+        <pose>0 -0.2 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg1.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>0 -0.2 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg1.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="leg1_LF">
+      <pose>0.1 -0.20 0 0 3.1415 3.1415</pose>
+      <collision name="surface">
+        <pose>0 -0.2 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg1.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>0 -0.2 -0.05 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg1.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <!-- LINK LEG2 -->
+    <link name="leg2_RB">
+      <pose>-0.1325 0.38 0 3.1415 3.1415 0</pose>
+      <collision name="surface">
+        <pose>-0.025 -0.025 -0.225 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg2.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>-0.025 -0.025 -0.225 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg2.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="leg2_LB">
+      <pose>0.1325 0.38 0 3.1415 3.1415 0</pose>
+      <collision name="surface">
+        <pose>-0.025 -0.025 -0.225 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg2.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>-0.025 -0.025 -0.225 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg2.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="leg2_RF">
+      <pose>-0.1325 -0.02 0 3.1415 3.1415 0</pose>
+      <collision name="surface">
+        <pose>-0.025 -0.025 -0.225 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg2.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>-0.025 -0.025 -0.225 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg2.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <link name="leg2_LF">
+      <pose>0.1325 -0.02 0 3.1415 3.1415 0</pose>
+      <collision name="surface">
+        <pose>-0.025 -0.025 -0.225 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg2.STL</uri>
+          </mesh>
+        </geometry>
+      </collision>
+
+      <visual name="visual">
+        <pose>-0.025 -0.025 -0.225 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>model://orthrus/meshes/leg2.STL</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <!-- JOINT HIP -->
+
+    <joint name='joint_hip_RB' type='revolute'>
+      <child>hip_RB</child>
+      <parent>body</parent>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower>
+          <upper>1.5708</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint name='joint_hip_LB' type='revolute'>
+      <child>hip_LB</child>
+      <parent>body</parent>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower>
+          <upper>1.5708</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint name='joint_hip_RF' type='revolute'>
+      <child>hip_RF</child>
+      <parent>body</parent>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower>
+          <upper>1.5708</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint name='joint_hip_LF' type='revolute'>
+      <child>hip_LF</child>
+      <parent>body</parent>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-1.5708</lower>
+          <upper>1.5708</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <!-- JOINT LEG1 -->
+
+    <joint name='joint_leg1_RB' type='revolute'>
+      <child>leg1_RB</child>
+      <parent>hip_RB</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint name='joint_leg1_LB' type='revolute'>
+      <child>leg1_LB</child>
+      <parent>hip_LB</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint name='joint_leg1_RF' type='revolute'>
+      <child>leg1_RF</child>
+      <parent>hip_RF</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint name='joint_leg1_LF' type='revolute'>
+      <child>leg1_LF</child>
+      <parent>hip_LF</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <!-- JOINT LEG2 -->
+
+    <joint name='joint_leg2_RB' type='revolute'>
+      <child>leg2_RB</child>
+      <parent>leg1_RB</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint name='joint_leg2_LB' type='revolute'>
+      <child>leg2_LB</child>
+      <parent>leg1_LB</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint name='joint_leg2_RF' type='revolute'>
+      <child>leg2_RF</child>
+      <parent>leg1_RF</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
+    <joint name='joint_leg2_LF' type='revolute'>
+      <child>leg2_LF</child>
+      <parent>leg1_LF</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-3.1416</lower>
+          <upper>3.1416</upper>
+          <effort>35</effort>
+          <velocity>3.2</velocity>
+        </limit>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+
   </model>
 </sdf>
