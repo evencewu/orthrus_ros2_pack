@@ -2,14 +2,13 @@ controller_manager:
   ros__parameters:
     update_rate: 100  # Hz
 
-    gripper_controller:
-      type: forward_command_controller/ForwardCommandController
+    effort_controller:
+      type: effort_controllers/JointGroupEffortController
 
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-gripper_controller:
+effort_controller:
   ros__parameters:
     joints:
-      - right_finger_joint
-    interface_name: position
+      - joint_hip_RF
