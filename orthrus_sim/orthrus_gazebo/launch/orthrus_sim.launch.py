@@ -47,21 +47,22 @@ def generate_launch_description():
     )
 
     #spawn the robot 
-    cranebot_spawn = Node(
+    orthrus_spawn = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
         arguments=["-topic", "/robot_description", 
-                    "-entity", "r2d",
+                    "-entity", "othrus",
                     "-x", '0.0',
                     "-y", '0.0',
                     "-z", '1.0']
+        
     )
-    
+
     return LaunchDescription([
     #rviz2,
     robot_state_publisher_node,
     ExecuteProcess(
-        cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so'],
+        cmd=['gazebo', '--verbose', '-u' , '-s', 'libgazebo_ros_factory.so'],
         output='screen'),
 
     ExecuteProcess(
@@ -73,6 +74,5 @@ def generate_launch_description():
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'start', 'effort_controller'],
         output='screen'
     ),
-
-    cranebot_spawn,
+    orthrus_spawn,
 ])

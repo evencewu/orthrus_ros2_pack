@@ -33,12 +33,14 @@
 
   <link name="body">
     <visual>
+      <origin xyz="-0.10 0.1385 -0.05" rpy="${pi/2} 0 0" />
       <geometry>
         <mesh filename="${meshes_folder}/body.STL"/>
       </geometry>
       <material name="blue"/>
     </visual>
     <collision>
+      <origin xyz="-0.10 0.1385 -0.05" rpy="${pi/2} 0 0" />
       <geometry>
         <mesh filename="${meshes_folder}/body.STL"/>
       </geometry>
@@ -49,14 +51,14 @@
   <xacro:macro name="hip" params="prefix">
     <link name="hip_${prefix}">
       <visual>
-        <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+        <origin xyz="-0.02 -0.05 -0.05" rpy="0 0 0" />
         <geometry>
           <mesh filename="${meshes_folder}/hip.STL"/>
         </geometry>
         <material name="black"/>
       </visual>
       <collision>
-        <origin xyz="0 0 0" rpy="${pi/2} 0 0" />
+        <origin xyz="-0.02 -0.05 -0.05" rpy="0 0 0" />
         <geometry>
           <mesh filename="${meshes_folder}/hip.STL"/>
         </geometry>
@@ -64,187 +66,128 @@
       <xacro:default_inertial mass="1"/>
     </link>
 
-    <joint name="hip_${prefix}_joint" type="continuous">
-      <axis xyz="0 1 0" rpy="0 0 0" />
+    <joint name="hip_${prefix}_joint" type="revolute">
+      <axis xyz="0 0 1"/>
       <parent link="body"/>
       <child link="hip_${prefix}"/>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <dynamics damping="0.1" friction="0.1"/>
+      <limit effort="35.0" lower="-${pi/2}" upper="${pi/2}" velocity="${pi}"/>
+      <xacro:if value="${prefix == 'LF'}">
+        <origin xyz="-0.05 0.20 0" rpy="${pi/2} ${pi} 0" />
+      </xacro:if>
+      <xacro:if value="${prefix == 'LB'}">
+        <origin xyz="-0.05 -0.20 0" rpy="-${pi/2} ${pi} 0" />
+      </xacro:if>
+      <xacro:if value="${prefix == 'RB'}">
+        <origin xyz="0.05 -0.20 0" rpy="${pi/2} ${pi} ${pi}" />
+      </xacro:if>
+      <xacro:if value="${prefix == 'RF'}">
+        <origin xyz="0.05 0.20 0" rpy="-${pi/2} ${pi} ${pi}" />
+      </xacro:if>
+
     </joint>
   </xacro:macro>
 
   <xacro:hip prefix="RF"/>
+  <xacro:hip prefix="LF"/>
+  <xacro:hip prefix="RB"/>
+  <xacro:hip prefix="LB"/>
 
-  <!--
-
-
-  <xacro:macro name="leg" params="prefix reflect">
-    <link name="${prefix}_leg">
+  <xacro:macro name="leg1" params="prefix">
+    <link name="leg1_${prefix}">
       <visual>
+        <origin xyz="0 -0.2 -0.05" rpy="0 0 0" />
         <geometry>
-          <box size="${leglen} 0.1 0.2"/>
+          <mesh filename="${meshes_folder}/leg1.STL"/>
         </geometry>
-        <origin xyz="0 0 -${leglen/2}" rpy="0 ${pi/2} 0"/>
-        <material name="white"/>
+        <material name="black"/>
       </visual>
       <collision>
+        <origin xyz="0 -0.2 -0.05" rpy="0 0 0" />
         <geometry>
-          <box size="${leglen} 0.1 0.2"/>
-        </geometry>
-        <origin xyz="0 0 -${leglen/2}" rpy="0 ${pi/2} 0"/>
-      </collision>
-      <xacro:default_inertial mass="10"/>
-    </link>
-
-    <joint name="base_to_${prefix}_leg" type="fixed">
-      <parent link="base_link"/>
-      <child link="${prefix}_leg"/>
-      <origin xyz="0 ${reflect*(width+.02)} 0.25" />
-    </joint>
-
-    <link name="${prefix}_base">
-      <visual>
-        <geometry>
-          <box size="${baselen} 0.1 0.1"/>
-        </geometry>
-        <material name="white"/>
-      </visual>
-      <collision>
-        <geometry>
-          <box size="${baselen} 0.1 0.1"/>
+          <mesh filename="${meshes_folder}/leg1.STL"/>
         </geometry>
       </collision>
-      <xacro:default_inertial mass="10"/>
+      <xacro:default_inertial mass="1"/>
     </link>
 
-    <joint name="${prefix}_base_joint" type="fixed">
-      <parent link="${prefix}_leg"/>
-      <child link="${prefix}_base"/>
-      <origin xyz="0 0 ${-leglen}" />
+    <joint name="leg1_${prefix}_joint" type="revolute">
+      <axis xyz="1 0 0"/>
+      <parent link="hip_${prefix}"/>
+      <child link="leg1_${prefix}"/>
+      <dynamics damping="0.1" friction="0.1"/>
+      <limit effort="35.0" lower="-${pi*2/3}" upper="${pi*2/3}" velocity="${pi}"/>
+      <xacro:if value="${prefix == 'LF'}">
+        <origin xyz="0.05 0 0" rpy="-${pi/2} 0 0" />
+      </xacro:if>
+      <xacro:if value="${prefix == 'LB'}">
+        <origin xyz="0.05 0 0" rpy="${pi/2} 0 0" />
+      </xacro:if>
+      <xacro:if value="${prefix == 'RB'}">
+        <origin xyz="0.05 0 0" rpy="${pi/2} 0 0" />
+      </xacro:if>
+      <xacro:if value="${prefix == 'RF'}">
+        <origin xyz="0.05 0 0" rpy="-${pi/2} 0 0" />
+      </xacro:if>
+
     </joint>
-    <xacro:wheel prefix="${prefix}" suffix="front" reflect="1"/>
-    <xacro:wheel prefix="${prefix}" suffix="back" reflect="-1"/>
-  </xacro:macro>
-  <xacro:leg prefix="right" reflect="-1" />
-  <xacro:leg prefix="left" reflect="1" />
-
-  <joint name="gripper_extension" type="prismatic">
-    <parent link="base_link"/>
-    <child link="gripper_pole"/>
-    <limit effort="1000.0" lower="-${width*2-.02}" upper="0" velocity="0.5"/>
-    <origin rpy="0 0 0" xyz="${width-.01} 0 0.2"/>
-  </joint>
-
-  <link name="gripper_pole">
-    <visual>
-      <geometry>
-        <cylinder length="${polelen}" radius="0.01"/>
-      </geometry>
-      <origin xyz="${polelen/2} 0 0" rpy="0 ${pi/2} 0 "/>
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="${polelen}" radius="0.01"/>
-      </geometry>
-      <origin xyz="${polelen/2} 0 0" rpy="0 ${pi/2} 0 "/>
-    </collision>
-    <xacro:default_inertial mass="0.05"/>
-  </link>
-
-  <xacro:macro name="gripper" params="prefix reflect">
-    <joint name="${prefix}_gripper_joint" type="revolute">
-      <axis xyz="0 0 ${reflect}"/>
-      <limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/>
-      <origin rpy="0 0 0" xyz="${polelen} ${reflect*0.01} 0"/>
-      <parent link="gripper_pole"/>
-      <child link="${prefix}_gripper"/>
-    </joint>
-    <link name="${prefix}_gripper">
-      <visual>
-        <origin rpy="${(reflect-1)/2*pi} 0 0" xyz="0 0 0"/>
-        <geometry>
-          <mesh filename="/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/meshes/l_finger.dae"/>
-        </geometry>
-      </visual>
-      <collision>
-        <geometry>
-          <mesh filename="/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/meshes/l_finger.dae"/>
-        </geometry>
-        <origin rpy="${(reflect-1)/2*pi} 0 0" xyz="0 0 0"/>
-      </collision>
-      <xacro:default_inertial mass="0.05"/>
-    </link>
-
-    <joint name="${prefix}_tip_joint" type="fixed">
-      <parent link="${prefix}_gripper"/>
-      <child link="${prefix}_tip"/>
-    </joint>
-    <link name="${prefix}_tip">
-      <visual>
-        <origin rpy="${(reflect-1)/2*pi} 0 0" xyz="0.09137 0.00495 0"/>
-        <geometry>
-          <mesh filename="/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/meshes/l_finger_tip.dae"/>
-        </geometry>
-      </visual>
-      <collision>
-        <geometry>
-          <mesh filename="/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/meshes/l_finger_tip.dae"/>
-        </geometry>
-        <origin rpy="${(reflect-1)/2*pi} 0 0" xyz="0.09137 0.00495 0"/>
-      </collision>
-      <xacro:default_inertial mass="0.05"/>
-    </link>
   </xacro:macro>
 
-  <xacro:gripper prefix="left" reflect="1" />
-  <xacro:gripper prefix="right" reflect="-1" />
+  <xacro:leg1 prefix="RF"/>
+  <xacro:leg1 prefix="LF"/>
+  <xacro:leg1 prefix="RB"/>
+  <xacro:leg1 prefix="LB"/>
 
-  <link name="head">
-    <visual>
-      <geometry>
-        <sphere radius="${width}"/>
-      </geometry>
-      <material name="white"/>
-    </visual>
-    <collision>
-      <geometry>
-        <sphere radius="${width}"/>
-      </geometry>
-    </collision>
-    <xacro:default_inertial mass="2"/>
-  </link>
+  <xacro:macro name="leg2" params="prefix">
+    <link name="leg2_${prefix}">
+      <visual>
+        <origin xyz="-0.025 -0.025 -0.225" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="${meshes_folder}/leg2.STL"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <origin xyz="-0.025 -0.025 -0.225" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="${meshes_folder}/leg2.STL"/>
+        </geometry>
+      </collision>
+      <xacro:default_inertial mass="1"/>
+    </link>
 
-  <joint name="head_swivel" type="continuous">
-    <parent link="base_link"/>
-    <child link="head"/>
-    <axis xyz="0 0 1"/>
-    <origin xyz="0 0 ${bodylen/2}"/>
-  </joint>
+    <joint name="leg2_${prefix}_joint" type="revolute">
+      <axis xyz="1 0 0"/>
+      <parent link="leg1_${prefix}"/>
+      <child link="leg2_${prefix}"/>
+      <dynamics damping="0.1" friction="0.1"/>
+      
+      <xacro:if value="${prefix == 'LF'}">
+        <origin xyz="0.035 -0.18 0" rpy="${pi*2/3} 0 0" />
+        <limit effort="35.0" lower="-${pi*1/12}" upper="${pi*2/3}" velocity="${pi}"/>
+      </xacro:if>
+      <xacro:if value="${prefix == 'RF'}">
+        <origin xyz="0.035 -0.18 0" rpy="${pi*1/3} 0 0" />
+        <limit effort="35.0" lower="-${pi*2/3}" upper="${pi*1/12}" velocity="${pi}"/>
+      </xacro:if>
+      <xacro:if value="${prefix == 'RB'}">
+        <origin xyz="0.035 -0.18 0" rpy="${pi*1/3} 0 0" />
+        <limit effort="35.0" lower="-${pi*2/3}" upper="${pi*1/12}" velocity="${pi}"/>
+      </xacro:if>
+      <xacro:if value="${prefix == 'LB'}">
+        <origin xyz="0.035 -0.18 0" rpy="${pi*2/3} 0 0" />
+        <limit effort="35.0" lower="-${pi*1/12}" upper="${pi*2/3}" velocity="${pi}"/>
 
-  <link name="box">
-    <visual>
-      <geometry>
-        <box size="0.08 0.08 0.08"/>
-      </geometry>
-      <material name="blue"/>
-      <origin xyz="-0.04 0 0"/>
-    </visual>
-    <collision>
-      <geometry>
-        <box size="0.08 0.08 0.08"/>
-      </geometry>
-    </collision>
-    <xacro:default_inertial mass="1"/>
-  </link>
--->
+      </xacro:if>
 
-  <!--
-  <joint name="tobox" type="fixed">
-    <parent link="head"/>
-    <child link="box"/>
-    <origin xyz="${.707*width+0.04} 0 ${.707*width}"/>
-  </joint>
+    </joint>
+  </xacro:macro>
 
--->
+  <xacro:leg2 prefix="LF"/>
+  <xacro:leg2 prefix="RF"/>
+  <xacro:leg2 prefix="LB"/>
+  <xacro:leg2 prefix="RB"/>
+
 
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
