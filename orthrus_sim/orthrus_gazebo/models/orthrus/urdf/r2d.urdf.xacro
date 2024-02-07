@@ -70,7 +70,7 @@
       <axis xyz="0 0 1"/>
       <parent link="body"/>
       <child link="hip_${prefix}"/>
-      <dynamics damping="0.1" friction="0.1"/>
+      <dynamics damping="0.5" friction="0.1"/>
       <limit effort="35.0" lower="-${pi/2}" upper="${pi/2}" velocity="${pi}"/>
       <xacro:if value="${prefix == 'LF'}">
         <origin xyz="-0.05 0.20 0" rpy="${pi/2} ${pi} 0" />
@@ -115,7 +115,7 @@
       <axis xyz="1 0 0"/>
       <parent link="hip_${prefix}"/>
       <child link="leg1_${prefix}"/>
-      <dynamics damping="0.1" friction="0.1"/>
+      <dynamics damping="0.5" friction="0.1"/>
       <limit effort="35.0" lower="-${pi*2/3}" upper="${pi*2/3}" velocity="${pi}"/>
       <xacro:if value="${prefix == 'LF'}">
         <origin xyz="0.05 0 0" rpy="-${pi/2} 0 0" />
@@ -160,7 +160,7 @@
       <axis xyz="1 0 0"/>
       <parent link="leg1_${prefix}"/>
       <child link="leg2_${prefix}"/>
-      <dynamics damping="0.1" friction="0.1"/>
+      <dynamics damping="0.5" friction="0.1"/>
       
       <xacro:if value="${prefix == 'LF'}">
         <origin xyz="0.035 -0.18 0" rpy="${pi*2/3} 0 0" />
@@ -188,21 +188,24 @@
   <xacro:leg2 prefix="LB"/>
   <xacro:leg2 prefix="RB"/>
 
+  <xacro:macro name="ros2_hip_joint" params="prefix">
+    <joint name="hip_${prefix}_joint">
+      <command_interface name="position">
+        <param name="min">-${pi/2}</param>
+        <param name="max">${pi/2}</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+  </xacro:macro>
 
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
     </hardware>
 
-    <joint name="hip_RF_joint">
-      <command_interface name="position">
-        <param name="min">-10</param>
-        <param name="max">10</param>
-      </command_interface>
-      <state_interface name="position"/>
-      <state_interface name="velocity"/>
-      <state_interface name="effort"/>
-    </joint>
+    <xacro:ros2_hip_joint prefix="RF"/>
 
   </ros2_control>
 

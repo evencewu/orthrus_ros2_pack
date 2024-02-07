@@ -12,3 +12,4 @@ effort_controller:
   ros__parameters:
     joints:
       - joint_hip_RF
+
