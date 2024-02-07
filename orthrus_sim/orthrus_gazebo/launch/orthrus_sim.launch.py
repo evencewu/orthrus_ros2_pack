@@ -21,7 +21,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("orthrus_gazebo"), "models", "orthrus", "urdf",  "r2d.urdf.xacro"]
+                [FindPackageShare("orthrus_gazebo"), "models", "orthrus", "urdf",  "orthrus.urdf.xacro"]
             ),
         ]
     )
