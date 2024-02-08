@@ -2,15 +2,7 @@
 <robot name="gazebo1"
   xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:property name="width" value="0.2" />
-  <xacro:property name="leglen" value="0.6" />
-  <xacro:property name="polelen" value="0.2" />
-  <xacro:property name="bodylen" value="0.6" />
-  <xacro:property name="baselen" value="0.4" />
-  <xacro:property name="wheeldiam" value="0.07" />
-
   <xacro:property name="meshes_folder" value="$(find orthrus_gazebo)/models/orthrus/meshes" />
-
 
   <material name="blue">
     <color rgba="0 0 0.8 1"/>
@@ -23,13 +15,6 @@
   <material name="white">
     <color rgba="1 1 1 1"/>
   </material>
-
-  <xacro:macro name="default_inertial" params="mass">
-    <inertial>
-      <mass value="${mass}" />
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
-    </inertial>
-  </xacro:macro>
 
   <link name="body">
     <visual>
@@ -45,7 +30,11 @@
         <mesh filename="${meshes_folder}/body.STL"/>
       </geometry>
     </collision>
-    <xacro:default_inertial mass="10"/>
+    <inertial>
+      <origin xyz="-0.10 0.1385 -0.05" rpy="${pi/2} 0 0" />
+      <mass value="7"/>
+      <inertia ixx="4.9950395" ixy="0" ixz="0" iyy="6.4183150" iyz="0" izz="2.4616377" />
+    </inertial>
   </link>
 
   <xacro:macro name="hip" params="prefix">
@@ -161,7 +150,7 @@
       <parent link="leg1_${prefix}"/>
       <child link="leg2_${prefix}"/>
       <dynamics damping="0.5" friction="0.1"/>
-      
+
       <xacro:if value="${prefix == 'LF'}">
         <origin xyz="0.035 -0.18 0" rpy="${pi*2/3} 0 0" />
         <limit effort="35.0" lower="-${pi*1/12}" upper="${pi*2/3}" velocity="${pi}"/>
