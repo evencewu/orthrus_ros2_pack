@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(orthrus_ctrl)
+project(orthrus_controllers)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -19,7 +19,7 @@ endif ()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-ament_auto_add_executable(orthrus_ctrl
+ament_auto_add_executable(orthrus_controllers
   src/orthrus_ctrl.cpp
 )
 
