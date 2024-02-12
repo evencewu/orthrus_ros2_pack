@@ -19,8 +19,8 @@ endif ()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-ament_auto_add_executable(example_gripper
-  examples/example_gripper.cpp
+ament_auto_add_executable(orthrus_gazebo
+  src/orthrus_gazebo_interface.cpp
 )
 
 #############
