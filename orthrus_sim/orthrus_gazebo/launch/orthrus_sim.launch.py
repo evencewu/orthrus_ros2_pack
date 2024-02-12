@@ -66,12 +66,12 @@ def generate_launch_description():
         output='screen'),
 
     ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start','joint_state_broadcaster'],
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','joint_state_broadcaster'],
         output='screen'
     ),
 
     ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start', 'effort_controller'],
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'effort_controller'],
         output='screen'
     ),
     orthrus_spawn,
