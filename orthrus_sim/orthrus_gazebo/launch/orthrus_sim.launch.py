@@ -5,7 +5,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch_ros.parameter_descriptions import ParameterValue
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess, TimerAction
 from launch.conditions import IfCondition
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -21,7 +21,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("orthrus_gazebo"), "models", "orthrus", "urdf",  "orthrus.urdf.xacro"]
+                [FindPackageShare("orthrus_gazebo"), "models", "orthrus", "urdf", "orthrus.urdf.xacro"]
             ),
         ]
     )
@@ -58,6 +58,22 @@ def generate_launch_description():
         
     )
 
+    active_joint_state_broadcaster = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','joint_state_broadcaster'],
+        output='screen'
+    )
+
+    
+    active_effort_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','effort_controller'],
+        output='screen'
+    )
+
+    delay_active_effort_controller = TimerAction(
+        period=2.0,
+        actions=[active_effort_controller]
+    )
+
     return LaunchDescription([
     #rviz2,
     robot_state_publisher_node,
@@ -65,14 +81,7 @@ def generate_launch_description():
         cmd=['gazebo', '--verbose', '-u' , '-s', 'libgazebo_ros_factory.so'],
         output='screen'),
 
-    ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','joint_state_broadcaster'],
-        output='screen'
-    ),
-
-    ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 'effort_controller'],
-        output='screen'
-    ),
+    active_joint_state_broadcaster,
+    delay_active_effort_controller,
     orthrus_spawn,
 ])

@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
-<robot name="gazebo1"
+<robot name="orthrus"
   xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:property name="meshes_folder" value="$(find orthrus_gazebo)/models/orthrus/meshes" />
+  <xacro:property name="meshes_folder" value="file:///$(find orthrus_gazebo)/models/orthrus/meshes" />
+  <!--<xacro:property name="meshes_folder" value="/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/models/orthrus/meshes" />-->
 
   <material name="blue">
     <color rgba="0 0 0.8 1"/>
