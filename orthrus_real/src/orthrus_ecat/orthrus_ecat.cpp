@@ -1,8 +1,8 @@
-#include "orthrus_interfaces/orthrus_interfaces.hpp"
+#include "orthrus_ecat/orthrus_ecat.hpp"
 
-namespace orthrus_interfaces
+namespace orthrus_ecat
 {
-    OrthrusInterfacesNode::OrthrusInterfacesNode() : Node("orthrus_interfaces")
+    OrthrusInterfacesNode::OrthrusInterfacesNode() : Node("orthrus_ecat")
     {
 
     }
@@ -21,7 +21,6 @@ void OrthrusInterfacesNode::init()
 
   }
 
-  /// @brief arx5a 主循环函数
   void OrthrusInterfacesNode::main_loop()
   {
     //TODO
@@ -55,7 +54,7 @@ void OrthrusInterfacesNode::init()
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<orthrus_interfaces::OrthrusInterfacesNode>());
+  rclcpp::spin(std::make_shared<orthrus_ecat::OrthrusInterfacesNode>());
   rclcpp::shutdown();
   return 0;
 }

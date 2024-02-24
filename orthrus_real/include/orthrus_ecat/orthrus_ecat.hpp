@@ -18,7 +18,7 @@
 #include "orthrus_ecat/orthrus_leg.hpp"
 #include "orthrus_ecat/orthrus_imu.hpp"
 
-namespace orthrus_interfaces
+namespace orthrus_ecat
 {
   class OrthrusInterfacesNode : public rclcpp::Node
   {
