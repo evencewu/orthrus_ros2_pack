@@ -245,7 +245,6 @@
 
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-      <robot_sim_type>gazebo_ros2_control/GazeboSystem</robot_sim_type>
       <parameters>/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/config/orthrus.yaml</parameters>
     </plugin>
   </gazebo>

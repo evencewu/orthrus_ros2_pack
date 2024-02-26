@@ -14,14 +14,18 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
 
     model_arg = DeclareLaunchArgument(name='models', description='Absolute path to robot urdf file')
-    pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
+    pkg_gazebo_ros = get_package_share_directory('orthrus_gazebo')
+
+
+    pkg_dir = get_package_share_directory('orthrus_gazebo')
+    simulation_description_path = os.path.join(pkg_dir)
 
     robot_description_content = Command(
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [FindPackageShare("orthrus_gazebo"), "models", "orthrus", "urdf", "orthrus.urdf.xacro"]
+                [simulation_description_path, "models", "orthrus", "urdf", "orthrus.urdf.xacro"]
             ),
         ]
     )
@@ -33,10 +37,13 @@ def generate_launch_description():
         name='rviz2',
     )
 
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': robot_description_content}],
+        output='screen',
+        parameters=[{'robot_description': robot_description_content}, {'use_sim_time': use_sim_time}],
     )
 
     # Gazebo launch
@@ -65,7 +72,7 @@ def generate_launch_description():
 
     
     active_effort_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','effort_controller'],
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','joint_group_effort_controller'],
         output='screen'
     )
 

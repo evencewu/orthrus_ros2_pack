@@ -1,116 +1,85 @@
 import os
- 
+
 from ament_index_python.packages import get_package_share_directory
-
-from launch_ros.parameter_descriptions import ParameterValue
-from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, ExecuteProcess, RegisterEventHandler
-from launch.conditions import IfCondition
-from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
-from launch.event_handlers import OnProcessExit
-from launch_ros.substitutions import FindPackageShare
- 
+from launch.actions import ExecuteProcess, IncludeLaunchDescription, DeclareLaunchArgument
+# from launch.event_handlers import OnProcessExit
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import Command, LaunchConfiguration
+from launch_ros.descriptions import ParameterValue
+
+
 def generate_launch_description():
+    pause_gz = LaunchConfiguration('pause_gz')
+    # pause_gz_arg = DeclareLaunchArgument(
+    #         'pause_gz',
+    #         default_value='False',
+    #         description='Pause Gazebo at launch'),
 
-    declared_arguments = []
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "gui",
-            default_value="true",
-            description="Start RViz2 automatically with this launch file.",
+    pkg_dir = get_package_share_directory('orthrus_gazebo')
+    world_path = os.path.join(
+        pkg_dir,
+        'worlds',
+        'default.world')
+
+    gazebo = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('gazebo_ros'), 'launch'),
+                                               '/gazebo.launch.py']),
+                launch_arguments={'world': world_path,
+                                  'pause': pause_gz}.items(),
+    )
+
+    simulation_description_path = os.path.join(pkg_dir)
+    simulation_urdf_path = os.path.join(simulation_description_path, "models", "orthrus", "urdf", "orthrus.urdf.xacro")
+    robot_description_config = ParameterValue(
+            Command(['xacro ', str(simulation_urdf_path)]), value_type=str
         )
-    )
-    
-    gui = LaunchConfiguration("gui")
+    robot_description = {'robot_description': robot_description_config}
 
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    # use_sim_time_decl = DeclareLaunchArgument(
+    #         'use_sim_time',
+    #         default_value='true',
+    #         description='Use simulation (Gazebo) clock if true'),
 
-    model_arg = DeclareLaunchArgument(name='models', description='Absolute path to robot urdf file')
-    pkg_gazebo_ros = get_package_share_directory('gazebo_ros')
-
-    robot_description_content = Command(
-        [
-            PathJoinSubstitution([FindExecutable(name="xacro")]),
-            " ",
-            PathJoinSubstitution(
-                [FindPackageShare("orthrus_gazebo"), "models", "orthrus", "urdf",  "orthrus.urdf.xacro"]
-            ),
-        ]
-    )
-
-    robot_controllers = PathJoinSubstitution(
-        [
-            FindPackageShare("orthrus_gazebo"),
-            "config",
-            "orthrus.yaml",
-        ]
-    )
-
-    #rivz2
-    rviz2 = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-    )
-
-    robot_state_publisher_node = Node(
+    node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': robot_description_content}],
+        output='screen',
+        parameters=[robot_description, {'use_sim_time': use_sim_time}]
     )
 
-    control_node = Node(
-        package="controller_manager",
-        executable="ros2_control_node",
-        parameters=[{'robot_description': robot_description_content}, robot_controllers],
-        output="both",
+    spawn_entity = Node(package='gazebo_ros', executable="spawn_entity.py",
+                        arguments=['-topic', 'robot_description',
+                                   '-entity', 'robot',
+                                   '-z', '1.1230'],
+                        output='both')
+
+    load_joint_state_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+             'joint_state_broadcaster'],
+        output='screen'
     )
 
-    # Gazebo launch
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
-        )
+    load_joint_group_effort_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller',
+             '--set-state', 'active', 'joint_group_effort_controller'],
+        output='screen'
     )
+    nodes = [
+        # pause_gz_arg,
+        DeclareLaunchArgument(
+            'pause_gz',
+            default_value='true',
+            description='Pause Gazebo at launch'),
 
-    #spawn the robot 
-    orthrus_spawn = Node(
-        package='gazebo_ros',
-        executable='spawn_entity.py',
-        arguments=["-topic", "/robot_description", 
-                    "-entity", "othrus",
-                    "-x", '0.0',
-                    "-y", '0.0',
-                    "-z", '1.0']
-        
-    )
+        gazebo,
+        spawn_entity,
+        node_robot_state_publisher,
+        load_joint_state_controller,
+        load_joint_group_effort_controller,
+    ]
 
-    joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["joint_state_broadcaster", "--controller-manager", "/controller_manager"],
-    )
-
-    robot_controller_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=["effort_controller", "--controller-manager", "/controller_manager"],
-    )
-
-    # Delay start of robot_controller after `joint_state_broadcaster`
-    delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
-        event_handler=OnProcessExit(
-            target_action=joint_state_broadcaster_spawner,
-            on_exit=[robot_controller_spawner],
-        )
-    )
-
-    return LaunchDescription([
-    #rviz2,
-    control_node,
-    robot_state_publisher_node,
-    joint_state_broadcaster_spawner,
-    delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
-    orthrus_spawn,
-])
+    return LaunchDescription(nodes)
