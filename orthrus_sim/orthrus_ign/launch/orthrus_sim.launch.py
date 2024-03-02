@@ -23,7 +23,7 @@ def generate_launch_description():
 
     xacro_file = os.path.join(orthrus_ign_path,
                               "models", "orthrus", "urdf", 
-                              "orthrus.urdf.xacro")
+                              "orthrus.urdf")
 
     doc = xacro.parse(open(xacro_file))
     xacro.process_doc(doc)
