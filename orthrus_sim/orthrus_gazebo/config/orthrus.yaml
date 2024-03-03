@@ -5,24 +5,24 @@ controller_manager:
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    joint_group_effort_controller:
+    effort_controller:
       type: effort_controllers/JointGroupEffortController
 
-joint_group_effort_controller:
+effort_controller:
   ros__parameters:
     joints:
       - hip_RF_joint
-      - hip_lF_joint
-      - hip_RB_joint
-      - hip_LB_joint
       - leg1_RF_joint
-      - leg1_lF_joint
-      - leg1_RB_joint
-      - leg1_LB_joint
       - leg2_RF_joint
-      - leg2_lF_joint
-      - leg2_RB_joint
-      - leg2_LB_joint
+      #- hip_lF_joint
+      #- hip_RB_joint
+      #- hip_LB_joint
+      #- leg1_lF_joint
+      #- leg1_RB_joint
+      #- leg1_LB_joint
+      #- leg2_lF_joint
+      #- leg2_RB_joint
+      #- leg2_LB_joint
 
 
 

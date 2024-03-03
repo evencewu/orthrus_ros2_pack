@@ -72,7 +72,7 @@ def generate_launch_description():
 
     
     active_effort_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','joint_group_effort_controller'],
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','effort_controller'],
         output='screen'
     )
 
@@ -89,6 +89,6 @@ def generate_launch_description():
         output='screen'),
 
     active_joint_state_broadcaster,
-    delay_active_effort_controller,
+    active_effort_controller,
     orthrus_spawn,
 ])
