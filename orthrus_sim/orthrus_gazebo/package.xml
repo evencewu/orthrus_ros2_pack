@@ -41,6 +41,7 @@
   <test_depend>ament_lint_common</test_depend>
 
   <depend>orthrus_interfaces</depend>
+  <depend>sensor_msgs</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
