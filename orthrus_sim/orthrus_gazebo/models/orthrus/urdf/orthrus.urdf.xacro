@@ -227,18 +227,19 @@
     </hardware>
 
     <xacro:ros2_hip_joint prefix="RF"/>
-    <xacro:ros2_hip_joint prefix="LF"/>
-    <xacro:ros2_hip_joint prefix="RB"/>
-    <xacro:ros2_hip_joint prefix="LB"/>
-
     <xacro:ros2_leg1_joint prefix="RF"/>
-    <xacro:ros2_leg1_joint prefix="LF"/>
-    <xacro:ros2_leg1_joint prefix="RB"/>
-    <xacro:ros2_leg1_joint prefix="LB"/>
-
     <xacro:ros2_leg2_joint prefix="RF"/>
+
+    <xacro:ros2_hip_joint prefix="LF"/>
+    <xacro:ros2_leg1_joint prefix="LF"/>
     <xacro:ros2_leg2_joint prefix="LF"/>
+
+    <xacro:ros2_hip_joint prefix="RB"/>
+    <xacro:ros2_leg1_joint prefix="RB"/>
     <xacro:ros2_leg2_joint prefix="RB"/>
+
+    <xacro:ros2_hip_joint prefix="LB"/>
+    <xacro:ros2_leg1_joint prefix="LB"/>
     <xacro:ros2_leg2_joint prefix="LB"/>
 
   </ros2_control>
