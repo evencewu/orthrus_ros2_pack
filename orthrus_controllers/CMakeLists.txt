@@ -17,11 +17,15 @@ endif ()
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
+find_package(Eigen3 REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(orthrus_controllers
   src/orthrus_ctrl.cpp
+  src/orthrus_controllers/orthrus_ctrl_test.cpp
 )
+
+ament_target_dependencies(orthrus_controllers Eigen3)
 
 #############
 ## Testing ##
