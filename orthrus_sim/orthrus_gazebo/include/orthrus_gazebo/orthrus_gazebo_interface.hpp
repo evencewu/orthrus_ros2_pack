@@ -2,6 +2,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
+#include <orthrus_interfaces/msg/ctrl_cmd.hpp>
 
 namespace othrus_gazebo
 {
@@ -27,9 +28,19 @@ namespace othrus_gazebo
 
         void main_loop();
 
+        
+
     private:
+        void CtrlCmdCallback(const orthrus_interfaces::msg::CtrlCmd::SharedPtr msg);
+
         rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr joint_torque_pub_;
         std_msgs::msg::Float64MultiArray joint_torque_msg_;
         rclcpp::TimerBase::SharedPtr timer_;
+
+        rclcpp::Subscription<orthrus_interfaces::msg::CtrlCmd>::SharedPtr ctrl_cmd_pub_;
+        orthrus_interfaces::msg::CtrlCmd ctrl_cmd_msg_;
+
+        double hybrid_[12];
+        
     };
 }
