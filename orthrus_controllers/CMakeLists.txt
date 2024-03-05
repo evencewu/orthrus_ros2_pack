@@ -23,9 +23,10 @@ ament_auto_find_build_dependencies()
 ament_auto_add_executable(orthrus_controllers
   src/orthrus_ctrl.cpp
   src/orthrus_controllers/orthrus_ctrl_test.cpp
+  src/orthrus_controllers/orthrus_param_def.cpp
 )
 
-ament_target_dependencies(orthrus_controllers Eigen3)
+target_link_libraries(orthrus_controllers Eigen3::Eigen)
 
 #############
 ## Testing ##

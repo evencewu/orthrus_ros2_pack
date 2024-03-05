@@ -3,8 +3,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <orthrus_interfaces/msg/ctrl_cmd.hpp>
-
-#define PI 3.1415926
+#include <orthrus_controllers/orthrus_param_def.hpp>
 namespace othrus_ctrl
 {
     class PositonCtrl

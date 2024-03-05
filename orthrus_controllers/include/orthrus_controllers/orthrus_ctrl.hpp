@@ -7,6 +7,7 @@
 
 #include "orthrus_controllers/orthrus_ctrl_base.hpp"
 #include "orthrus_controllers/orthrus_ctrl_test.hpp"
+#include "orthrus_controllers/orthrus_param_def.hpp"
 
 #define PI 3.1415926
 
@@ -21,10 +22,10 @@ namespace othrus_ctrl
         void main_loop();
     private:
         void init();
-
         int num_ = 0;
 
         PositonCtrl PositonCtrl_;
+        othrus_parma_def othrus_parma_;
         
         //timer
         rclcpp::TimerBase::SharedPtr timer_;
