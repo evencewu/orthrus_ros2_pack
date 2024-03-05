@@ -27,27 +27,6 @@ namespace orthrus_ctrl
     void orthrusCtrlNode::main_loop()
     {
         ctrl_cmd_msg_ = PositonCtrl_.StandUp();
-        //num_++;
-        //if (num_ <= 5000)
-        //{
-        //    ctrl_cmd_msg_.motor_cmd[0].k_p = 10;
-        //    ctrl_cmd_msg_.motor_cmd[0].target_p = -PI / 2;
-        //    ctrl_cmd_msg_.motor_cmd[0].k_d = 2;
-        //    ctrl_cmd_msg_.motor_cmd[0].target_d = 0;
-        //    ctrl_cmd_msg_.motor_cmd[0].torqe = 0;
-        //}
-        //else if (num_ > 5000 && num_ <= 10000)
-        //{
-        //    ctrl_cmd_msg_.motor_cmd[0].k_p = 10;
-        //    ctrl_cmd_msg_.motor_cmd[0].target_p = PI / 2;
-        //    ctrl_cmd_msg_.motor_cmd[0].k_d = 2;
-        //    ctrl_cmd_msg_.motor_cmd[0].target_d = 0;
-        //    ctrl_cmd_msg_.motor_cmd[0].torqe = 0;
-        //}
-        //else
-        //{
-        //    num_ = 0;
-        //}
         ctrl_cmd_pub_->publish(ctrl_cmd_msg_);
     }
 
@@ -72,11 +51,11 @@ namespace orthrus_ctrl
         RCLCPP_INFO(this->get_logger(), "run orthrus parma define\n");
 
         RCLCPP_INFO(this->get_logger(), "pinocchio urdf model loading\n");
-        const std::string urdf_filename = std::string("/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/models/orthrus/urdf/orthrus.urdf.xacro");
+        const std::string urdf_filename = std::string("/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/models/orthrus/urdf/orthrus.urdf");
 
         pinocchio::Model model;
         pinocchio::urdf::buildModel(urdf_filename, model);
-        RCLCPP_INFO(this->get_logger(), "over! model name: %s \n", &model.name);
+        RCLCPP_INFO(this->get_logger(), "over! model name: %s \n", model.name.c_str());
     }
 }
 
