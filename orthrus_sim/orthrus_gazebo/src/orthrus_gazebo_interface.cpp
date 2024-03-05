@@ -1,21 +1,21 @@
 #include "orthrus_gazebo/orthrus_gazebo_interface.hpp"
 
-namespace othrus_gazebo
+namespace orthrus_gazebo
 {
-    OthrusGazeboNode::OthrusGazeboNode() : Node("othrus_gazebo")
+    orthrusGazeboNode::orthrusGazeboNode() : Node("orthrus_gazebo")
     {
         Init();
         
         joint_torque_pub_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/effort_controller/commands", 10);
 
         ctrl_cmd_sub_ = this->create_subscription<orthrus_interfaces::msg::CtrlCmd>("/orthrus_cmd", 10,
-                                                                                    std::bind(&OthrusGazeboNode::CtrlCmdCallback, this, std::placeholders::_1));
+                                                                                    std::bind(&orthrusGazeboNode::CtrlCmdCallback, this, std::placeholders::_1));
 
         joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10,
-                                                                                   std::bind(&OthrusGazeboNode::JointStateCallback, this, std::placeholders::_1));
+                                                                                   std::bind(&orthrusGazeboNode::JointStateCallback, this, std::placeholders::_1));
     }
 
-    void OthrusGazeboNode::Init()
+    void orthrusGazeboNode::Init()
     {
         for (int i = 0; i < 12; i++)
         {
@@ -23,7 +23,7 @@ namespace othrus_gazebo
         }
     }
 
-    void OthrusGazeboNode::CtrlCmdCallback(const orthrus_interfaces::msg::CtrlCmd::SharedPtr msg)
+    void orthrusGazeboNode::CtrlCmdCallback(const orthrus_interfaces::msg::CtrlCmd::SharedPtr msg)
     {
         for (int i = 0; i < 12; i++)
         {
@@ -38,7 +38,7 @@ namespace othrus_gazebo
         joint_torque_pub_->publish(joint_torque_msg_);
     }
 
-    void OthrusGazeboNode::JointStateCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
+    void orthrusGazeboNode::JointStateCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
     {
         for (int i = 0; i < 12; i++)
         {
@@ -58,7 +58,7 @@ namespace othrus_gazebo
 int main(int argc, char *argv[])
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<othrus_gazebo::OthrusGazeboNode>());
+    rclcpp::spin(std::make_shared<orthrus_gazebo::orthrusGazeboNode>());
     rclcpp::shutdown();
     return 0;
 }

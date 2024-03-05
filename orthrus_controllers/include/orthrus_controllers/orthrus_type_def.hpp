@@ -4,16 +4,9 @@
 
 #include <orthrus_interfaces/msg/ctrl_cmd.hpp>
 
-namespace othrus_ctrl
+namespace orthrus_ctrl
 {
-    struct JointParam
-    {
-        std::string name;
-
-        double position;
-        double velocity;
-        double effort;
-    };
+    const double PI = 3.1415926;
 
     class OrthrusMotion
     {
@@ -23,5 +16,5 @@ namespace othrus_ctrl
     class OrthrusDynamics
     {
 
-    };    
+    };  
 }

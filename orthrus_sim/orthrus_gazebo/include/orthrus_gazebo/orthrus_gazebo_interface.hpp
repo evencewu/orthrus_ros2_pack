@@ -6,7 +6,7 @@
 #include <orthrus_interfaces/msg/ctrl_cmd.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 
-namespace othrus_gazebo
+namespace orthrus_gazebo
 {
     struct JointParam
     {
@@ -17,10 +17,10 @@ namespace othrus_gazebo
         double effort;
     };
 
-    class OthrusGazeboNode : public rclcpp::Node
+    class orthrusGazeboNode : public rclcpp::Node
     {
     public:
-        OthrusGazeboNode();
+        orthrusGazeboNode();
 
         void main_loop();
 

@@ -3,7 +3,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
 
-namespace othrus_gazebo
+namespace orthrus_gazebo
 {
     class JointHybrid
     {
@@ -20,10 +20,10 @@ namespace othrus_gazebo
         double k_d_;
     };
 
-    class OthrusGazeboNode : public rclcpp::Node
+    class orthrusGazeboNode : public rclcpp::Node
     {
     public:
-        OthrusGazeboNode();
+        orthrusGazeboNode();
 
         void main_loop();
 
