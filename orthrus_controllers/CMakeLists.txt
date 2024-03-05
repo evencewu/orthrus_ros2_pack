@@ -21,7 +21,7 @@ find_package(Eigen3 REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(orthrus_controllers
-  src/orthrus_ctrl.cpp
+  src/orthrus_controllers/orthrus_ctrl.cpp
   src/orthrus_controllers/orthrus_wbc.cpp
 )
 

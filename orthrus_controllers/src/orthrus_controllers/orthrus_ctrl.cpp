@@ -56,6 +56,22 @@ namespace orthrus_ctrl
         pinocchio::Model model;
         pinocchio::urdf::buildModel(urdf_filename, model);
         RCLCPP_INFO(this->get_logger(), "over! model name: %s \n", model.name.c_str());
+
+        // Create data required by the algorithms
+        pinocchio::Data data(model);
+
+        // Sample a random configuration
+        Eigen::VectorXd q = randomConfiguration(model);
+        RCLCPP_INFO(this->get_logger(), "q = %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf", q(0), q(1), q(2), q(3), q(4), q(5), q(6), q(7), q(8), q(9), q(10), q(11));
+
+        // Perform the forward kinematics over the kinematic tree
+        forwardKinematics(model, data, q);
+
+        // Print out the placement of each joint of the kinematic tree
+        for (pinocchio::JointIndex joint_id = 0; joint_id < (pinocchio::JointIndex)model.njoints; ++joint_id)
+        {
+            RCLCPP_INFO(this->get_logger(), "| %-14s | %9lf %9lf %9lf |", model.names[joint_id].c_str(),data.oMi[joint_id].translation()(0),data.oMi[joint_id].translation()(1),data.oMi[joint_id].translation()(2));
+        }
     }
 }
 
