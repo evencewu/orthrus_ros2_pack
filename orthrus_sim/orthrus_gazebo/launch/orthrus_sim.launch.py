@@ -76,10 +76,11 @@ def generate_launch_description():
         output='screen'
     )
 
-    delay_active_effort_controller = TimerAction(
-        period=2.0,
-        actions=[active_effort_controller]
+    active_imu_sensor_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','imu_sensor_broadcaster'],
+        output='screen'
     )
+    
 
     return LaunchDescription([
     #rviz2,
@@ -88,6 +89,7 @@ def generate_launch_description():
         cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so'],
         output='screen'),
 
+    active_imu_sensor_controller,
     active_joint_state_broadcaster,
     active_effort_controller,
     orthrus_spawn,

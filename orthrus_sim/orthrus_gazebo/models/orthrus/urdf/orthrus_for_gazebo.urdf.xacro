@@ -3,7 +3,6 @@
   xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:property name="meshes_folder" value="file:///$(find orthrus_gazebo)/models/orthrus/meshes" />
-  <!--<xacro:property name="meshes_folder" value="/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/models/orthrus/meshes" />-->
 
   <material name="blue">
     <color rgba="0 0 0.8 1"/>
@@ -37,11 +36,11 @@
     </inertial>
   </link>
 
-  <link name="dummy">
+  <link name="imu_link">
   </link>
 
-  <joint name="dummy_joint" type="fixed">
-    <parent link="dummy"/>
+  <joint name="imu_joint" type="fixed">
+    <parent link="imu_link"/>
     <child link="body"/>
   </joint>
 
@@ -132,7 +131,6 @@
       <xacro:if value="${prefix == 'RF'}">
         <origin xyz="0.05 0 0" rpy="-${pi/2} 0 0" />
       </xacro:if>
-
     </joint>
   </xacro:macro>
 
@@ -249,7 +247,20 @@
     <xacro:ros2_hip_joint prefix="LB"/>
     <xacro:ros2_leg1_joint prefix="LB"/>
     <xacro:ros2_leg2_joint prefix="LB"/>
-
+    
+    <sensor name="imu_sensor">
+      <state_interface name="orientation.x"/>
+      <state_interface name="orientation.y"/>
+      <state_interface name="orientation.z"/>
+      <state_interface name="orientation.w"/>
+      <state_interface name="angular_velocity.x"/>
+      <state_interface name="angular_velocity.y"/>
+      <state_interface name="angular_velocity.z"/>
+      <state_interface name="linear_acceleration.x"/>
+      <state_interface name="linear_acceleration.y"/>
+      <state_interface name="linear_acceleration.z"/>
+    </sensor>
+    
   </ros2_control>
 
   <gazebo>
