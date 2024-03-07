@@ -85,7 +85,7 @@ def generate_launch_description():
     #rviz2,
     robot_state_publisher_node,
     ExecuteProcess(
-        cmd=['gazebo', '--verbose', '-u' , '-s', 'libgazebo_ros_factory.so'],
+        cmd=['gazebo', '--verbose', '-s', 'libgazebo_ros_factory.so'],
         output='screen'),
 
     active_joint_state_broadcaster,
