@@ -26,7 +26,11 @@ namespace orthrus_ctrl
 
     private:
         void init();
-        void orthrus_parma_def();
+
+        void InitDefKinematicsParma();
+        void UpdateKinematicsParma();
+
+        OrthrusParam OrthrusParam_;
 
         OrthrusWbc PositonCtrl_;
 
@@ -39,20 +43,16 @@ namespace orthrus_ctrl
 
         void JointStateSubCallback(const sensor_msgs::msg::JointState::SharedPtr msg);
 
-        struct JointParam
-        {
-            std::string name;
-
-            double position;
-            double velocity;
-            double effort;
-            
-        }JointParam_[12];
-
         std::vector<std::string> joint_name_{"hip_RF_joint", "leg1_RF_joint", "leg2_RF_joint", "hip_LF_joint", "leg1_LF_joint", "leg2_LF_joint", "hip_RB_joint", "leg1_RB_joint", "leg2_RB_joint", "hip_LB_joint", "leg1_LB_joint", "leg2_LB_joint"};
 
         // ctrl_cmd_pub_
         rclcpp::Publisher<orthrus_interfaces::msg::CtrlCmd>::SharedPtr ctrl_cmd_pub_;
         orthrus_interfaces::msg::CtrlCmd ctrl_cmd_msg_;
+
+        //pinochio
+        pinocchio::Model orthrus_model_;
+        pinocchio::Data orthrus_data_;
+
+
     };
 }
