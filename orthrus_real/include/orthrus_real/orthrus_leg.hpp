@@ -2,9 +2,9 @@
 
 #include <inttypes.h>
 
-#include "orthrus_ecat/ecat_typedef.hpp"
-#include "orthrus_ecat/orthrus_imu.hpp"
-#include "orthrus_ecat/orthrus_angle.hpp"
+#include "orthrus_real/ecat_typedef.hpp"
+#include "orthrus_real/orthrus_imu.hpp"
+#include "orthrus_real/orthrus_angle.hpp"
 
 
 #define USART1 0
@@ -12,7 +12,7 @@
 #define USART3 2
 #define USART6 3
 
-namespace orthrus_ecat
+namespace orthrus_real
 {
     class Leg
     {

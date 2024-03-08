@@ -1,8 +1,8 @@
-#include "orthrus_ecat/orthrus_ecat.hpp"
+#include "orthrus_real/orthrus_real.hpp"
 
-namespace orthrus_ecat
+namespace orthrus_real
 {
-    OrthrusInterfacesNode::OrthrusInterfacesNode() : Node("orthrus_ecat")
+    OrthrusInterfacesNode::OrthrusInterfacesNode() : Node("orthrus_real")
     {
 
     }
@@ -54,7 +54,7 @@ void OrthrusInterfacesNode::init()
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<orthrus_ecat::OrthrusInterfacesNode>());
+  rclcpp::spin(std::make_shared<orthrus_real::OrthrusInterfacesNode>());
   rclcpp::shutdown();
   return 0;
 }

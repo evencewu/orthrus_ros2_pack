@@ -1,9 +1,9 @@
-#include "orthrus_ecat/orthrus_imu.hpp"
+#include "orthrus_real/orthrus_imu.hpp"
 
 #include <inttypes.h>
 #include <cstdio>
 
-namespace orthrus_ecat
+namespace orthrus_real
 {
     Imu::Imu(uint8_t _can_id,int _device_id)
     {

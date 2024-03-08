@@ -1,6 +1,6 @@
-#include "orthrus_ecat/ecat_base.hpp"
-#include "orthrus_ecat/ecat_typedef.hpp"
-#include "orthrus_ecat/orthrus_leg.hpp"
+#include "orthrus_real/ecat_base.hpp"
+#include "orthrus_real/ecat_typedef.hpp"
+#include "orthrus_real/orthrus_leg.hpp"
 
 #include <array>
 #include <signal.h>
@@ -11,9 +11,9 @@ bool app_stopped = false;
 void sigint_handler(int sig);
 void safe_stop();
 
-orthrus_ecat::EcatBase Ethercat(1);
+orthrus_real::EcatBase Ethercat(1);
 
-orthrus_ecat::Leg leg = orthrus_ecat::Leg(CAN2,IMU1,0);
+orthrus_real::Leg leg = orthrus_real::Leg(CAN2,IMU1,0);
 
 int main()
 {

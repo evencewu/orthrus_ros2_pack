@@ -1,6 +1,6 @@
-#include "orthrus_ecat/orthrus_angle.hpp"
+#include "orthrus_real/orthrus_angle.hpp"
 
-namespace orthrus_ecat
+namespace orthrus_real
 {
     Angle::Angle(uint8_t _can_id, int _device_id)
     {

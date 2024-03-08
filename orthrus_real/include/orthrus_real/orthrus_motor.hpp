@@ -4,7 +4,7 @@
 
 #include "ecat_can_base/ecat_typedef.hpp"
 
-namespace orthrus_ecat
+namespace orthrus_real
 {
     class Motor
     {

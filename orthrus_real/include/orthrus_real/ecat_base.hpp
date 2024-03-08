@@ -3,11 +3,11 @@
 #include <inttypes.h>
 
 #include "soem_ros2/soem.h"
-#include "orthrus_ecat/ecat_typedef.hpp"
+#include "orthrus_real/ecat_typedef.hpp"
 
 #define EC_VER1
 
-namespace orthrus_ecat
+namespace orthrus_real
 {
     class EcatBase
     {
@@ -19,8 +19,8 @@ namespace orthrus_ecat
         void EcatSyncMsg();
         void EcatStop();
 
-        Ecat_Outputs_Pack packet_tx[2];
-        Ecat_Inputs_Pack packet_rx[2];
+        Ecat_Outputs_Pack packet_tx[128];
+        Ecat_Inputs_Pack packet_rx[128];
 
     private:
         int slave_num = 1;

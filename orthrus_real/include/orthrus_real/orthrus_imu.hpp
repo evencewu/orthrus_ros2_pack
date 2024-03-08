@@ -2,7 +2,7 @@
 
 #include <inttypes.h>
 
-#include "orthrus_ecat/ecat_typedef.hpp"
+#include "orthrus_real/ecat_typedef.hpp"
 
 #define IMU1 0
 #define IMU2 2
@@ -10,7 +10,7 @@
 #define IMU4 6
 #define IMU5 8
 
-namespace orthrus_ecat
+namespace orthrus_real
 {
     class Imu
     {

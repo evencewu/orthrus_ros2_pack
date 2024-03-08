@@ -21,10 +21,10 @@ ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(test_sensor
   src/test/test_sensor.cpp
-  src/orthrus_ecat/ecat_base.cpp
-  src/orthrus_ecat/orthrus_imu.cpp
-  src/orthrus_ecat/orthrus_angle.cpp
-  src/orthrus_ecat/orthrus_leg.cpp
+  src/orthrus_real/ecat_base.cpp
+  src/orthrus_real/orthrus_imu.cpp
+  src/orthrus_real/orthrus_angle.cpp
+  src/orthrus_real/orthrus_leg.cpp
 )
 
 #############

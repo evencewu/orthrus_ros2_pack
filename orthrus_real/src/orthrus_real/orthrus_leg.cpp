@@ -1,7 +1,7 @@
-#include "orthrus_ecat/orthrus_leg.hpp"
-#include "orthrus_ecat/orthrus_angle.hpp"
+#include "orthrus_real/orthrus_leg.hpp"
+#include "orthrus_real/orthrus_angle.hpp"
 
-namespace orthrus_ecat
+namespace orthrus_real
 {
     Leg::Leg(uint8_t _can_id, uint8_t _imu_id, uint8_t _usart_id)
     {
