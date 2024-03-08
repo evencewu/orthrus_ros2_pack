@@ -21,11 +21,10 @@ namespace orthrus_ctrl
     public:
         orthrusCtrlNode();
         //~orthrusCtrlNode() override;
-
-        void main_loop();
-
     private:
         void init();
+
+        void main_loop();
 
         void InitDefKinematicsParma();
         void UpdateKinematicsParma();

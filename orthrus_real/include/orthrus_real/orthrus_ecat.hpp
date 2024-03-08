@@ -44,6 +44,9 @@ namespace orthrus_real
         orthrus_real::Leg(CAN2, IMU4, USART6)};
 
     // body imu
-    Imu body = Imu(CAN2, IMU5);
+    Imu body_imu = Imu(CAN2, IMU5);
+
+    //ros2 timer
+    rclcpp::TimerBase::SharedPtr timer_;
   };
 }

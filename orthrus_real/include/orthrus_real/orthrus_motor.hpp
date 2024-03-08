@@ -11,6 +11,5 @@ namespace orthrus_real
     public:
         Motor(uint8_t _motor_id);
     private:
-
     };
 }

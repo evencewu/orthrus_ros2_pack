@@ -31,5 +31,4 @@ namespace orthrus_real
         uint8_t can_id;
         uint8_t device_id;
     };
-
 }
