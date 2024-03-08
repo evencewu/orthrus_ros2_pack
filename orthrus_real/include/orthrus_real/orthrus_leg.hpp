@@ -8,7 +8,6 @@
 
 #include <cstdio>
 
-
 #define USART1 0
 #define USART2 1
 #define USART3 2
@@ -19,15 +18,10 @@ namespace orthrus_real
     class Leg
     {
     public:
-        Leg(uint8_t _can_id, uint8_t _imu_id, uint8_t _usart_id);
-
+        void init(uint8_t can_id, uint8_t imu_id, uint8_t usart_id);
         void analyze(Ecat_Inputs_Pack *pack);
 
-        Imu imu; 
-        Angle angle; 
-    private:
-        uint8_t can_id;
-        uint8_t imu_id;
-        uint8_t usart_id;
+        Imu imu;
+        Angle angle;
     };
 }

@@ -2,19 +2,15 @@
 
 namespace orthrus_real
 {
-    Leg::Leg(uint8_t _can_id, uint8_t _imu_id, uint8_t _usart_id)
-    {
-        can_id = _can_id;
-        imu_id = _imu_id;
-        usart_id = _usart_id;
-
-        imu = Imu(can_id,imu_id);
-        angle = Angle(can_id,imu_id);
-    }
-
     void Leg::analyze(Ecat_Inputs_Pack *pack)
     {
         imu.analyze(pack);
         angle.analyze(pack);
+    }
+
+    void Leg::init(uint8_t can_id, uint8_t imu_id, uint8_t usart_id)
+    {
+        imu.init(can_id, imu_id);
+        angle.init(can_id, imu_id);
     }
 }

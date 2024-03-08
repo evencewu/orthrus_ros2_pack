@@ -15,12 +15,10 @@ namespace orthrus_real
     class Imu
     {
     public:
-        Imu(uint8_t _can_id,int _device_id);
-        
+        void init(uint8_t can_id, uint8_t device_id);
         void analyze(Ecat_Inputs_Pack *pack);
 
         float Gyro[3]; //角度
-
     private:
         union
         {

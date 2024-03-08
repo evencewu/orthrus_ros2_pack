@@ -5,11 +5,10 @@
 
 namespace orthrus_real
 {
-    Imu::Imu(uint8_t _can_id,int _device_id)
+    void Imu::init(uint8_t can_id, uint8_t device_id)
     {
-        printf("device_id %d ",_device_id);
-        can_id = _can_id;
-        device_id = _device_id;        
+        this->can_id = can_id;
+        this->device_id = can_id;
     }
 
     void Imu::analyze(Ecat_Inputs_Pack *pack)
