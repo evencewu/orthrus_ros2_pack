@@ -27,6 +27,14 @@ ament_auto_add_executable(test_sensor
   src/orthrus_real/orthrus_leg.cpp
 )
 
+ament_auto_add_executable(orthrus_ecat
+  src/orthrus_ecat.cpp
+  src/orthrus_real/ecat_base.cpp
+  src/orthrus_real/orthrus_imu.cpp
+  src/orthrus_real/orthrus_angle.cpp
+  src/orthrus_real/orthrus_leg.cpp
+)
+
 #############
 ## Testing ##
 #############

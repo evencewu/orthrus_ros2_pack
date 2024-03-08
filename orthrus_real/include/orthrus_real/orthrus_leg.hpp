@@ -6,6 +6,8 @@
 #include "orthrus_real/orthrus_imu.hpp"
 #include "orthrus_real/orthrus_angle.hpp"
 
+#include <cstdio>
+
 
 #define USART1 0
 #define USART2 1

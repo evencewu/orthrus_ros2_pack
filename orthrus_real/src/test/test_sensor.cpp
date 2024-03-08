@@ -13,7 +13,7 @@ void safe_stop();
 
 orthrus_real::EcatBase Ethercat(1);
 
-orthrus_real::Leg leg = orthrus_real::Leg(CAN2,IMU1,0);
+orthrus_real::Leg leg = orthrus_real::Leg(CAN2,IMU4,0);
 
 int main()
 {
@@ -34,8 +34,6 @@ int main()
         leg.analyze(&Ethercat.packet_rx[0]);
 
         printf("%f %f %f %f\n",leg.imu.Gyro[0],leg.imu.Gyro[1],leg.imu.Gyro[2],leg.angle.Pos);
-
-
 
         if (app_stopped)
         {

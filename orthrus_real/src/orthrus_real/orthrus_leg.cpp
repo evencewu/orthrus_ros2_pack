@@ -1,5 +1,4 @@
 #include "orthrus_real/orthrus_leg.hpp"
-#include "orthrus_real/orthrus_angle.hpp"
 
 namespace orthrus_real
 {

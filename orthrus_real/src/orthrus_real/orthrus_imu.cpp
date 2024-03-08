@@ -7,6 +7,7 @@ namespace orthrus_real
 {
     Imu::Imu(uint8_t _can_id,int _device_id)
     {
+        printf("device_id %d ",_device_id);
         can_id = _can_id;
         device_id = _device_id;        
     }
@@ -15,6 +16,7 @@ namespace orthrus_real
     {
         if (pack->can[can_id].StdId == device_id+1)
         {
+            printf("yes");
             data.uint_data[0] = pack->can[can_id].Data[0];
             data.uint_data[1] = pack->can[can_id].Data[1];
             data.uint_data[2] = pack->can[can_id].Data[2];
@@ -31,6 +33,7 @@ namespace orthrus_real
         }
         if (pack->can[can_id].StdId == device_id+2)
         {
+            printf("yes");
             data.uint_data[0] = pack->can[can_id].Data[0];
             data.uint_data[1] = pack->can[can_id].Data[1];
             data.uint_data[2] = pack->can[can_id].Data[2];

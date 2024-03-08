@@ -30,7 +30,7 @@ namespace orthrus_real
     void init();
     void main_loop();
 
-    void usleep(int usec);
+
     void safe_stop();
     void analyze_all();
 
