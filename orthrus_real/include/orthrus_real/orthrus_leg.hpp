@@ -21,8 +21,8 @@ namespace orthrus_real
 
         void analyze(Ecat_Inputs_Pack *pack);
 
-        Imu imu = Imu(1,imu_id);
-        Angle angle = Angle(1,imu_id);
+        Imu imu = Imu(can_id,imu_id);
+        Angle angle = Angle(can_id,imu_id);
     private:
         uint8_t can_id;
         uint8_t imu_id;

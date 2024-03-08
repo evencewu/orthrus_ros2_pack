@@ -17,7 +17,7 @@ namespace orthrus_real
   }
   void OrthrusInterfacesNode::init()
   {
-    char phy[] = "enp5s0";
+    char phy[] = "enp3s0";
 
     RCLCPP_INFO(this->get_logger(), "wl_driver启动,网口%s\n", phy);
     Ethercat.EcatStart(phy);
@@ -27,7 +27,7 @@ namespace orthrus_real
   {
     Ethercat.EcatSyncMsg();
     analyze_all();
-    RCLCPP_INFO(this->get_logger(), "imu %lf\n", body_imu.Gyro[0], body_imu.Gyro[1], body_imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[3].imu.Gyro[0], leg[3].imu.Gyro[1], leg[3].imu.Gyro[2]);
   }
 
   void OrthrusInterfacesNode::safe_stop()
@@ -39,6 +39,10 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::analyze_all()
   {
+    leg[0].imu.analyze(Ethercat.packet_rx[0]);
+    leg[1].imu.analyze(Ethercat.packet_rx[0]);
+    leg[2].imu.analyze(Ethercat.packet_rx[0]);
+    leg[3].imu.analyze(Ethercat.packet_rx[0]);
     body_imu.analyze(Ethercat.packet_rx[0]);
   }
 
