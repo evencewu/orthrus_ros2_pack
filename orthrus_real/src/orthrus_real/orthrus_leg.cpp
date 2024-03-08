@@ -7,6 +7,9 @@ namespace orthrus_real
         can_id = _can_id;
         imu_id = _imu_id;
         usart_id = _usart_id;
+
+        imu = Imu(can_id,imu_id);
+        angle = Angle(can_id,imu_id);
     }
 
     void Leg::analyze(Ecat_Inputs_Pack *pack)

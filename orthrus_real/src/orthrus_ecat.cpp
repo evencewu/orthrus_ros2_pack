@@ -28,16 +28,11 @@ namespace orthrus_real
   {
     Ethercat.EcatSyncMsg();
     analyze_all();
-    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[3].imu.Gyro[2]);
-    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[1].imu.Gyro[0], leg[1].imu.Gyro[1], leg[3].imu.Gyro[2]);
-    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[2].imu.Gyro[0], leg[2].imu.Gyro[1], leg[3].imu.Gyro[2]);
-    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[3].imu.Gyro[0], leg[3].imu.Gyro[1], leg[3].imu.Gyro[2]);
-    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", body_imu.Gyro[0], body_imu.Gyro[1], body_imu.Gyro[2]);
-    RCLCPP_INFO(this->get_logger(), "imu %d\n", Ethercat.packet_rx[0].can[1].StdId);
-    RCLCPP_INFO(this->get_logger(), "imu %d\n", Ethercat.packet_rx[0].can[1].Data[0]);
-    RCLCPP_INFO(this->get_logger(), "imu %d\n", Ethercat.packet_rx[0].can[1].Data[1]);
-    RCLCPP_INFO(this->get_logger(), "imu %d\n", Ethercat.packet_rx[0].can[1].Data[2]);
-    RCLCPP_INFO(this->get_logger(), "-----------------------");
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[3].imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[1].imu.Gyro[0], leg[1].imu.Gyro[1], leg[3].imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[2].imu.Gyro[0], leg[2].imu.Gyro[1], leg[3].imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[3].imu.Gyro[0], leg[3].imu.Gyro[1], leg[3].imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", body_imu.Gyro[0], body_imu.Gyro[1], body_imu.Gyro[2]);
   }
 
   void OrthrusInterfacesNode::safe_stop()
