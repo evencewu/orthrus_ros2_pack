@@ -18,6 +18,7 @@ endif ()
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(pinocchio REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(orthrus_controllers
