@@ -34,7 +34,7 @@ namespace orthrus_real
   void OrthrusInterfacesNode::MainLoop()
   {
     Ethercat.EcatSyncMsg();
-    analyze_all();
+    AnalyzeAll();
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[3].imu.Gyro[2]);
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[1].imu.Gyro[0], leg[1].imu.Gyro[1], leg[3].imu.Gyro[2]);
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[2].imu.Gyro[0], leg[2].imu.Gyro[1], leg[3].imu.Gyro[2]);
@@ -49,7 +49,7 @@ namespace orthrus_real
     // safe stop code
   }
 
-  void OrthrusInterfacesNode::analyze_all()
+  void OrthrusInterfacesNode::AnalyzeAll()
   {
     leg[0].analyze(&Ethercat.packet_rx[0]);
     leg[1].analyze(&Ethercat.packet_rx[0]);

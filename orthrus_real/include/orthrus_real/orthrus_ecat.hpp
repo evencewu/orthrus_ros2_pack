@@ -31,7 +31,7 @@ namespace orthrus_real
     void MainLoop();
 
     void SafeStop();
-    void analyze_all();
+    void AnalyzeAll();
 
     EcatBase Ethercat = EcatBase(1);
 
