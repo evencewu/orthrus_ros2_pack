@@ -7,7 +7,7 @@ namespace orthrus_real
     Init();
 
     timer_ = this->create_wall_timer(
-        std::chrono::milliseconds(1), std::bind(&OrthrusInterfacesNode::MainLoop, this));
+        std::chrono::microseconds(100), std::bind(&OrthrusInterfacesNode::MainLoop, this));
   }
 
   OrthrusInterfacesNode::~OrthrusInterfacesNode()
@@ -28,18 +28,18 @@ namespace orthrus_real
     leg[2].init(CAN2,IMU3,USART3);
     leg[3].init(CAN2,IMU4,USART6);
     body_imu.init(CAN2,IMU5);
-
   }
 
   void OrthrusInterfacesNode::MainLoop()
   {
     Ethercat.EcatSyncMsg();
     AnalyzeAll();
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[3].imu.Gyro[2]);
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[1].imu.Gyro[0], leg[1].imu.Gyro[1], leg[3].imu.Gyro[2]);
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[2].imu.Gyro[0], leg[2].imu.Gyro[1], leg[3].imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[0].imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[1].imu.Gyro[0], leg[1].imu.Gyro[1], leg[1].imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[2].imu.Gyro[0], leg[2].imu.Gyro[1], leg[2].imu.Gyro[2]);
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[3].imu.Gyro[0], leg[3].imu.Gyro[1], leg[3].imu.Gyro[2]);
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", body_imu.Gyro[0], body_imu.Gyro[1], body_imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "=================");
   }
 
   void OrthrusInterfacesNode::SafeStop()
@@ -51,11 +51,11 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::AnalyzeAll()
   {
-    leg[0].analyze(&Ethercat.packet_rx[0]);
-    leg[1].analyze(&Ethercat.packet_rx[0]);
-    leg[2].analyze(&Ethercat.packet_rx[0]);
+    //leg[0].analyze(&Ethercat.packet_rx[0]);
+    //leg[1].analyze(&Ethercat.packet_rx[0]);
+    //leg[2].analyze(&Ethercat.packet_rx[0]);
     leg[3].analyze(&Ethercat.packet_rx[0]);
-    body_imu.analyze(&Ethercat.packet_rx[0]);
+    //body_imu.analyze(&Ethercat.packet_rx[0]);
   }
 }
 

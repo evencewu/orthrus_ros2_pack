@@ -8,14 +8,13 @@ namespace orthrus_real
     void Imu::init(uint8_t can_id, uint8_t device_id)
     {
         this->can_id = can_id;
-        this->device_id = can_id;
+        this->device_id = device_id;
     }
 
     void Imu::analyze(Ecat_Inputs_Pack *pack)
     {
-        if (pack->can[can_id].StdId == device_id+1)
+        if (pack->can[can_id].StdId == device_id + 1)
         {
-            printf("yes");
             data.uint_data[0] = pack->can[can_id].Data[0];
             data.uint_data[1] = pack->can[can_id].Data[1];
             data.uint_data[2] = pack->can[can_id].Data[2];
@@ -30,9 +29,8 @@ namespace orthrus_real
 
             Gyro[1] = data.f_data;
         }
-        if (pack->can[can_id].StdId == device_id+2)
+        if (pack->can[can_id].StdId == device_id + 2)
         {
-            printf("yes");
             data.uint_data[0] = pack->can[can_id].Data[0];
             data.uint_data[1] = pack->can[can_id].Data[1];
             data.uint_data[2] = pack->can[can_id].Data[2];
