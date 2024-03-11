@@ -12,6 +12,9 @@ namespace orthrus_ctrl
     {
     public:
         OrthrusWbc();
+
+        TurnForce();
+        
         orthrus_interfaces::msg::CtrlCmd StandUp();
 
     private:
