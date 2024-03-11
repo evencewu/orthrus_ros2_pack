@@ -2,8 +2,9 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <orthrus_interfaces/msg/ctrl_cmd.hpp>
+#include <Eigen/Eigen>
 
+#include <orthrus_interfaces/msg/ctrl_cmd.hpp>
 #include "orthrus_controllers/orthrus_type_def.hpp"
 
 namespace orthrus_ctrl
@@ -13,7 +14,7 @@ namespace orthrus_ctrl
     public:
         OrthrusWbc();
 
-        TurnForce();
+        //void BreakDownMotorForce(std::vector<double> force);
         
         orthrus_interfaces::msg::CtrlCmd StandUp();
 

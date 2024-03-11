@@ -5,11 +5,12 @@
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <orthrus_interfaces/msg/ctrl_cmd.hpp>
 
-// #include <Eigen/Dense>
+#include <Eigen/Eigen>
 
-#include "pinocchio/parsers/urdf.hpp"
-#include "pinocchio/algorithm/joint-configuration.hpp"
-#include "pinocchio/algorithm/kinematics.hpp"
+#include <pinocchio/parsers/urdf.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
+#include <pinocchio/algorithm/joint-configuration.hpp>
+#include <pinocchio/algorithm/kinematics.hpp>
 
 #include "orthrus_controllers/orthrus_wbc.hpp"
 #include "orthrus_controllers/orthrus_type_def.hpp"
@@ -26,8 +27,11 @@ namespace orthrus_ctrl
 
         void main_loop();
 
-        void InitDefKinematicsParma();
-        void UpdateKinematicsParma();
+        void InitRobotParam();        // Init robot param of pinocchio
+        void UpdateRobotParma(); //
+
+        void SolveLegKinematics();
+        void SolveLegDynamics();
 
         OrthrusParam OrthrusParam_;
 
@@ -48,10 +52,10 @@ namespace orthrus_ctrl
         rclcpp::Publisher<orthrus_interfaces::msg::CtrlCmd>::SharedPtr ctrl_cmd_pub_;
         orthrus_interfaces::msg::CtrlCmd ctrl_cmd_msg_;
 
-        //pinochio
+        // pinochio
         pinocchio::Model orthrus_model_;
         pinocchio::Data orthrus_data_;
 
-
+        Eigen::VectorXd q_;
     };
 }

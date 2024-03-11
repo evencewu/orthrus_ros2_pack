@@ -16,7 +16,7 @@ namespace orthrus_ctrl
 
     void orthrusCtrlNode::init()
     {
-        InitDefKinematicsParma();
+        InitRobotParam();
 
         for (int i = 0; i < 12; i++)
         {
@@ -26,7 +26,7 @@ namespace orthrus_ctrl
 
     void orthrusCtrlNode::main_loop()
     {
-        UpdateKinematicsParma();                      
+        UpdateRobotParma();                      
         ctrl_cmd_msg_ = PositonCtrl_.StandUp();
         ctrl_cmd_pub_->publish(ctrl_cmd_msg_);
     }
@@ -47,7 +47,7 @@ namespace orthrus_ctrl
         }
     }
 
-    void orthrusCtrlNode::InitDefKinematicsParma()
+    void orthrusCtrlNode::InitRobotParam()
     {
         RCLCPP_INFO(this->get_logger(), "run orthrus parma define\n");
 
@@ -69,8 +69,11 @@ namespace orthrus_ctrl
         // Print out the placement of each joint of the kinematic tree
     }
 
-    void orthrusCtrlNode::UpdateKinematicsParma()
+    void orthrusCtrlNode::UpdateRobotParma()
     {
+        q_ = orthrus_data_.q;
+
+        //slove and print joint coordinate
         for (int joint_id = 0; joint_id < 12; joint_id++)
         {
             OrthrusParam_.dynamic.joint_pos(joint_id) = OrthrusParam_.joint[joint_id].position;
@@ -88,6 +91,34 @@ namespace orthrus_ctrl
                         orthrus_data_.oMi[joint_id].translation()(2),
                         (joint_id > 0) ? OrthrusParam_.dynamic.joint_pos(joint_id - 1) : 0);
         }
+
+        //
+
+
+        //slove and print joint coordinate
+    }
+
+    void orthrusCtrlNode::SolveLegKinematics()
+    {
+        Eigen::Vector3d target_position(0.1, 0.0, 0.0);
+        Eigen::Quaterniond target_orientation(1, 0, 0, 0);
+
+        //error slove
+        Eigen::MatrixXd J = orthrus_data_.J[orthrus_model_.nframes - 1]; // 获取最后一个关节的雅可比矩阵
+        Eigen::VectorXd dq = J.colPivHouseholderQr().solve(target_position - orthrus_data_.oMi[orthrus_model_.nframes - 1].translation()); // 求解关节期望角度增量        
+        Eigen::VectorXd q_desired = q_ + dq; 
+
+        orthrus_data_.q = q_desired;
+
+        //q += dx;
+        //data.q = q;
+
+        //absolute slove
+
+        //Eigen::Vector3d target_position(0.5, 0.5, 0.5); // 目标末端位置
+        //Eigen::MatrixXd J = data.J[model.nframes - 1]; // 获取最后一个关节的雅可比矩阵
+        //Eigen::VectorXd dq = J.colPivHouseholderQr().solve(target_position - data.oMi[model.nframes - 1].translation()); // 求解关节期望角度增量
+         // 计算关节期望角度
     }
 }
 
