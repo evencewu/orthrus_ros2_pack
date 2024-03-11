@@ -13,6 +13,7 @@
   <depend>rclcpp_components</depend>
 
   <depend>soem_ros2</depend>
+  <depend>orthrus_interfaces</depend>
   
   <export>
     <build_type>ament_cmake</build_type>

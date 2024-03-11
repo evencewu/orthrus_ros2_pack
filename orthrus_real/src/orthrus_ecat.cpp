@@ -51,11 +51,11 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::AnalyzeAll()
   {
-    //leg[0].analyze(&Ethercat.packet_rx[0]);
-    //leg[1].analyze(&Ethercat.packet_rx[0]);
-    //leg[2].analyze(&Ethercat.packet_rx[0]);
+    leg[0].analyze(&Ethercat.packet_rx[0]);
+    leg[1].analyze(&Ethercat.packet_rx[0]);
+    leg[2].analyze(&Ethercat.packet_rx[0]);
     leg[3].analyze(&Ethercat.packet_rx[0]);
-    //body_imu.analyze(&Ethercat.packet_rx[0]);
+    body_imu.analyze(&Ethercat.packet_rx[0]);
   }
 }
 
