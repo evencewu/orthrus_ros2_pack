@@ -71,7 +71,7 @@ namespace orthrus_ctrl
 
     void orthrusCtrlNode::UpdateRobotParma()
     {
-        q_ = orthrus_data_.q;
+        //q_ = orthrus_data_.q;
 
         //slove and print joint coordinate
         for (int joint_id = 0; joint_id < 12; joint_id++)
@@ -100,6 +100,7 @@ namespace orthrus_ctrl
 
     void orthrusCtrlNode::SolveLegKinematics()
     {
+        /*
         Eigen::Vector3d target_position(0.1, 0.0, 0.0);
         Eigen::Quaterniond target_orientation(1, 0, 0, 0);
 
@@ -119,6 +120,7 @@ namespace orthrus_ctrl
         //Eigen::MatrixXd J = data.J[model.nframes - 1]; // 获取最后一个关节的雅可比矩阵
         //Eigen::VectorXd dq = J.colPivHouseholderQr().solve(target_position - data.oMi[model.nframes - 1].translation()); // 求解关节期望角度增量
          // 计算关节期望角度
+         */
     }
 }
 

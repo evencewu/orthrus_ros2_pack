@@ -23,6 +23,15 @@ namespace orthrus_real
         uint8_t Data[8];
     } __attribute__((packed)) can_pack;
 
+    typedef struct A1MotorPack
+    {
+        double motor_T;
+        double motor_W;
+        double motor_Pos;
+        double motor_LW;
+        float motor_Acc;
+    } __attribute__((packed)) A1MotorPack;
+
     typedef struct Ecat_Outputs_Pack
     {
         uint8_t LED;
@@ -37,6 +46,10 @@ namespace orthrus_real
         uint8_t null[5];
 
         struct can_pack can[2];
+
+        struct A1MotorPack Motor;
+
+
     } __attribute__((packed)) Ecat_Inputs_Pack;
 
 
