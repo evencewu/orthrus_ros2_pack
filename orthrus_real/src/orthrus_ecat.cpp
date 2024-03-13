@@ -5,7 +5,7 @@ namespace orthrus_real
   OrthrusInterfacesNode::OrthrusInterfacesNode() : Node("orthrus_real")
   {
     Init();
-
+    
     timer_ = this->create_wall_timer(
         std::chrono::microseconds(100), std::bind(&OrthrusInterfacesNode::MainLoop, this));
   }
@@ -32,6 +32,15 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::MainLoop()
   {
+    if(motor_send_flag_++ >= 10)
+    {
+      Ethercat.packet_tx[0].LED = 0x01;
+      motor_send_flag_ = 0;
+    }
+    else
+    {
+      Ethercat.packet_tx[0].LED = 0x00;
+    }
     Ethercat.EcatSyncMsg();
     AnalyzeAll();
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[0].imu.Gyro[2]);
@@ -40,7 +49,12 @@ namespace orthrus_real
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[3].imu.Gyro[0], leg[3].imu.Gyro[1], leg[3].imu.Gyro[2]);
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", body_imu.Gyro[0], body_imu.Gyro[1], body_imu.Gyro[2]);
     RCLCPP_INFO(this->get_logger(), "=================");
-    RCLCPP_INFO(this->get_logger(), "motor %lf %lf %lf\n", Ethercat.packet_rx[0].Motor.motor_LW, Ethercat.packet_rx[0].Motor.motor_Pos, Ethercat.packet_rx[0].Motor.motor_W);
+    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_id);
+    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_mode);
+    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_temp);
+    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_error);
+    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_T);
+    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_W);
     RCLCPP_INFO(this->get_logger(), "=================");
     
   }

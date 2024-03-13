@@ -6,7 +6,7 @@
 #define CAN2 1
 
 #define USE_SSC
-//#define USE_SOES
+// #define USE_SOES
 
 namespace orthrus_real
 {
@@ -25,11 +25,15 @@ namespace orthrus_real
 
     typedef struct A1MotorPack
     {
-        double motor_T;
-        double motor_W;
-        double motor_Pos;
-        double motor_LW;
-        float motor_Acc;
+        uint8_t motor_id;
+        uint8_t motor_mode;
+        uint16_t motor_temp;
+        uint16_t motor_error;
+        uint32_t motor_T;
+        uint32_t motor_W;
+        uint32_t motor_Pos;
+        uint32_t motor_LW;
+        uint16_t motor_Acc;
     } __attribute__((packed)) A1MotorPack;
 
     typedef struct Ecat_Outputs_Pack
@@ -49,8 +53,6 @@ namespace orthrus_real
 
         struct A1MotorPack Motor;
 
-
     } __attribute__((packed)) Ecat_Inputs_Pack;
-
 
 }

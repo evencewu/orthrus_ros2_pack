@@ -41,5 +41,7 @@ namespace orthrus_real
     Imu body_imu;
     // ros2 timer
     rclcpp::TimerBase::SharedPtr timer_;
+
+    int motor_send_flag_ = 0;
   };
 }
