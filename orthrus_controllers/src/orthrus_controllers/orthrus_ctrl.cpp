@@ -6,7 +6,7 @@ namespace orthrus_ctrl
     {
         init();
 
-        joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10, std::bind(&orthrusCtrlNode::JointStateSubCallback, this, std::placeholders::_1));
+        orthrus_joint_state_sub_ = this->create_subscription<orthrus_interfaces::msg::OrthrusJointState>("/orthrus_interface/joint_state", 10, std::bind(&orthrusCtrlNode::OrthrusJointStateSubCallback, this, std::placeholders::_1));
 
         orthrus_joint_control_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10);
 
@@ -17,11 +17,6 @@ namespace orthrus_ctrl
     void orthrusCtrlNode::init()
     {
         InitRobotParam();
-
-        for (int i = 0; i < 12; i++)
-        {
-            OrthrusParam_.joint[i].name = joint_name_[i];
-        }
     }
 
     void orthrusCtrlNode::main_loop()
@@ -31,19 +26,13 @@ namespace orthrus_ctrl
         orthrus_joint_control_pub_->publish(orthrus_joint_control_msg_);
     }
 
-    void orthrusCtrlNode::JointStateSubCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
+    void orthrusCtrlNode::OrthrusJointStateSubCallback(const orthrus_interfaces::msg::OrthrusJointState::SharedPtr msg)
     {
         for (int i = 0; i < 12; i++)
         {
-            for (int j = 0; j < 12; j++)
-            {
-                if (msg->name[i] == OrthrusParam_.joint[j].name)
-                {
-                    OrthrusParam_.joint[j].position = msg->position[i];
-                    OrthrusParam_.joint[j].velocity = msg->velocity[i];
-                    OrthrusParam_.joint[j].effort = msg->effort[i];
-                }
-            }
+            OrthrusParam_.joint[i].position = msg->motor[i].pos;
+            OrthrusParam_.joint[i].velocity = msg->motor[i].vec;
+            OrthrusParam_.joint[i].effort = msg->motor[i].torq;
         }
     }
 

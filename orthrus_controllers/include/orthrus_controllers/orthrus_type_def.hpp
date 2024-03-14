@@ -14,12 +14,9 @@ namespace orthrus_ctrl
 
     struct JointParam
     {
-        std::string name;
-
         double position;
         double velocity;
         double effort;
-
     };
 
     struct Dynamic
