@@ -15,7 +15,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ImuReceive.msg"
   "msg/MotorCmd.msg"
   "msg/MotorReceive.msg"
-  "msg/Receive.msg"
+  "msg/ReceiveSensor.msg"
 
   DEPENDENCIES
     std_msgs

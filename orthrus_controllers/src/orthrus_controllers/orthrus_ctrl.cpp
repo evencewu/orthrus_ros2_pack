@@ -8,7 +8,7 @@ namespace orthrus_ctrl
 
         joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10, std::bind(&orthrusCtrlNode::JointStateSubCallback, this, std::placeholders::_1));
 
-        ctrl_cmd_pub_ = this->create_publisher<orthrus_interfaces::msg::CtrlCmd>("/orthrus_cmd", 10);
+        ctrl_cmd_pub_ = this->create_publisher<orthrus_interfaces::msg::CtrlCmd>("/orthrus_interface/cmd", 10);
 
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(1), std::bind(&orthrusCtrlNode::main_loop, this));
