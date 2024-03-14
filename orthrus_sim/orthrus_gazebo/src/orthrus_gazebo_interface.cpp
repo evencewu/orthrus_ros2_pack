@@ -15,8 +15,6 @@ namespace orthrus_gazebo
 
         joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10,
                                                                                    std::bind(&orthrusGazeboNode::JointStateCallback, this, std::placeholders::_1));
-
-        orthrus_joint_state_timer_ = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&orthrusGazeboNode::SensorReceiveLoop, this));
     }
 
     void orthrusGazeboNode::Init()
@@ -31,7 +29,7 @@ namespace orthrus_gazebo
     {
         for (int i = 0; i < 12; i++)
         {
-            hybrid_output_[i] = msg->motor_cmd[i].k_p * (msg->motor_cmd[i].target_p - JointParam_[i].position) + msg->motor_cmd[i].k_d * (msg->motor_cmd[i].target_d - JointParam_[i].velocity) + msg->motor_cmd[i].torqe;
+            hybrid_output_[i] = msg->motor_cmd[i].k_p * (msg->motor_cmd[i].target_p - orthrus_joint_state_msg_.motor[i].pos) + msg->motor_cmd[i].k_d * (msg->motor_cmd[i].target_d - orthrus_joint_state_msg_.motor[i].vec) + msg->motor_cmd[i].torqe;
         }
 
         joint_torque_msg_.layout.dim.push_back(std_msgs::msg::MultiArrayDimension());
@@ -50,13 +48,13 @@ namespace orthrus_gazebo
             {
                 if (msg->name[i] == JointParam_[j].name)
                 {
-                    orthrus_joint_state_pub_.motor[j].pos = msg->position[i];
-                    orthrus_joint_state_pub_.motor[j].vec = msg->velocity[i];
-                    orthrus_joint_state_pub_.motor[j].torq = msg->effort[i];   
+                    orthrus_joint_state_msg_.motor[j].pos = msg->position[i];
+                    orthrus_joint_state_msg_.motor[j].vec = msg->velocity[i];
+                    orthrus_joint_state_msg_.motor[j].torq = msg->effort[i];   
                 }
             }
         }
-        orthrus_joint_state_pub_->publish(orthrus_joint_state_pub_);
+        orthrus_joint_state_pub_->publish(orthrus_joint_state_msg_);
     }
 }
 

@@ -47,9 +47,6 @@ namespace orthrus_gazebo
         // orthrus_joint_state_pub_
         rclcpp::Publisher<orthrus_interfaces::msg::OrthrusJointState>::SharedPtr orthrus_joint_state_pub_;
         orthrus_interfaces::msg::OrthrusJointState orthrus_joint_state_msg_;
-
-        // timer
-        rclcpp::TimerBase::SharedPtr orthrus_joint_state_timer_;
         
         // orthrus_joint_control_sub_
         rclcpp::Subscription<orthrus_interfaces::msg::OrthrusJointControl>::SharedPtr orthrus_joint_control_sub_;
