@@ -18,6 +18,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/ReceiveSensor.msg"
 
   DEPENDENCIES
+    sensor_msgs
     std_msgs
     geometry_msgs
 )

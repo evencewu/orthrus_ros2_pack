@@ -1,17 +1,17 @@
 controller_manager:
   ros__parameters:
-    update_rate: 100  # Hz
+    update_rate: 1000  # Hz
 
-    joint_state_broadcaster:
+    orthrus_gazebo_joint_state:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-    effort_controller:
+    orthrus_gazebo_joint_effort_controller:
       type: effort_controllers/JointGroupEffortController
 
-    imu_sensor_broadcaster:
+    orthrus_gazebo_imu:
       type: imu_sensor_broadcaster/IMUSensorBroadcaster
 
-effort_controller:
+orthrus_gazebo_joint_effort_controller:
   ros__parameters:
     joints:
       - hip_RF_joint
@@ -27,7 +27,7 @@ effort_controller:
       - leg1_LB_joint
       - leg2_LB_joint
 
-imu_sensor_broadcaster:
+orthrus_gazebo_imu:
   ros__parameters:
     frame_id: imu_link
     sensor_name: imu_sensor
