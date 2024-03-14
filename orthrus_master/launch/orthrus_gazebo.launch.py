@@ -12,8 +12,6 @@ sys.path.append(os.path.join(get_package_share_directory('orthrus_master'), 'lau
 def generate_launch_description():
     import common
 
-
-    
     orthrus_ctrl_node = common.get_orthrus_ctrl('orthrus_controllers', 'orthrus_controllers','orthrus_ctrl_node')
     
     orthrus_gazebo_node = common.get_orthrus_gazebo('orthrus_gazebo', 'orthrus_gazebo','orthrus_gazebo_node')
