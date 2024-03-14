@@ -6,17 +6,17 @@ namespace orthrus_gazebo
     {
         Init();
 
-        joint_torque_pub_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/effort_controller/commands", 10);
+        joint_torque_pub_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("/orthrus_gazebo_joint_effort_controller/commands", 10);
 
-        sensor_receive_pub_ = this->create_publisher<orthrus_interfaces::msg::ReceiveSensor>("/orthrus_interface/sensor", 10);
+        orthrus_joint_state_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointState>("/orthrus_interface/joint_state", 10);
 
-        ctrl_cmd_sub_ = this->create_subscription<orthrus_interfaces::msg::CtrlCmd>("/orthrus_interface/cmd", 10,
-                                                                                    std::bind(&orthrusGazeboNode::CtrlCmdCallback, this, std::placeholders::_1));
+        orthrus_joint_control_sub_ = this->create_subscription<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10,
+                                                                                    std::bind(&orthrusGazeboNode::OrthrusJointControlCallback, this, std::placeholders::_1));
 
         joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10,
                                                                                    std::bind(&orthrusGazeboNode::JointStateCallback, this, std::placeholders::_1));
 
-        sensor_receive_pub_timer_ = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&orthrusGazeboNode::SensorReceiveLoop, this));
+        orthrus_joint_state_timer_ = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&orthrusGazeboNode::SensorReceiveLoop, this));
     }
 
     void orthrusGazeboNode::Init()
@@ -27,7 +27,7 @@ namespace orthrus_gazebo
         }
     }
 
-    void orthrusGazeboNode::CtrlCmdCallback(const orthrus_interfaces::msg::CtrlCmd::SharedPtr msg)
+    void orthrusGazeboNode::OrthrusJointControlCallback(const orthrus_interfaces::msg::OrthrusJointControl::SharedPtr msg)
     {
         for (int i = 0; i < 12; i++)
         {
@@ -50,23 +50,13 @@ namespace orthrus_gazebo
             {
                 if (msg->name[i] == JointParam_[j].name)
                 {
-                    JointParam_[j].position = msg->position[i];
-                    JointParam_[j].velocity = msg->velocity[i];
-                    JointParam_[j].effort = msg->effort[i];
+                    orthrus_joint_state_pub_.motor[j].pos = msg->position[i];
+                    orthrus_joint_state_pub_.motor[j].vec = msg->velocity[i];
+                    orthrus_joint_state_pub_.motor[j].torq = msg->effort[i];   
                 }
             }
         }
-    }
-
-    void orthrusGazeboNode::SensorReceiveLoop()
-    {
-        for (int i = 0; i < 12; i++)
-        {
-            sensor_receive_msg_.motor_receive[i].pos = JointParam_[i].position;
-            sensor_receive_msg_.motor_receive[i].vec = JointParam_[i].velocity;
-            sensor_receive_msg_.motor_receive[i].torq = JointParam_[i].effort;
-        }
-        sensor_receive_pub_->publish(sensor_receive_msg_);
+        orthrus_joint_state_pub_->publish(orthrus_joint_state_pub_);
     }
 }
 

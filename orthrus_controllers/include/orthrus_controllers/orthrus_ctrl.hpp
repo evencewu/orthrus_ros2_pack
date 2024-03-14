@@ -3,8 +3,9 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <sensor_msgs/msg/joint_state.hpp>
-#include <orthrus_interfaces/msg/ctrl_cmd.hpp>
-#include <orthrus_interfaces/msg/receive_sensor.hpp>
+#include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
+#include <orthrus_interfaces/msg/orthrus_joint_state.hpp>
+
 
 #include <Eigen/Eigen>
 
@@ -41,13 +42,13 @@ namespace orthrus_ctrl
         // timer
         rclcpp::TimerBase::SharedPtr timer_;
 
-        // ctrl_cmd_pub_
-        rclcpp::Publisher<orthrus_interfaces::msg::CtrlCmd>::SharedPtr ctrl_cmd_pub_;
-        orthrus_interfaces::msg::CtrlCmd ctrl_cmd_msg_;
+        // orthrus_joint_control_pub_
+        rclcpp::Publisher<orthrus_interfaces::msg::OrthrusJointControl>::SharedPtr orthrus_joint_control_pub_;
+        orthrus_interfaces::msg::OrthrusJointControl orthrus_joint_control_msg_;
 
-        // sensor_receive_sub_
-        rclcpp::Subscription<orthrus_interfaces::msg::ReceiveSensor>::SharedPtr sensor_receive_sub_;
-        orthrus_interfaces::msg::ReceiveSensor sensor_receive_msg_;
+        // orthrus_joint_state_sub_
+        rclcpp::Subscription<orthrus_interfaces::msg::OrthrusJointState>::SharedPtr orthrus_joint_state_sub_;
+        orthrus_interfaces::msg::OrthrusJointState orthrus_joint_state_msg_;
         
         // joint_state_sub_
         rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;

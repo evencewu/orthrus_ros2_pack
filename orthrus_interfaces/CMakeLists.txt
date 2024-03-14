@@ -11,11 +11,10 @@ find_package(rosidl_default_generators REQUIRED)
 ament_auto_find_build_dependencies()
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/CtrlCmd.msg"
-  "msg/ImuReceive.msg"
+  "msg/OrthrusJointControl.msg"
   "msg/MotorCmd.msg"
   "msg/MotorReceive.msg"
-  "msg/ReceiveSensor.msg"
+  "msg/OrthrusJointState.msg"
 
   DEPENDENCIES
     sensor_msgs

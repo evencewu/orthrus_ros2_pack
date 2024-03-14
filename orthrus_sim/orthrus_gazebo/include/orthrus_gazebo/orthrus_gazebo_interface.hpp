@@ -3,8 +3,8 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <std_msgs/msg/float64_multi_array.hpp>
-#include <orthrus_interfaces/msg/ctrl_cmd.hpp>
-#include <orthrus_interfaces/msg/receive_sensor.hpp>
+#include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
+#include <orthrus_interfaces/msg/orthrus_joint_state.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 
 namespace orthrus_gazebo
@@ -42,26 +42,20 @@ namespace orthrus_gazebo
 
         void JointStateCallback(const sensor_msgs::msg::JointState::SharedPtr msg);
 
-        // joint_state_sub_
-        // rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
-        // sensor_msgs::msg::JointState joint_state_msg_;
-
-        // void JointStateCallback(const sensor_msgs::msg::JointState::SharedPtr msg);
-
         //-----------
 
-        // sensor_receive_pub_
-        rclcpp::Publisher<orthrus_interfaces::msg::ReceiveSensor>::SharedPtr sensor_receive_pub_;
-        orthrus_interfaces::msg::ReceiveSensor sensor_receive_msg_;
-        // timer
-        rclcpp::TimerBase::SharedPtr sensor_receive_pub_timer_;
-        void SensorReceiveLoop();
-        
-        // ctrl_cmd_sub_
-        rclcpp::Subscription<orthrus_interfaces::msg::CtrlCmd>::SharedPtr ctrl_cmd_sub_;
-        orthrus_interfaces::msg::CtrlCmd ctrl_cmd_msg_;
+        // orthrus_joint_state_pub_
+        rclcpp::Publisher<orthrus_interfaces::msg::OrthrusJointState>::SharedPtr orthrus_joint_state_pub_;
+        orthrus_interfaces::msg::OrthrusJointState orthrus_joint_state_msg_;
 
-        void CtrlCmdCallback(const orthrus_interfaces::msg::CtrlCmd::SharedPtr msg);
+        // timer
+        rclcpp::TimerBase::SharedPtr orthrus_joint_state_timer_;
+        
+        // orthrus_joint_control_sub_
+        rclcpp::Subscription<orthrus_interfaces::msg::OrthrusJointControl>::SharedPtr orthrus_joint_control_sub_;
+        orthrus_interfaces::msg::OrthrusJointControl orthrus_joint_control_msg_;
+
+        void OrthrusJointControlCallback(const orthrus_interfaces::msg::OrthrusJointControl::SharedPtr msg);
 
         JointParam JointParam_[12];
     };

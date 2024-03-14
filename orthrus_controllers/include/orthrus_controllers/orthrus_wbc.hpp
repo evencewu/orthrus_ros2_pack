@@ -4,7 +4,7 @@
 
 #include <Eigen/Eigen>
 
-#include <orthrus_interfaces/msg/ctrl_cmd.hpp>
+#include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
 #include "orthrus_controllers/orthrus_type_def.hpp"
 
 namespace orthrus_ctrl
@@ -16,9 +16,9 @@ namespace orthrus_ctrl
 
         //void BreakDownMotorForce(std::vector<double> force);
         
-        orthrus_interfaces::msg::CtrlCmd StandUp();
+        orthrus_interfaces::msg::OrthrusJointControl StandUp();
 
     private:
-        orthrus_interfaces::msg::CtrlCmd ctrl_cmd_msg_;
+        orthrus_interfaces::msg::OrthrusJointControl orthrus_joint_control_msg_;
     };
 }

@@ -8,7 +8,7 @@ namespace orthrus_ctrl
 
         joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10, std::bind(&orthrusCtrlNode::JointStateSubCallback, this, std::placeholders::_1));
 
-        ctrl_cmd_pub_ = this->create_publisher<orthrus_interfaces::msg::CtrlCmd>("/orthrus_interface/cmd", 10);
+        orthrus_joint_control_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10);
 
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(1), std::bind(&orthrusCtrlNode::main_loop, this));
@@ -27,8 +27,8 @@ namespace orthrus_ctrl
     void orthrusCtrlNode::main_loop()
     {
         UpdateRobotParma();                      
-        ctrl_cmd_msg_ = PositonCtrl_.StandUp();
-        ctrl_cmd_pub_->publish(ctrl_cmd_msg_);
+        orthrus_joint_control_msg_ = PositonCtrl_.StandUp();
+        orthrus_joint_control_pub_->publish(orthrus_joint_control_msg_);
     }
 
     void orthrusCtrlNode::JointStateSubCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
