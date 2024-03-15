@@ -21,7 +21,7 @@ namespace orthrus_ctrl
 
     void orthrusCtrlNode::main_loop()
     {
-        UpdateRobotParma();                      
+        UpdateRobotParma();
         orthrus_joint_control_msg_ = PositonCtrl_.StandUp();
         orthrus_joint_control_pub_->publish(orthrus_joint_control_msg_);
     }
@@ -52,6 +52,13 @@ namespace orthrus_ctrl
         // Sample a random configuration
         OrthrusParam_.dynamic.joint_pos = randomConfiguration(orthrus_model_);
 
+        q_ = Eigen::VectorXd::Zero(orthrus_model_.nq);
+        v_ = Eigen::VectorXd::Zero(orthrus_model_.nv);
+
+        const Eigen::MatrixXd& M = orthrus_data_.M; // 惯性矩阵
+        const Eigen::MatrixXd& C = orthrus_data_.C; // 科里奥利和向心力矩阵
+        const Eigen::MatrixXd& g = orthrus_data_.g; // 重力项（不是完整的G矩阵，但通常与G矩阵一起使用）
+
         // Perform the forward kinematics over the kinematic tree
         forwardKinematics(orthrus_model_, orthrus_data_, OrthrusParam_.dynamic.joint_pos);
 
@@ -60,9 +67,9 @@ namespace orthrus_ctrl
 
     void orthrusCtrlNode::UpdateRobotParma()
     {
-        //q_ = orthrus_data_.q;
+        // q_ = orthrus_data_.q;
 
-        //slove and print joint coordinate
+        // slove and print joint coordinate
         for (int joint_id = 0; joint_id < 12; joint_id++)
         {
             OrthrusParam_.dynamic.joint_pos(joint_id) = OrthrusParam_.joint[joint_id].position;
@@ -83,8 +90,7 @@ namespace orthrus_ctrl
 
         //
 
-
-        //slove and print joint coordinate
+        // slove and print joint coordinate
     }
 
     void orthrusCtrlNode::SolveLegKinematics()
@@ -95,8 +101,8 @@ namespace orthrus_ctrl
 
         //error slove
         Eigen::MatrixXd J = orthrus_data_.J[orthrus_model_.nframes - 1]; // 获取最后一个关节的雅可比矩阵
-        Eigen::VectorXd dq = J.colPivHouseholderQr().solve(target_position - orthrus_data_.oMi[orthrus_model_.nframes - 1].translation()); // 求解关节期望角度增量        
-        Eigen::VectorXd q_desired = q_ + dq; 
+        Eigen::VectorXd dq = J.colPivHouseholderQr().solve(target_position - orthrus_data_.oMi[orthrus_model_.nframes - 1].translation()); // 求解关节期望角度增量
+        Eigen::VectorXd q_desired = q_ + dq;
 
         orthrus_data_.q = q_desired;
 

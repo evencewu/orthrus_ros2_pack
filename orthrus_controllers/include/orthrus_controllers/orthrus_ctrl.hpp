@@ -58,5 +58,7 @@ namespace orthrus_ctrl
         pinocchio::Data orthrus_data_;
 
         Eigen::VectorXd q_;
+        Eigen::VectorXd v_;
+
     };
 }
