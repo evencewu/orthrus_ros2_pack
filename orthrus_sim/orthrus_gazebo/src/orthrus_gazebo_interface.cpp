@@ -10,11 +10,16 @@ namespace orthrus_gazebo
 
         orthrus_joint_state_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointState>("/orthrus_interface/joint_state", 10);
 
+        orthrus_imu_pub_ = this->create_publisher<sensor_msgs::msg::Imu>("/orthrus_interface/imu", 10);
+
         orthrus_joint_control_sub_ = this->create_subscription<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10,
-                                                                                    std::bind(&orthrusGazeboNode::OrthrusJointControlCallback, this, std::placeholders::_1));
+                                                                                                             std::bind(&orthrusGazeboNode::OrthrusJointControlCallback, this, std::placeholders::_1));
 
         joint_state_sub_ = this->create_subscription<sensor_msgs::msg::JointState>("/joint_states", 10,
-                                                                                   std::bind(&orthrusGazeboNode::JointStateCallback, this, std::placeholders::_1));
+                                                                                   std::bind(&orthrusGazeboNode::OrthrusGazeboJointStateCallback, this, std::placeholders::_1));
+
+        orthrus_gazebo_imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>("/orthrus_gazebo_imu/imu", 10,
+                                                                                   std::bind(&orthrusGazeboNode::OrthrusGazeboImuCallback, this, std::placeholders::_1));
     }
 
     void orthrusGazeboNode::Init()
@@ -40,7 +45,7 @@ namespace orthrus_gazebo
         joint_torque_pub_->publish(joint_torque_msg_);
     }
 
-    void orthrusGazeboNode::JointStateCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
+    void orthrusGazeboNode::OrthrusGazeboJointStateCallback(const sensor_msgs::msg::JointState::SharedPtr msg)
     {
         for (int i = 0; i < 12; i++)
         {
@@ -50,11 +55,23 @@ namespace orthrus_gazebo
                 {
                     orthrus_joint_state_msg_.motor[j].pos = msg->position[i];
                     orthrus_joint_state_msg_.motor[j].vec = msg->velocity[i];
-                    orthrus_joint_state_msg_.motor[j].torq = msg->effort[i];   
+                    orthrus_joint_state_msg_.motor[j].torq = msg->effort[i];
                 }
             }
         }
         orthrus_joint_state_pub_->publish(orthrus_joint_state_msg_);
+    }
+
+    void orthrusGazeboNode::OrthrusGazeboImuCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
+    {
+        orthrus_imu_msg_.header = msg->header;                                                 // 复制头部信息
+        orthrus_imu_msg_.orientation = msg->orientation;                                       // 复制方向四元数
+        orthrus_imu_msg_.orientation_covariance = msg->orientation_covariance;                 // 复制方向协方差
+        orthrus_imu_msg_.angular_velocity = msg->angular_velocity;                             // 复制角速度
+        orthrus_imu_msg_.angular_velocity_covariance = msg->angular_velocity_covariance;       // 复制角速度协方差
+        orthrus_imu_msg_.linear_acceleration = msg->linear_acceleration;                       // 复制线性加速度
+        orthrus_imu_msg_.linear_acceleration_covariance = msg->linear_acceleration_covariance; // 复制线性加速度协方差
+        orthrus_imu_pub_->publish(orthrus_imu_msg_);
     }
 }
 

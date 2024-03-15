@@ -5,6 +5,7 @@
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
 #include <orthrus_interfaces/msg/orthrus_joint_state.hpp>
+#include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/joint_state.hpp>
 
 namespace orthrus_gazebo
@@ -38,11 +39,8 @@ namespace orthrus_gazebo
 
         // joint_state_sub_
         rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr joint_state_sub_;
-        sensor_msgs::msg::JointState joint_state_msg_;
 
-        void JointStateCallback(const sensor_msgs::msg::JointState::SharedPtr msg);
-
-        //-----------
+        void OrthrusGazeboJointStateCallback(const sensor_msgs::msg::JointState::SharedPtr msg);
 
         // orthrus_joint_state_pub_
         rclcpp::Publisher<orthrus_interfaces::msg::OrthrusJointState>::SharedPtr orthrus_joint_state_pub_;
@@ -50,9 +48,17 @@ namespace orthrus_gazebo
         
         // orthrus_joint_control_sub_
         rclcpp::Subscription<orthrus_interfaces::msg::OrthrusJointControl>::SharedPtr orthrus_joint_control_sub_;
-        orthrus_interfaces::msg::OrthrusJointControl orthrus_joint_control_msg_;
 
         void OrthrusJointControlCallback(const orthrus_interfaces::msg::OrthrusJointControl::SharedPtr msg);
+
+        rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr orthrus_imu_pub_;
+        sensor_msgs::msg::Imu orthrus_imu_msg_;
+        
+        // orthrus_joint_control_sub_
+        rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr orthrus_gazebo_imu_sub_;
+        sensor_msgs::msg::Imu orthrus_gazebo_imu_msg_;
+
+        void OrthrusGazeboImuCallback(const sensor_msgs::msg::Imu::SharedPtr msg);
 
         JointParam JointParam_[12];
     };
