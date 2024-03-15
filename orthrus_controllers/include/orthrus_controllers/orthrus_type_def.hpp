@@ -2,7 +2,7 @@
 
 #include <rclcpp/rclcpp.hpp>
 
-#include <orthrus_interfaces/msg/ctrl_cmd.hpp>
+#include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
 
 #include "pinocchio/parsers/urdf.hpp"
 #include "pinocchio/algorithm/joint-configuration.hpp"
