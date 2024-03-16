@@ -18,6 +18,8 @@
 #include "orthrus_controllers/orthrus_wbc.hpp"
 #include "orthrus_controllers/orthrus_type_def.hpp"
 
+//#define JOINT_INFO_LOG 
+
 namespace orthrus_ctrl
 {
     class orthrusCtrlNode : public rclcpp::Node
@@ -34,11 +36,14 @@ namespace orthrus_ctrl
         void UpdateRobotParma(); //
 
         void SolveLegKinematics();
+        void ResolveLegKinematics();
         void SolveLegDynamics();
 
         OrthrusParam OrthrusParam_;
 
         OrthrusWbc PositonCtrl_;
+
+        std::vector<std::string> joint_name_{"hip_RF_joint", "leg1_RF_joint", "leg2_RF_joint", "hip_LF_joint", "leg1_LF_joint", "leg2_LF_joint", "hip_RB_joint", "leg1_RB_joint", "leg2_RB_joint", "hip_LB_joint", "leg1_LB_joint", "leg2_LB_joint"};
 
         // timer
         rclcpp::TimerBase::SharedPtr timer_;
@@ -50,8 +55,12 @@ namespace orthrus_ctrl
         // orthrus_joint_state_sub_
         rclcpp::Subscription<orthrus_interfaces::msg::OrthrusJointState>::SharedPtr orthrus_joint_state_sub_;
         orthrus_interfaces::msg::OrthrusJointState orthrus_joint_state_msg_;
-        
+
         void OrthrusJointStateSubCallback(const orthrus_interfaces::msg::OrthrusJointState::SharedPtr msg);
+
+        // orthrus_viewer_joint_state_pub_
+        rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr orthrus_viewer_joint_state_pub_;
+        sensor_msgs::msg::JointState orthrus_viewer_joint_state_msg_;
 
         // pinochio
         pinocchio::Model orthrus_model_;
@@ -59,6 +68,8 @@ namespace orthrus_ctrl
 
         Eigen::VectorXd q_;
         Eigen::VectorXd v_;
+
+        //sensor_msgs/msg/JointState
 
     };
 }

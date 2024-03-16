@@ -22,6 +22,7 @@ namespace orthrus_ctrl
     struct Dynamic
     {
         Eigen::VectorXd joint_pos;
+        Eigen::VectorXd joint_vec;
     };
 
     struct OrthrusParam

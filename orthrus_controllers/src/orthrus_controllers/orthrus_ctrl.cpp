@@ -10,6 +10,8 @@ namespace orthrus_ctrl
 
         orthrus_joint_control_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10);
 
+        orthrus_viewer_joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("/orthrus_viewer/joint_state", 10);
+
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(1), std::bind(&orthrusCtrlNode::main_loop, this));
     }
@@ -28,12 +30,31 @@ namespace orthrus_ctrl
 
     void orthrusCtrlNode::OrthrusJointStateSubCallback(const orthrus_interfaces::msg::OrthrusJointState::SharedPtr msg)
     {
+        orthrus_viewer_joint_state_msg_.header.stamp = this->now();
+        orthrus_viewer_joint_state_msg_.header.frame_id = "body";
+
+        std::vector<double> position = std::vector<double>(12);
+        std::vector<double> velocity = std::vector<double>(12);
+        std::vector<double> effort = std::vector<double>(12);
+
+        orthrus_viewer_joint_state_msg_.name = joint_name_;
+
         for (int i = 0; i < 12; i++)
         {
             OrthrusParam_.joint[i].position = msg->motor[i].pos;
             OrthrusParam_.joint[i].velocity = msg->motor[i].vec;
             OrthrusParam_.joint[i].effort = msg->motor[i].torq;
+
+            position[i] = msg->motor[i].pos;
+            velocity[i] = msg->motor[i].vec;
+            effort[i] = msg->motor[i].torq;
         }
+
+        orthrus_viewer_joint_state_msg_.position = position;
+        orthrus_viewer_joint_state_msg_.velocity = velocity;
+        orthrus_viewer_joint_state_msg_.effort = effort;
+
+        orthrus_viewer_joint_state_pub_->publish(orthrus_viewer_joint_state_msg_);
     }
 
     void orthrusCtrlNode::InitRobotParam()
@@ -55,12 +76,12 @@ namespace orthrus_ctrl
         q_ = Eigen::VectorXd::Zero(orthrus_model_.nq);
         v_ = Eigen::VectorXd::Zero(orthrus_model_.nv);
 
-        const Eigen::MatrixXd& M = orthrus_data_.M; // 惯性矩阵
-        const Eigen::MatrixXd& C = orthrus_data_.C; // 科里奥利和向心力矩阵
-        const Eigen::MatrixXd& g = orthrus_data_.g; // 重力项（不是完整的G矩阵，但通常与G矩阵一起使用）
+        const Eigen::MatrixXd &M = orthrus_data_.M; // 惯性矩阵
+        const Eigen::MatrixXd &C = orthrus_data_.C; // 科里奥利和向心力矩阵
+        const Eigen::MatrixXd &g = orthrus_data_.g; // 重力项（不是完整的G矩阵，但通常与G矩阵一起使用）
 
         // Perform the forward kinematics over the kinematic tree
-        forwardKinematics(orthrus_model_, orthrus_data_, OrthrusParam_.dynamic.joint_pos);
+        pinocchio::forwardKinematics(orthrus_model_, orthrus_data_, OrthrusParam_.dynamic.joint_pos);
 
         // Print out the placement of each joint of the kinematic tree
     }
@@ -75,8 +96,10 @@ namespace orthrus_ctrl
             OrthrusParam_.dynamic.joint_pos(joint_id) = OrthrusParam_.joint[joint_id].position;
         }
 
-        forwardKinematics(orthrus_model_, orthrus_data_, OrthrusParam_.dynamic.joint_pos);
+        pinocchio::forwardKinematics(orthrus_model_, orthrus_data_, OrthrusParam_.dynamic.joint_pos);
+        pinocchio::updateGlobalPlacements(orthrus_model_, orthrus_data_);
 
+#ifdef JOINT_INFO_LOG
         RCLCPP_INFO(this->get_logger(), "|   Joint Name   |         Link Position         | Joint Angle |");
         for (pinocchio::JointIndex joint_id = 0; joint_id < (pinocchio::JointIndex)orthrus_model_.njoints; ++joint_id)
         {
@@ -87,6 +110,11 @@ namespace orthrus_ctrl
                         orthrus_data_.oMi[joint_id].translation()(2),
                         (joint_id > 0) ? OrthrusParam_.dynamic.joint_pos(joint_id - 1) : 0);
         }
+#endif
+        // std::ostringstream oss;
+        // oss << orthrus_data_.C << std::endl;
+        // std::string matrix_str = oss.str();
+        // RCLCPP_INFO(this->get_logger(), "Matrix contents:\n%s", matrix_str.c_str());
 
         //
 
@@ -114,8 +142,12 @@ namespace orthrus_ctrl
         //Eigen::Vector3d target_position(0.5, 0.5, 0.5); // 目标末端位置
         //Eigen::MatrixXd J = data.J[model.nframes - 1]; // 获取最后一个关节的雅可比矩阵
         //Eigen::VectorXd dq = J.colPivHouseholderQr().solve(target_position - data.oMi[model.nframes - 1].translation()); // 求解关节期望角度增量
-         // 计算关节期望角度
-         */
+        // 计算关节期望角度
+        */
+    }
+
+    void orthrusCtrlNode::ResolveLegKinematics()
+    {
     }
 }
 
