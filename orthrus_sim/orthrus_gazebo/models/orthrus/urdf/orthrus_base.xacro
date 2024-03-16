@@ -1,9 +1,7 @@
-<?xml version="1.0"?>
-<robot name="orthrus"
-  xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="orthrus_base" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:property name="meshes_folder" value="file:///$(find orthrus_gazebo)/models/orthrus/meshes" />
-  
+
   <material name="blue">
     <color rgba="0 0 0.8 1"/>
   </material>
@@ -15,7 +13,7 @@
   <material name="white">
     <color rgba="1 1 1 1"/>
   </material>
-
+  
   <link name="body">
     <visual>
       <origin xyz="-0.10 0.1385 -0.05" rpy="${pi/2} 0 0" />
@@ -35,14 +33,6 @@
       <inertia ixx="4.9950395" ixy="0" ixz="0" iyy="2.4616377" iyz="0" izz="6.4183150" />
     </inertial>
   </link>
-
-  <link name="imu_link">
-  </link>
-
-  <joint name="imu_joint" type="fixed">
-    <parent link="body"/>
-    <child link="imu_link"/>
-  </joint>
 
   <xacro:macro name="hip" params="prefix">
     <link name="hip_${prefix}">
@@ -83,14 +73,8 @@
       <xacro:if value="${prefix == 'RF'}">
         <origin xyz="0.05 0.20 0" rpy="-${pi/2} ${pi} ${pi}" />
       </xacro:if>
-
     </joint>
   </xacro:macro>
-
-  <xacro:hip prefix="RF"/>
-  <xacro:hip prefix="LF"/>
-  <xacro:hip prefix="RB"/>
-  <xacro:hip prefix="LB"/>
 
   <xacro:macro name="leg1" params="prefix">
     <link name="leg1_${prefix}">
@@ -133,11 +117,6 @@
       </xacro:if>
     </joint>
   </xacro:macro>
-
-  <xacro:leg1 prefix="RF"/>
-  <xacro:leg1 prefix="LF"/>
-  <xacro:leg1 prefix="RB"/>
-  <xacro:leg1 prefix="LB"/>
 
   <xacro:macro name="leg2" params="prefix">
     <link name="leg2_${prefix}">
@@ -186,11 +165,6 @@
     </joint>
   </xacro:macro>
 
-  <xacro:leg2 prefix="LF"/>
-  <xacro:leg2 prefix="RF"/>
-  <xacro:leg2 prefix="LB"/>
-  <xacro:leg2 prefix="RB"/>
-
   <xacro:macro name="ros2_hip_joint" params="prefix">
     <joint name="hip_${prefix}_joint">
       <command_interface name="effort">
@@ -227,53 +201,6 @@
     </joint>
   </xacro:macro>
 
-  <ros2_control name="GazeboSystem" type="system">
-    <hardware>
-      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
-    </hardware>
-
-    <xacro:ros2_hip_joint prefix="RF"/>
-    <xacro:ros2_leg1_joint prefix="RF"/>
-    <xacro:ros2_leg2_joint prefix="RF"/>
-
-    <xacro:ros2_hip_joint prefix="LF"/>
-    <xacro:ros2_leg1_joint prefix="LF"/>
-    <xacro:ros2_leg2_joint prefix="LF"/>
-
-    <xacro:ros2_hip_joint prefix="RB"/>
-    <xacro:ros2_leg1_joint prefix="RB"/>
-    <xacro:ros2_leg2_joint prefix="RB"/>
-
-    <xacro:ros2_hip_joint prefix="LB"/>
-    <xacro:ros2_leg1_joint prefix="LB"/>
-    <xacro:ros2_leg2_joint prefix="LB"/>
-    
-    <sensor name="imu_sensor">
-      <state_interface name="orientation.x"/>
-      <state_interface name="orientation.y"/>
-      <state_interface name="orientation.z"/>
-      <state_interface name="orientation.w"/>
-      <state_interface name="angular_velocity.x"/>
-      <state_interface name="angular_velocity.y"/>
-      <state_interface name="angular_velocity.z"/>
-      <state_interface name="linear_acceleration.x"/>
-      <state_interface name="linear_acceleration.y"/>
-      <state_interface name="linear_acceleration.z"/>
-    </sensor>
-
-  </ros2_control>
-
-  <gazebo reference="imu_link">
-    <sensor name="imu_sensor" type="imu">
-      <always_on>true</always_on>
-      <update_rate>1000</update_rate>
-    </sensor>
-  </gazebo>
-
-  <gazebo>
-    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-      <parameters>/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/config/orthrus.yaml</parameters>
-    </plugin>
-  </gazebo>
 </robot>
+
 
