@@ -40,8 +40,8 @@
   </link>
 
   <joint name="imu_joint" type="fixed">
-    <parent link="imu_link"/>
-    <child link="body"/>
+    <parent link="body"/>
+    <child link="imu_link"/>
   </joint>
 
   <xacro:macro name="hip" params="prefix">

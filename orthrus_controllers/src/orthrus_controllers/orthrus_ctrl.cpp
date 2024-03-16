@@ -8,9 +8,13 @@ namespace orthrus_ctrl
 
         orthrus_joint_state_sub_ = this->create_subscription<orthrus_interfaces::msg::OrthrusJointState>("/orthrus_interface/joint_state", 10, std::bind(&orthrusCtrlNode::OrthrusJointStateSubCallback, this, std::placeholders::_1));
 
+        orthrus_imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>("/orthrus_interface/imu", 10, std::bind(&orthrusCtrlNode::OrthrusImuSubCallback, this, std::placeholders::_1));
+
         orthrus_joint_control_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10);
 
         orthrus_viewer_joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("/orthrus_viewer/joint_state", 10);
+
+        orthrus_viewer_horizontal_pub_ = this->create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
 
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(1), std::bind(&orthrusCtrlNode::main_loop, this));
@@ -55,6 +59,30 @@ namespace orthrus_ctrl
         orthrus_viewer_joint_state_msg_.effort = effort;
 
         orthrus_viewer_joint_state_pub_->publish(orthrus_viewer_joint_state_msg_);
+    }
+
+    void orthrusCtrlNode::OrthrusImuSubCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
+    {
+        geometry_msgs::msg::TransformStamped tf_stamped;
+        //orthrus_viewer_horizontal_pub_
+        tf_stamped.header.stamp = this->now();  
+        tf_stamped.header.frame_id = "horizontal";  
+        tf_stamped.child_frame_id = "body";  
+
+        tf_stamped.transform.translation.x = 0.0;  
+        tf_stamped.transform.translation.y = 0.0;  
+        tf_stamped.transform.translation.z = 0.0;  
+  
+        tf_stamped.transform.rotation.x = msg->orientation.x;  
+        tf_stamped.transform.rotation.y = msg->orientation.y;  
+        tf_stamped.transform.rotation.z = msg->orientation.z;  
+        tf_stamped.transform.rotation.w = msg->orientation.w; 
+
+        orthrus_viewer_horizontal_msg_.transforms.clear();
+
+        orthrus_viewer_horizontal_msg_.transforms.push_back(tf_stamped); 
+
+        orthrus_viewer_horizontal_pub_->publish(orthrus_viewer_horizontal_msg_);
     }
 
     void orthrusCtrlNode::InitRobotParam()
@@ -149,6 +177,7 @@ namespace orthrus_ctrl
     void orthrusCtrlNode::ResolveLegKinematics()
     {
     }
+
 }
 
 int main(int argc, char *argv[])

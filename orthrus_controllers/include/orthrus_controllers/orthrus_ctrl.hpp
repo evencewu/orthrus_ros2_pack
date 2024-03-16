@@ -6,6 +6,8 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
 #include <orthrus_interfaces/msg/orthrus_joint_state.hpp>
+#include <geometry_msgs/msg/transform_stamped.hpp>
+#include <tf2_msgs/msg/tf_message.hpp>
 
 
 #include <Eigen/Eigen>
@@ -58,9 +60,19 @@ namespace orthrus_ctrl
 
         void OrthrusJointStateSubCallback(const orthrus_interfaces::msg::OrthrusJointState::SharedPtr msg);
 
+        // orthrus_imu_sub_
+        rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr orthrus_imu_sub_;
+        sensor_msgs::msg::Imu orthrus_imu_msg_;
+
+        void OrthrusImuSubCallback(const sensor_msgs::msg::Imu::SharedPtr msg);
+
         // orthrus_viewer_joint_state_pub_
         rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr orthrus_viewer_joint_state_pub_;
         sensor_msgs::msg::JointState orthrus_viewer_joint_state_msg_;
+
+        // orthrus_viewer_Horizontal_pub_
+        rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr orthrus_viewer_horizontal_pub_;
+        tf2_msgs::msg::TFMessage orthrus_viewer_horizontal_msg_;
 
         // pinochio
         pinocchio::Model orthrus_model_;
@@ -68,8 +80,5 @@ namespace orthrus_ctrl
 
         Eigen::VectorXd q_;
         Eigen::VectorXd v_;
-
-        //sensor_msgs/msg/JointState
-
     };
 }
