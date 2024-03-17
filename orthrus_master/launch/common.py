@@ -13,11 +13,14 @@ from launch_ros.descriptions import ComposableNode
 
 from launch.actions import TimerAction
 
+use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+
 def get_orthrus_ctrl(package, executable, name):
     return Node(
         package=package,  # 替换为你的包名
         executable=executable,  # 替换为你的可执行文件名
         name=name,
+        parameters=[{'use_sim_time': use_sim_time}],
     )
     
 def get_orthrus_gazebo(package, executable, name):
@@ -25,6 +28,7 @@ def get_orthrus_gazebo(package, executable, name):
         package=package,  # 替换为你的包名
         executable=executable,  # 替换为你的可执行文件名
         name=name,
+        parameters=[{'use_sim_time': use_sim_time}],
     )
 
 def get_orthrus_gazebo_sim(package, executable):

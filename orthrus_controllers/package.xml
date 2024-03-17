@@ -17,6 +17,7 @@
   <depend>pinocchio</depend>
   <depend>eigen</depend>
   <depend>tf2_msgs</depend>
+  <depend>rosgraph_msgs</depend>
   
   <export>
     <build_type>ament_cmake</build_type>

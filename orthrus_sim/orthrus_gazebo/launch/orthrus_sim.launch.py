@@ -14,8 +14,6 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
 
     model_arg = DeclareLaunchArgument(name='models', description='Absolute path to robot urdf file')
-    pkg_gazebo_ros = get_package_share_directory('orthrus_gazebo')
-
 
     pkg_dir = get_package_share_directory('orthrus_gazebo')
     simulation_description_path = os.path.join(pkg_dir)
@@ -46,13 +44,6 @@ def generate_launch_description():
         parameters=[{'robot_description': robot_description_content}, {'use_sim_time': use_sim_time}],
     )
 
-    # Gazebo launch
-    gazebo = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_gazebo_ros, 'launch', 'gazebo.launch.py'),
-        )
-    )
-
     #spawn the robot 
     orthrus_spawn = Node(
         package='gazebo_ros',
@@ -62,7 +53,6 @@ def generate_launch_description():
                     "-x", '0.0',
                     "-y", '0.0',
                     "-z", '1.0']
-        
     )
 
     active_joint_state_broadcaster = ExecuteProcess(

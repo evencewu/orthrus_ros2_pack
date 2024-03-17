@@ -64,23 +64,24 @@ namespace orthrus_ctrl
     void orthrusCtrlNode::OrthrusImuSubCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
     {
         geometry_msgs::msg::TransformStamped tf_stamped;
-        //orthrus_viewer_horizontal_pub_
+        // orthrus_viewer_horizontal_pub_
         tf_stamped.header.stamp = this->now();  
-        tf_stamped.header.frame_id = "horizontal";  
-        tf_stamped.child_frame_id = "body";  
 
-        tf_stamped.transform.translation.x = 0.0;  
-        tf_stamped.transform.translation.y = 0.0;  
-        tf_stamped.transform.translation.z = 0.0;  
-  
-        tf_stamped.transform.rotation.x = msg->orientation.x;  
-        tf_stamped.transform.rotation.y = msg->orientation.y;  
-        tf_stamped.transform.rotation.z = msg->orientation.z;  
-        tf_stamped.transform.rotation.w = msg->orientation.w; 
+        tf_stamped.header.frame_id = "horizontal";
+        tf_stamped.child_frame_id = "body";
+
+        tf_stamped.transform.translation.x = 0.0;
+        tf_stamped.transform.translation.y = 0.0;
+        tf_stamped.transform.translation.z = 0.0;
+
+        tf_stamped.transform.rotation.x = msg->orientation.x;
+        tf_stamped.transform.rotation.y = msg->orientation.y;
+        tf_stamped.transform.rotation.z = msg->orientation.z;
+        tf_stamped.transform.rotation.w = msg->orientation.w;
 
         orthrus_viewer_horizontal_msg_.transforms.clear();
 
-        orthrus_viewer_horizontal_msg_.transforms.push_back(tf_stamped); 
+        orthrus_viewer_horizontal_msg_.transforms.push_back(tf_stamped);
 
         orthrus_viewer_horizontal_pub_->publish(orthrus_viewer_horizontal_msg_);
     }

@@ -9,6 +9,7 @@
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <tf2_msgs/msg/tf_message.hpp>
 
+#include <rosgraph_msgs/msg/clock.hpp>
 
 #include <Eigen/Eigen>
 
@@ -46,6 +47,8 @@ namespace orthrus_ctrl
         OrthrusWbc PositonCtrl_;
 
         std::vector<std::string> joint_name_{"hip_RF_joint", "leg1_RF_joint", "leg2_RF_joint", "hip_LF_joint", "leg1_LF_joint", "leg2_LF_joint", "hip_RB_joint", "leg1_RB_joint", "leg2_RB_joint", "hip_LB_joint", "leg1_LB_joint", "leg2_LB_joint"};
+
+        // sim_time
 
         // timer
         rclcpp::TimerBase::SharedPtr timer_;
