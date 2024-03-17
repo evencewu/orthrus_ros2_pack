@@ -105,10 +105,6 @@ namespace orthrus_ctrl
         q_ = Eigen::VectorXd::Zero(orthrus_model_.nq);
         v_ = Eigen::VectorXd::Zero(orthrus_model_.nv);
 
-        const Eigen::MatrixXd &M = orthrus_data_.M; // 惯性矩阵
-        const Eigen::MatrixXd &C = orthrus_data_.C; // 科里奥利和向心力矩阵
-        const Eigen::MatrixXd &g = orthrus_data_.g; // 重力项（不是完整的G矩阵，但通常与G矩阵一起使用）
-
         // Perform the forward kinematics over the kinematic tree
         pinocchio::forwardKinematics(orthrus_model_, orthrus_data_, OrthrusParam_.dynamic.joint_pos);
 
@@ -140,12 +136,10 @@ namespace orthrus_ctrl
                         (joint_id > 0) ? OrthrusParam_.dynamic.joint_pos(joint_id - 1) : 0);
         }
 #endif
-        // std::ostringstream oss;
-        // oss << orthrus_data_.C << std::endl;
-        // std::string matrix_str = oss.str();
-        // RCLCPP_INFO(this->get_logger(), "Matrix contents:\n%s", matrix_str.c_str());
-
-        //
+        //std::ostringstream oss;
+        //oss << orthrus_data_.C << std::endl;
+        //std::string matrix_str = oss.str();
+        //RCLCPP_INFO(this->get_logger(), "Matrix contents:\n%s", matrix_str.c_str());
 
         // slove and print joint coordinate
     }
