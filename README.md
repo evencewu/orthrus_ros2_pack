@@ -14,7 +14,7 @@ Orthrus hardware interface package on ros2
         ```
     * ### pinocchio
         ``` bash
-        git clone --recurse-submodules https://github.com/evencewu/pinocchio_ros2
+        git clone --recurse-submodules https://github.com/evencewu/pinocchio_ros2.git
         ```
     * ### hpp-fcl
         ``` bash
