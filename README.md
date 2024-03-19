@@ -24,5 +24,7 @@ Orthrus hardware interface package on ros2
         ``` bash
         sudo apt-get install ros-humble-grid-map-cv ros-humble-grid-map-msgs ros-humble-grid-map-ros ros-humble-grid-map-sdf libmpfr-dev libpcap-dev
         ```
-    
-    
+* ## build
+    ``` bash
+    colcon build --cmake-args -DCMAKE_PREFIX_PATH=~/software/raisimLib/raisim/linux
+    ```
