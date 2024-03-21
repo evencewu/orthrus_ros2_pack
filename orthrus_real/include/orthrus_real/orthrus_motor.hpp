@@ -24,9 +24,9 @@ namespace orthrus_real
     {
     public:
 
-        void init(uint8_t can_id, uint8_t device_id);
+        void init(uint8_t can_id, uint8_t device_id,uint8_t motor_id);
         void analyze(Ecat_Inputs_Pack *pack);
-        void SetOutput(EcatOutputs_Pack *pack, int can_pack, float k_p, float k_d, float W, float T, float Pos, uint16_t Mode);
+        void SetOutput(Ecat_Outputs_Pack *pack, int can_pack, float k_p, float k_d, float W, float T, float Pos, uint8_t Mode);
 
         float T_ = 0;
         float Pos_ = 0;
@@ -51,6 +51,7 @@ namespace orthrus_real
         }data;
 
         uint8_t can_id;
-        uint8_t device_id;
+        uint8_t leg_id;
+        uint8_t motor_id;
     };
 }

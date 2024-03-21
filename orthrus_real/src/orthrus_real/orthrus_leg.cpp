@@ -11,12 +11,12 @@ namespace orthrus_real
         motor[2].analyze(pack);
     }
 
-    void Leg::init(uint8_t can_id, uint8_t imu_id, uint8_t usart_id)
+    void Leg::init(uint8_t can_id, uint8_t imu_id, uint8_t leg_id)
     {
         imu.init(can_id, imu_id);
         angle.init(can_id, imu_id);
-        motor[0].init(can_id,usart_id*3);
-        motor[1].init(can_id,usart_id*3+1);
-        motor[2].init(can_id,usart_id*3+2);
+        motor[0].init(can_id,leg_id,0);
+        motor[1].init(can_id,leg_id,1);
+        motor[2].init(can_id,leg_id,2);
     }
 }
