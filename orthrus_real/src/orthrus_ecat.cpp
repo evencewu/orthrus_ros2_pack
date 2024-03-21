@@ -41,21 +41,51 @@ namespace orthrus_real
     {
       Ethercat.packet_tx[0].LED = 0x00;
     }
+
+    leg[0].motor[2].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0, 0x10);
     Ethercat.EcatSyncMsg();
     AnalyzeAll();
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[0].imu.Gyro[2]);
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[1].imu.Gyro[0], leg[1].imu.Gyro[1], leg[1].imu.Gyro[2]);
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[2].imu.Gyro[0], leg[2].imu.Gyro[1], leg[2].imu.Gyro[2]);
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[3].imu.Gyro[0], leg[3].imu.Gyro[1], leg[3].imu.Gyro[2]);
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", body_imu.Gyro[0], body_imu.Gyro[1], body_imu.Gyro[2]);
-    RCLCPP_INFO(this->get_logger(), "=================");
-    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_id);
-    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_mode);
-    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_temp);
-    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_error);
-    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_T);
-    RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_W);
-    RCLCPP_INFO(this->get_logger(), "=================");
+    leg[0].motor[2].SetOutput(&Ethercat.packet_tx[0], 1, 0, 0, 0, 0, 0, 0x10);
+    Ethercat.EcatSyncMsg();
+    AnalyzeAll();
+    leg[0].motor[2].SetOutput(&Ethercat.packet_tx[0], 2, 0, 0, 0, 0, 0, 0x10);
+    Ethercat.EcatSyncMsg();
+    AnalyzeAll();
+    
+    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[0].imu.Gyro[2]);
+    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[1].imu.Gyro[0], leg[1].imu.Gyro[1], leg[1].imu.Gyro[2]);
+    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[2].imu.Gyro[0], leg[2].imu.Gyro[1], leg[2].imu.Gyro[2]);
+    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[3].imu.Gyro[0], leg[3].imu.Gyro[1], leg[3].imu.Gyro[2]);
+    //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", body_imu.Gyro[0], body_imu.Gyro[1], body_imu.Gyro[2]);
+
+    //RCLCPP_INFO(this->get_logger(), "=================");
+    //RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_id);
+    //RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_mode);
+    //RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_temp);
+    //RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_error);
+    //RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_T);
+    //RCLCPP_INFO(this->get_logger(), "motor %lf\n", (float)Ethercat.packet_rx[0].Motor.motor_W);
+    //RCLCPP_INFO(this->get_logger(), "=================");
+
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[1].StdId);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[1].Data[0]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[1].Data[1]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[1].Data[2]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[1].Data[3]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[1].Data[4]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[1].Data[5]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[1].Data[6]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[1].Data[7]);
+
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].StdId);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[0]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[1]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[2]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[3]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[4]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[5]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[6]);
+    RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[7]);
     
   }
 

@@ -22,4 +22,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     geometry_msgs
 )
 
-ament_package()
+ament_auto_package(
+  INSTALL_TO_SHARE
+  models
+)

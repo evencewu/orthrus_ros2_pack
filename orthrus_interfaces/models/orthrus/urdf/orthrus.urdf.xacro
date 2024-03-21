@@ -18,14 +18,6 @@
   <xacro:leg2 prefix="LB"/>
   <xacro:leg2 prefix="RB"/>
   
-  <link name="horizontal">
-  </link>
-
-  <joint name="horizontal_joint" type="floating">
-    <parent link="body"/>
-    <child link="horizontal"/>
-  </joint>
-
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>

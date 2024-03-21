@@ -25,6 +25,7 @@ ament_auto_add_executable(orthrus_ecat
   src/orthrus_real/orthrus_imu.cpp
   src/orthrus_real/orthrus_angle.cpp
   src/orthrus_real/orthrus_leg.cpp
+  src/orthrus_real/orthrus_motor.cpp
 )
 
 ament_auto_add_executable(test1

@@ -5,6 +5,7 @@
 #include "orthrus_real/ecat_typedef.hpp"
 #include "orthrus_real/orthrus_imu.hpp"
 #include "orthrus_real/orthrus_angle.hpp"
+#include "orthrus_real/orthrus_motor.hpp"
 
 #include <cstdio>
 
@@ -23,5 +24,6 @@ namespace orthrus_real
 
         Imu imu;
         Angle angle;
+        MotorCan motor[3];
     };
 }
