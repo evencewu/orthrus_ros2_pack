@@ -12,6 +12,9 @@ Orthrus hardware interface package on ros2
         ``` bash
         git clone https://github.com/evencewu/ocs2_ros2.git
         ```
+        ``` bash
+        git clone https://github.com/evencewu/ocs2_ros2.git -b without_rasim
+        ```
     * ### pinocchio
         ``` bash
         git clone --recurse-submodules https://github.com/evencewu/pinocchio_ros2.git
@@ -22,7 +25,16 @@ Orthrus hardware interface package on ros2
         ```
     * ## orthers
         ``` bash
+        git clone https://github.com/evencewu/plane_segmentation_ros2.git
+        ```
+        ``` bash
+        git clone https://github.com/evencewu/ocs2_robotic_assets.git
+        ```
+        ``` bash
         sudo apt-get install ros-humble-grid-map-cv ros-humble-grid-map-msgs ros-humble-grid-map-ros ros-humble-grid-map-sdf libmpfr-dev libpcap-dev
+        ```
+        ``` bash
+        sudo apt-get install libgmp-dev libmpfr-dev libglpk-dev
         ```
 * ## build
     ``` bash
