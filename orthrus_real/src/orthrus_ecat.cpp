@@ -35,10 +35,10 @@ namespace orthrus_real
 
     LedLoop();
     LegLoop();
-    //Ethercat.EcatSyncMsg();
-    //AnalyzeAll();
+    // Ethercat.EcatSyncMsg();
+    // AnalyzeAll();
 
-    //leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 2, 0, 0, 0, 0, 0, 10);
+    // leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 2, 0, 0, 0, 0, 0, 10);
     Ethercat.EcatSyncMsg();
     AnalyzeAll();
 
@@ -77,6 +77,7 @@ namespace orthrus_real
     // RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[6]);
     // RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_rx[0].can[0].Data[7]);
 
+    RCLCPP_INFO(this->get_logger(), "=================");
     RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[1].StdId);
     RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[1].Data[0]);
     RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[1].Data[1]);
@@ -103,13 +104,21 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::LegLoop()
   {
-    if (motorcan_send_flag_++ < 3)
+    if (motorcan_time_flag_ < 10)
     {
-      leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 0, 0, 0, 0, 10);
+        motorcan_time_flag_++;
     }
     else
     {
-      motorcan_send_flag_ = 0;
+      if (motorcan_send_flag_++ < 3)
+      {
+        leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 1.0, 0, 0, 0, 10);
+      }
+      else
+      {
+        motorcan_send_flag_ = 0;
+      }
+      motorcan_time_flag_ = 0;
     }
   }
 

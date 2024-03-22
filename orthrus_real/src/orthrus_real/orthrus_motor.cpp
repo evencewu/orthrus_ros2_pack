@@ -2,7 +2,7 @@
 
 namespace orthrus_real
 {
-    void MotorCan::init(uint8_t can_id, uint8_t device_id,uint8_t motor_id)
+    void MotorCan::init(uint8_t can_id, uint8_t device_id, uint8_t motor_id)
     {
         this->can_id = can_id;
         this->leg_id = device_id;
@@ -11,7 +11,7 @@ namespace orthrus_real
 
     void MotorCan::analyze(Ecat_Inputs_Pack *pack)
     {
-        if (pack->can[can_id].StdId == leg_id*6 + motor_id + 0x300)
+        if (pack->can[can_id].StdId == leg_id * 6 + motor_id + 0x300)
         {
             data.uint_data[0] = pack->can[can_id].Data[0];
             data.uint_data[1] = pack->can[can_id].Data[1];
@@ -28,7 +28,7 @@ namespace orthrus_real
             Pos_ = data.f_data;
         }
 
-        if (pack->can[can_id].StdId == leg_id*6 + motor_id*2 + 0x301)
+        if (pack->can[can_id].StdId == leg_id * 6 + motor_id * 2 + 0x301)
         {
             data.uint_data[0] = pack->can[can_id].Data[0];
             data.uint_data[1] = pack->can[can_id].Data[1];
@@ -51,8 +51,8 @@ namespace orthrus_real
         pack->can[can_id].DLC = 0x08;
         if (can_pack == 0)
         {
-            pack->can[can_id].StdId = leg_id * 3 + 0x400;
-            
+            pack->can[can_id].StdId = leg_id * 3 + 0x20;
+
             data.f_data = k_p;
 
             pack->can[can_id].Data[0] = data.uint_data[0];
@@ -70,7 +70,7 @@ namespace orthrus_real
 
         if (can_pack == 1)
         {
-            pack->can[can_id].StdId = leg_id * 3 + 0x401;
+            pack->can[can_id].StdId = leg_id * 3 + 0x21;
 
             data.f_data = W;
 
@@ -89,7 +89,7 @@ namespace orthrus_real
 
         if (can_pack == 2)
         {
-            pack->can[can_id].StdId = leg_id * 3 + 0x402;
+            pack->can[can_id].StdId = leg_id * 3 + 0x22;
 
             data.f_data = Pos;
 
@@ -98,15 +98,30 @@ namespace orthrus_real
             pack->can[can_id].Data[2] = data.uint_data[2];
             pack->can[can_id].Data[3] = data.uint_data[3];
 
-
             pack->can[can_id].Data[4] = Mode;
             pack->can[can_id].Data[5] = 0;
 
-            data16.f_data = (uint16_t)k_p + (uint16_t)k_d + (uint16_t)W + (uint16_t)T + (uint16_t)Pos + (uint16_t)Mode;
+            data16.f_data = 0;
+
+            float_to_uint32_data.f_data = k_p;
+            data16.f_data += float_to_uint32_data.uint_data;
+
+            float_to_uint32_data.f_data = k_d;
+            data16.f_data += float_to_uint32_data.uint_data;
+
+            float_to_uint32_data.f_data = W;
+            data16.f_data += float_to_uint32_data.uint_data;
+
+            float_to_uint32_data.f_data = T;
+            data16.f_data += float_to_uint32_data.uint_data;
+
+            float_to_uint32_data.f_data = Pos;
+            data16.f_data += float_to_uint32_data.uint_data;
+
+            data16.f_data += Mode;
 
             pack->can[can_id].Data[6] = data16.uint_data[0];
             pack->can[can_id].Data[7] = data16.uint_data[1];
-
         }
     }
 }

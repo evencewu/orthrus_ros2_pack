@@ -47,5 +47,6 @@ namespace orthrus_real
     int led_flag_ = 0;
     int motor_send_flag_ = 0;
     int motorcan_send_flag_ = 0;
+    int motorcan_time_flag_ = 0;
   };
 }
