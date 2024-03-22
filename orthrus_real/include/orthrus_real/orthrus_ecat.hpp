@@ -29,6 +29,8 @@ namespace orthrus_real
   private:
     void Init();
     void MainLoop();
+    void LedLoop();
+    void LegLoop();
 
     void SafeStop();
     void AnalyzeAll();
@@ -42,6 +44,8 @@ namespace orthrus_real
     // ros2 timer
     rclcpp::TimerBase::SharedPtr timer_;
 
+    int led_flag_ = 0;
     int motor_send_flag_ = 0;
+    int motorcan_send_flag_ = 0;
   };
 }
