@@ -104,22 +104,15 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::LegLoop()
   {
-    if (motorcan_time_flag_ < 10)
+    if (motorcan_send_flag_++ < 3)
     {
-        motorcan_time_flag_++;
+      leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 2, 0, 0, 0, 10);
     }
     else
     {
-      if (motorcan_send_flag_++ < 3)
-      {
-        leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 1.0, 0, 0, 0, 10);
-      }
-      else
-      {
-        motorcan_send_flag_ = 0;
-      }
-      motorcan_time_flag_ = 0;
+      motorcan_send_flag_ = 0;
     }
+    motorcan_time_flag_ = 0;
   }
 
   void OrthrusInterfacesNode::SafeStop()
