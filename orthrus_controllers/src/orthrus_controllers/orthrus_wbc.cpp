@@ -83,6 +83,4 @@ namespace orthrus_ctrl
 
         return orthrus_joint_control_msg_;
     }
-
-
 }

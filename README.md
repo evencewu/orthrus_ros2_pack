@@ -34,7 +34,7 @@ Orthrus hardware interface package on ros2
         sudo apt-get install ros-humble-grid-map-cv ros-humble-grid-map-msgs ros-humble-grid-map-ros ros-humble-grid-map-sdf libmpfr-dev libpcap-dev
         ```
         ``` bash
-        sudo apt-get install libgmp-dev libmpfr-dev libglpk-dev
+        sudo apt-get install libgmp-dev libmpfr-dev libglpk-dev libpcap-dev
         ```
 * ## build
     ``` bash
