@@ -48,10 +48,11 @@ namespace orthrus_real
 
     void MotorCan::SetOutput(Ecat_Outputs_Pack *pack, int can_pack, float k_p, float k_d, float W, float T, float Pos, uint8_t Mode)
     {
+        pack->can[can_id].DLC = 0x08;
         if (can_pack == 0)
         {
             pack->can[can_id].StdId = leg_id * 3 + 0x400;
-
+            
             data.f_data = k_p;
 
             pack->can[can_id].Data[0] = data.uint_data[0];
@@ -99,12 +100,12 @@ namespace orthrus_real
 
 
             pack->can[can_id].Data[4] = Mode;
-            pack->can[can_id].Data[5] = motor_id;
+            pack->can[can_id].Data[5] = 0;
 
-            data.f_data = (uint16_t)k_p + (uint16_t)k_d + (uint16_t)W + (uint16_t)T + (uint16_t)Pos + (uint16_t)motor_id + (uint16_t)Mode;
+            data16.f_data = (uint16_t)k_p + (uint16_t)k_d + (uint16_t)W + (uint16_t)T + (uint16_t)Pos + (uint16_t)Mode;
 
-            pack->can[can_id].Data[6] = data.uint_data[2];
-            pack->can[can_id].Data[7] = data.uint_data[3];
+            pack->can[can_id].Data[6] = data16.uint_data[0];
+            pack->can[can_id].Data[7] = data16.uint_data[1];
 
         }
     }

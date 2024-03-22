@@ -50,6 +50,12 @@ namespace orthrus_real
             uint8_t uint_data[4];
         }data;
 
+        union
+        {
+            uint16_t f_data;
+            uint8_t uint_data[2];
+        }data16;
+
         uint8_t can_id;
         uint8_t leg_id;
         uint8_t motor_id;

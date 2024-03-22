@@ -35,12 +35,12 @@ namespace orthrus_real
 
     LedLoop();
     LegLoop();
-    Ethercat.EcatSyncMsg();
-    AnalyzeAll();
-
-    //leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 2, 0, 0, 0, 0, 0, 10);
     //Ethercat.EcatSyncMsg();
     //AnalyzeAll();
+
+    //leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 2, 0, 0, 0, 0, 0, 10);
+    Ethercat.EcatSyncMsg();
+    AnalyzeAll();
 
     // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[0].imu.Gyro[2]);
     // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[1].imu.Gyro[0], leg[1].imu.Gyro[1], leg[1].imu.Gyro[2]);
@@ -103,9 +103,13 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::LegLoop()
   {
-    if (motorcan_send_flag_ < 36)
+    if (motorcan_send_flag_++ < 3)
     {
       leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 0, 0, 0, 0, 10);
+    }
+    else
+    {
+      motorcan_send_flag_ = 0;
     }
   }
 
