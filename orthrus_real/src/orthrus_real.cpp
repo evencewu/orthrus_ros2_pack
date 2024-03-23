@@ -1,4 +1,4 @@
-#include "orthrus_real/orthrus_ecat.hpp"
+#include "orthrus_real/orthrus_real.hpp"
 
 namespace orthrus_real
 {
@@ -32,27 +32,16 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::MainLoop()
   {
+    //LED
+    SetLED();
 
-    LedLoop();
-    LegLoop();
-    // Ethercat.EcatSyncMsg();
-    // AnalyzeAll();
-
-    // leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 2, 0, 0, 0, 0, 0, 10);
+    //Leg
+    SetLeg();
     Ethercat.EcatSyncMsg();
     AnalyzeAll();
 
-    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].StdId);
-    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[0]);
-    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[1]);
-    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[2]);
-    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[3]);
-    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[4]);
-    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[5]);
-    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[6]);
-    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[7]);
-    RCLCPP_INFO(this->get_logger(), "=================");
 
+    RCLCPP_INFO(this->get_logger(), "=================");
     RCLCPP_INFO(this->get_logger(), "0x%f", leg[0].motor[0].Pos_);
     RCLCPP_INFO(this->get_logger(), "0x%f", leg[0].motor[1].Pos_);
     RCLCPP_INFO(this->get_logger(), "0x%f", leg[0].motor[2].Pos_);
@@ -66,6 +55,16 @@ namespace orthrus_real
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", body_imu.Gyro[0], body_imu.Gyro[1], body_imu.Gyro[2]);
     RCLCPP_INFO(this->get_logger(), "=================");
 
+    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].StdId);
+    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[0]);
+    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[1]);
+    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[2]);
+    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[3]);
+    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[4]);
+    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[5]);
+    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[6]);
+    //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[7]);
+
     //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[1].StdId);
     //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[1].Data[0]);
     //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[1].Data[1]);
@@ -75,11 +74,9 @@ namespace orthrus_real
     //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[1].Data[5]);
     //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[1].Data[6]);
     //RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[1].Data[7]);
-
-
   }
 
-  void OrthrusInterfacesNode::LedLoop()
+  void OrthrusInterfacesNode::SetLED()
   {
     if (led_flag_++ >= 10)
     {
@@ -92,7 +89,7 @@ namespace orthrus_real
     }
   }
 
-  void OrthrusInterfacesNode::LegLoop()
+  void OrthrusInterfacesNode::SetLeg()
   {
     if (motorcan_send_flag_++ < 9)
     {
@@ -102,7 +99,6 @@ namespace orthrus_real
     {
       motorcan_send_flag_ = 0;
     }
-    motorcan_time_flag_ = 0;
   }
 
   void OrthrusInterfacesNode::SafeStop()
@@ -119,6 +115,25 @@ namespace orthrus_real
     leg[2].analyze(&Ethercat.packet_rx[0]);
     leg[3].analyze(&Ethercat.packet_rx[0]);
     body_imu.analyze(&Ethercat.packet_rx[0]);
+  }
+
+  void OrthrusInterfacesNode::LegPositionCalibrating()
+  {
+    leg[0].motor[1].RealPosition_ = leg[0].motor[1].RealPosition_;
+    leg[0].motor[2].RealPosition_ = leg[0].motor[2].RealPosition_;
+    leg[0].motor[3].RealPosition_ = leg[0].motor[3].RealPosition_;
+
+    leg[1].motor[1].RealPosition_ = leg[1].motor[1].RealPosition_;
+    leg[1].motor[2].RealPosition_ = leg[1].motor[2].RealPosition_;
+    leg[1].motor[3].RealPosition_ = leg[1].motor[3].RealPosition_;
+
+    leg[2].motor[1].RealPosition_ = leg[2].motor[1].RealPosition_;
+    leg[2].motor[2].RealPosition_ = leg[2].motor[2].RealPosition_;
+    leg[2].motor[3].RealPosition_ = leg[2].motor[3].RealPosition_;
+
+    leg[3].motor[1].RealPosition_ = leg[3].motor[1].RealPosition_;
+    leg[3].motor[2].RealPosition_ = leg[3].motor[2].RealPosition_;
+    leg[3].motor[3].RealPosition_ = leg[3].motor[3].RealPosition_;
   }
 }
 

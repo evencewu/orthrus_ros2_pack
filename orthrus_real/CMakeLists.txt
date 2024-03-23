@@ -19,8 +19,8 @@ endif ()
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
 
-ament_auto_add_executable(orthrus_ecat
-  src/orthrus_ecat.cpp
+ament_auto_add_executable(orthrus_real
+  src/orthrus_real.cpp
   src/orthrus_real/ecat_base.cpp
   src/orthrus_real/orthrus_motor.cpp
   src/orthrus_real/orthrus_imu.cpp

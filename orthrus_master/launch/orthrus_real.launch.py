@@ -14,7 +14,7 @@ def generate_launch_description():
 
     orthrus_ctrl_node = common.get_orthrus_ctrl('orthrus_controllers', 'orthrus_controllers','orthrus_ctrl_node')
     
-    orthrus_real_node = common.get_orthrus_gazebo('orthrus_real', 'orthrus_ecat','orthrus_real_node')
+    orthrus_real_node = common.get_orthrus_gazebo('orthrus_real', 'orthrus_real','orthrus_real_node')
     return LaunchDescription(
         [
             orthrus_real_node,

@@ -1,5 +1,6 @@
 #include "orthrus_real/orthrus_motor.hpp"
 
+
 namespace orthrus_real
 {
     void MotorCan::init(uint8_t can_id, uint8_t device_id, uint8_t motor_id)
@@ -13,35 +14,19 @@ namespace orthrus_real
     {
         if (pack->can[can_id].StdId == leg_id * 6 + motor_id * 2 + 0x40)
         {
-            data.uint_data[0] = pack->can[can_id].Data[0];
-            data.uint_data[1] = pack->can[can_id].Data[1];
-            data.uint_data[2] = pack->can[can_id].Data[2];
-            data.uint_data[3] = pack->can[can_id].Data[3];
-
+            memcpy(data.uint_data, &(pack->can[can_id].Data[0]),4);
             T_ = data.f_data;
 
-            data.uint_data[0] = pack->can[can_id].Data[4];
-            data.uint_data[1] = pack->can[can_id].Data[5];
-            data.uint_data[2] = pack->can[can_id].Data[6];
-            data.uint_data[3] = pack->can[can_id].Data[7];
-
+            memcpy(data.uint_data, &(pack->can[can_id].Data[4]),4);
             Pos_ = data.f_data;
         }
 
         if (pack->can[can_id].StdId == leg_id * 6 + motor_id * 2 + 0x41)
         {
-            data.uint_data[0] = pack->can[can_id].Data[0];
-            data.uint_data[1] = pack->can[can_id].Data[1];
-            data.uint_data[2] = pack->can[can_id].Data[2];
-            data.uint_data[3] = pack->can[can_id].Data[3];
-
+            memcpy(data.uint_data, &(pack->can[can_id].Data[0]),4);
             W_ = data.f_data;
 
-            data.uint_data[0] = pack->can[can_id].Data[4];
-            data.uint_data[1] = pack->can[can_id].Data[5];
-            data.uint_data[2] = pack->can[can_id].Data[6];
-            data.uint_data[3] = pack->can[can_id].Data[7];
-
+            memcpy(data.uint_data, &(pack->can[can_id].Data[4]),4);
             Acc_ = data.f_data;
         }
     }

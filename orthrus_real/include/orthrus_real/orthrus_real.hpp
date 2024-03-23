@@ -29,9 +29,15 @@ namespace orthrus_real
   private:
     void Init();
     void MainLoop();
-    void LedLoop();
-    void LegLoop();
+    void PubMsgLoop();
+    
+    void SetLED();
+    void SetLeg();
 
+    //Calibrating leg position 
+    void LegPositionCalibrating();
+
+    //Ecat code
     void SafeStop();
     void AnalyzeAll();
 
@@ -43,10 +49,10 @@ namespace orthrus_real
     Imu body_imu;
     // ros2 timer
     rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::TimerBase::SharedPtr msg_pub_timer_;
 
     int led_flag_ = 0;
     int motor_send_flag_ = 0;
     int motorcan_send_flag_ = 0;
-    int motorcan_time_flag_ = 0;
   };
 }

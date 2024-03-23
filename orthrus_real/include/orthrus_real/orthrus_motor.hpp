@@ -2,6 +2,7 @@
 
 #include <inttypes.h>
 #include <cstdio>
+#include <string.h> 
 
 #include "orthrus_real/ecat_typedef.hpp"
 
@@ -32,17 +33,8 @@ namespace orthrus_real
         float Pos_ = 0;
         float W_ = 0;
         float Acc_ = 0;
+        float RealPosition_ = 0;
 
-        // struct orthrus_motor
-        //{
-        //     float k_p_;
-        //     float k_d_;
-        //     float W_;
-        //     float T_;
-        //     float Pos_;
-        //     uint16_t Mode_;
-        //     uint16_t CR_;
-        // };
     private:
         union
         {
