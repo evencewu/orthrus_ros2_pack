@@ -11,7 +11,7 @@ namespace orthrus_real
 
     void MotorCan::analyze(Ecat_Inputs_Pack *pack)
     {
-        if (pack->can[can_id].StdId == leg_id * 6 + motor_id + 0x300)
+        if (pack->can[can_id].StdId == leg_id * 6 + motor_id * 2 + 0x40)
         {
             data.uint_data[0] = pack->can[can_id].Data[0];
             data.uint_data[1] = pack->can[can_id].Data[1];
@@ -28,7 +28,7 @@ namespace orthrus_real
             Pos_ = data.f_data;
         }
 
-        if (pack->can[can_id].StdId == leg_id * 6 + motor_id * 2 + 0x301)
+        if (pack->can[can_id].StdId == leg_id * 6 + motor_id * 2 + 0x41)
         {
             data.uint_data[0] = pack->can[can_id].Data[0];
             data.uint_data[1] = pack->can[can_id].Data[1];
@@ -51,7 +51,7 @@ namespace orthrus_real
         pack->can[can_id].DLC = 0x08;
         if (can_pack == 0)
         {
-            pack->can[can_id].StdId = leg_id * 3 + 0x20;
+            pack->can[can_id].StdId = leg_id * 9 + motor_id * 3 + 0x20;
 
             data.f_data = k_p;
 
@@ -70,7 +70,7 @@ namespace orthrus_real
 
         if (can_pack == 1)
         {
-            pack->can[can_id].StdId = leg_id * 3 + 0x21;
+            pack->can[can_id].StdId = leg_id * 9 + motor_id * 3 + 0x21;
 
             data.f_data = W;
 
@@ -89,7 +89,7 @@ namespace orthrus_real
 
         if (can_pack == 2)
         {
-            pack->can[can_id].StdId = leg_id * 3 + 0x22;
+            pack->can[can_id].StdId = leg_id * 9 + motor_id * 3 + 0x22;
 
             data.f_data = Pos;
 
