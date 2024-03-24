@@ -37,6 +37,13 @@ namespace orthrus_real
             data.uint_data[3] = pack->can[can_id].Data[3];
 
             Gyro[2] = data.f_data;
+
+            data.uint_data[0] = pack->can[can_id].Data[4];
+            data.uint_data[1] = pack->can[can_id].Data[5];
+            data.uint_data[2] = pack->can[can_id].Data[6];
+            data.uint_data[3] = pack->can[can_id].Data[7];
+
+            Gyro[3] = data.f_data;
         }
     }
 }
