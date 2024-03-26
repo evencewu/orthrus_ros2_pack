@@ -6,6 +6,8 @@
 #include <rclcpp/qos.hpp>
 #include <rclcpp/utilities.hpp>
 
+
+
 // C++ system
 #include <cstdint>
 #include <functional>
@@ -13,6 +15,9 @@
 #include <string>
 #include <vector>
 #include <cmath>
+
+#include <Eigen/Dense>  
+#include <Eigen/Geometry>  
 
 #include "orthrus_real/ecat_base.hpp"
 #include "orthrus_real/ecat_typedef.hpp"
@@ -22,8 +27,6 @@
 #include <sensor_msgs/msg/imu.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <tf2_msgs/msg/tf_message.hpp>
-
-#define PI 3.1415926
 
 namespace orthrus_real
 {
@@ -42,7 +45,8 @@ namespace orthrus_real
     void SetLeg();
 
     //Calibrating leg position 
-    void LegPositionCalibrating();
+    void LegPositionCalibrate();
+    void ImuCalibrate(Ecat_Outputs_Pack *pack,int can_port);
 
     //Ecat code
     void SafeStop();

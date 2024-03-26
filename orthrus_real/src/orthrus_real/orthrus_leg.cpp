@@ -15,6 +15,10 @@ namespace orthrus_real
     {
         imu.init(can_id, imu_id);
         angle.init(can_id, imu_id);
+
+        //motor[0].init(can_id, leg_id, 0);
+        //motor[1].init(can_id, leg_id, 1);
+        //motor[2].init(can_id, leg_id, 2);
         if (can_id == 0)
         {
             motor[0].init(1, leg_id, 0);
