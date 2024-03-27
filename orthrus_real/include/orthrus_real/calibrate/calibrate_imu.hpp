@@ -5,14 +5,6 @@
 
 namespace orthrus_real::calibrate
 {
-    typedef struct ImuData
-    {
-        double yaw;
-        double pitch;
-        double roll;
-    } imu_data[3];
-
-    void GetEuler(Eigen::Quaterniond q, double *yaw, double *pitch, double *roll);//M_PI
-
-    void RotatingCoordinates();
+    void GetEuler(Eigen::Quaterniond q, double *yaw, double *pitch, double *roll);
+    Eigen::Quaterniond RotatingCoordinates(Eigen::Quaterniond input, double angle, Eigen::Vector3d axis,double install_angle, Eigen::Vector3d install_axis);
 }

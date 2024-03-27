@@ -15,35 +15,19 @@ namespace orthrus_real
     {
         if (pack->can[can_id].StdId == device_id + 1)
         {
-            data.uint_data[0] = pack->can[can_id].Data[0];
-            data.uint_data[1] = pack->can[can_id].Data[1];
-            data.uint_data[2] = pack->can[can_id].Data[2];
-            data.uint_data[3] = pack->can[can_id].Data[3];
+            memcpy(data.uint_data, &(pack->can[can_id].Data[0]),4);
+            gyro_.w() = data.f_data;
 
-            Gyro[0] = data.f_data;
-
-            data.uint_data[0] = pack->can[can_id].Data[4];
-            data.uint_data[1] = pack->can[can_id].Data[5];
-            data.uint_data[2] = pack->can[can_id].Data[6];
-            data.uint_data[3] = pack->can[can_id].Data[7];
-
-            Gyro[1] = data.f_data;
+            memcpy(data.uint_data, &(pack->can[can_id].Data[4]),4);
+            gyro_.x() = data.f_data;
         }
         if (pack->can[can_id].StdId == device_id + 2)
         {
-            data.uint_data[0] = pack->can[can_id].Data[0];
-            data.uint_data[1] = pack->can[can_id].Data[1];
-            data.uint_data[2] = pack->can[can_id].Data[2];
-            data.uint_data[3] = pack->can[can_id].Data[3];
+            memcpy(data.uint_data, &(pack->can[can_id].Data[0]),4);
+            gyro_.y() = data.f_data;
 
-            Gyro[2] = data.f_data;
-
-            data.uint_data[0] = pack->can[can_id].Data[4];
-            data.uint_data[1] = pack->can[can_id].Data[5];
-            data.uint_data[2] = pack->can[can_id].Data[6];
-            data.uint_data[3] = pack->can[can_id].Data[7];
-
-            Gyro[3] = data.f_data;
+            memcpy(data.uint_data, &(pack->can[can_id].Data[4]),4);
+            gyro_.z() = data.f_data;
         }
     }
 }

@@ -26,10 +26,14 @@ namespace orthrus_real::calibrate
         }
     }
 
-    void RotatingCoordinates(Eigen::Quaterniond *input, double angle, Eigen::Vector3d axis)
+    Eigen::Quaterniond RotatingCoordinates(Eigen::Quaterniond input, double angle, Eigen::Vector3d axis,double install_angle, Eigen::Vector3d install_axis)
     {
         Eigen::AngleAxisd rotation(angle, axis); // 绕y轴旋转90度
         Eigen::Quaterniond q(rotation);
-        *input *= q;
+
+        Eigen::AngleAxisd install_rotation(install_angle,install_axis);
+        Eigen::Quaterniond install_q(install_rotation);
+
+        return q * input * install_q;
     }
 }

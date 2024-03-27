@@ -50,6 +50,10 @@ namespace orthrus_real
     //Ecat code
     void SafeStop();
     void AnalyzeAll();
+    void UnifiedSensorData();
+
+    //imu set
+    void ImuIfUseMag(bool flag);
 
     EcatBase Ethercat = EcatBase(1);
 

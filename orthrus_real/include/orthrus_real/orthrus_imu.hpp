@@ -2,6 +2,9 @@
 
 #include <inttypes.h>
 
+#include <Eigen/Dense>  
+#include <Eigen/Geometry>  
+
 #include "orthrus_real/ethercat/ecat_typedef.hpp"
 
 #define IMU1 0
@@ -18,7 +21,13 @@ namespace orthrus_real
         void init(uint8_t can_id, uint8_t device_id);
         void analyze(Ecat_Inputs_Pack *pack);
 
-        float Gyro[4]; //角度
+        double yaw;
+        double pitch;
+        double roll;
+
+        Eigen::Quaterniond gyro_;
+
+        Eigen::Quaterniond unified_gyro_;
     private:
         union
         {
