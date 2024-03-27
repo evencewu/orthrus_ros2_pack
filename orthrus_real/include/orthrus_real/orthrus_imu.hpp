@@ -2,7 +2,7 @@
 
 #include <inttypes.h>
 
-#include "orthrus_real/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/ecat_typedef.hpp"
 
 #define IMU1 0
 #define IMU2 3

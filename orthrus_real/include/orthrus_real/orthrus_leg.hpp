@@ -2,7 +2,7 @@
 
 #include <inttypes.h>
 
-#include "orthrus_real/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/ecat_typedef.hpp"
 #include "orthrus_real/orthrus_imu.hpp"
 #include "orthrus_real/orthrus_angle.hpp"
 #include "orthrus_real/orthrus_motor.hpp"

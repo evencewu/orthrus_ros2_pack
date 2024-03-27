@@ -6,8 +6,6 @@
 #include <rclcpp/qos.hpp>
 #include <rclcpp/utilities.hpp>
 
-
-
 // C++ system
 #include <cstdint>
 #include <functional>
@@ -19,8 +17,10 @@
 #include <Eigen/Dense>  
 #include <Eigen/Geometry>  
 
-#include "orthrus_real/ecat_base.hpp"
-#include "orthrus_real/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/ecat_base.hpp"
+#include "orthrus_real/ethercat/ecat_typedef.hpp"
+#include "orthrus_real/calibrate/calibrate_imu.hpp"
+#include "orthrus_real/calibrate/calibrate_leg.hpp"
 #include "orthrus_real/orthrus_leg.hpp"
 #include "orthrus_real/orthrus_imu.hpp"
 
@@ -46,7 +46,6 @@ namespace orthrus_real
 
     //Calibrating leg position 
     void LegPositionCalibrate();
-    void ImuCalibrate(Ecat_Outputs_Pack *pack,int can_port);
 
     //Ecat code
     void SafeStop();

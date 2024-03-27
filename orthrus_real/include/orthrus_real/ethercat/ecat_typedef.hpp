@@ -54,5 +54,4 @@ namespace orthrus_real
         //struct A1MotorPack Motor;
 
     } __attribute__((packed)) Ecat_Inputs_Pack;
-
 }

@@ -1,4 +1,4 @@
-#include "orthrus_real/ecat_base.hpp"
+#include "orthrus_real/ethercat/ecat_base.hpp"
 
 #include <unistd.h>
 

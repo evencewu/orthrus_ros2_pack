@@ -2,7 +2,7 @@
 
 #include <inttypes.h>
 
-#include "orthrus_real/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/ecat_typedef.hpp"
 
 namespace orthrus_real
 {

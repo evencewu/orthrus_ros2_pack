@@ -1,5 +1,5 @@
-#include "orthrus_real/ecat_base.hpp"
-#include "orthrus_real/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/ecat_base.hpp"
+#include "orthrus_real/ethercat/ecat_typedef.hpp"
 #include "orthrus_real/orthrus_leg.hpp"
 
 #include <array>

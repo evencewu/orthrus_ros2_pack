@@ -22,31 +22,22 @@ ament_auto_find_build_dependencies()
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 
+file(GLOB_RECURSE SOURCES "src/orthrus_real/*.cpp")
+
 ament_auto_add_executable(orthrus_real
   src/orthrus_real.cpp
-  src/orthrus_real/ecat_base.cpp
-  src/orthrus_real/orthrus_motor.cpp
-  src/orthrus_real/orthrus_imu.cpp
-  src/orthrus_real/orthrus_angle.cpp
-  src/orthrus_real/orthrus_leg.cpp
+  ${SOURCES}
+
 )
 
 ament_auto_add_executable(test1
   src/test/test1.cpp
-  src/orthrus_real/ecat_base.cpp
-  src/orthrus_real/orthrus_motor.cpp
-  src/orthrus_real/orthrus_imu.cpp
-  src/orthrus_real/orthrus_angle.cpp
-  src/orthrus_real/orthrus_leg.cpp
+  ${SOURCES}
 )
 
 ament_auto_add_executable(orthrus_calibrate
   src/orthrus_calibrate.cpp
-  src/orthrus_real/ecat_base.cpp
-  src/orthrus_real/orthrus_motor.cpp
-  src/orthrus_real/orthrus_imu.cpp
-  src/orthrus_real/orthrus_angle.cpp
-  src/orthrus_real/orthrus_leg.cpp
+  ${SOURCES}
 )
 
 

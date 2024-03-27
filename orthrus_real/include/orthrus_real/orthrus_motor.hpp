@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <string.h> 
 
-#include "orthrus_real/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/ecat_typedef.hpp"
 
 #define RB 0
 #define RF 1
@@ -33,6 +33,7 @@ namespace orthrus_real
         float Pos_ = 0;
         float W_ = 0;
         float Acc_ = 0;
+
         float RealPosition_ = 0;
 
     private:
