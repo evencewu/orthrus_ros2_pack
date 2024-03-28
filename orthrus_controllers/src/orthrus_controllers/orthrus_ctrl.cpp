@@ -4,7 +4,7 @@ namespace orthrus_ctrl
 {
     orthrusCtrlNode::orthrusCtrlNode() : Node("orthrus_ctrl")
     {
-        init();
+        Init();
 
         orthrus_joint_state_sub_ = this->create_subscription<orthrus_interfaces::msg::OrthrusJointState>("/orthrus_interface/joint_state", 10, std::bind(&orthrusCtrlNode::OrthrusJointStateSubCallback, this, std::placeholders::_1));
 
@@ -20,7 +20,7 @@ namespace orthrus_ctrl
             std::chrono::milliseconds(1), std::bind(&orthrusCtrlNode::main_loop, this));
     }
 
-    void orthrusCtrlNode::init()
+    void orthrusCtrlNode::Init()
     {
         InitRobotParam();
     }

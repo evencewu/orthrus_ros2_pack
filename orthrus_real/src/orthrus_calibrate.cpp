@@ -23,9 +23,9 @@ void ImuCalibrateStart(orthrus_real::Ecat_Outputs_Pack *pack, int can_port)
 {
     pack->can[can_port].StdId = 0x11;
     pack->can[can_port].DLC = 0x04;
-    pack->can[can_port].Data[0] = 1;//磁力计校准
+    pack->can[can_port].Data[0] = 0;//磁力计校准
     pack->can[can_port].Data[1] = 0;//pos零点
-    pack->can[can_port].Data[2] = 0;//静止校准
+    pack->can[can_port].Data[2] = 1;//静止校准
     pack->can[can_port].Data[3] = 0;//enable磁力计
 }
 

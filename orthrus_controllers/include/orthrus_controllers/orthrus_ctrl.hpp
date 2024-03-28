@@ -31,7 +31,7 @@ namespace orthrus_ctrl
         orthrusCtrlNode();
         //~orthrusCtrlNode() override;
     private:
-        void init();
+        void Init();
 
         void main_loop();
 
