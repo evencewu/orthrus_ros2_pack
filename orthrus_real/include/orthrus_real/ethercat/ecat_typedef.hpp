@@ -51,7 +51,7 @@ namespace orthrus_real
 
         struct can_pack can[2];
 
-        //struct A1MotorPack Motor;
+        struct A1MotorPack Motor;
 
     } __attribute__((packed)) Ecat_Inputs_Pack;
 }
