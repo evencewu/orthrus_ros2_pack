@@ -35,8 +35,13 @@ ament_auto_add_executable(test1
   ${SOURCES}
 )
 
-ament_auto_add_executable(orthrus_calibrate
+ament_auto_add_executable(orthrus_calibrate_gyro
   src/orthrus_calibrate.cpp
+  ${SOURCES}
+)
+
+ament_auto_add_executable(orthrus_calibrate_mag
+  src/orthrus_calibrate_mag.cpp
   ${SOURCES}
 )
 

@@ -26,7 +26,7 @@ namespace orthrus_real
 
     private:
         int slave_num = 1;
-        int pdo_output_byte = 30;
+        int pdo_output_byte = 52;
         int pdo_input_byte = 58;//34
 
         char IOmap[4096];

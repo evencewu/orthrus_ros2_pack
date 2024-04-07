@@ -24,6 +24,6 @@ namespace orthrus_real
 
         Imu imu;
         Angle angle;
-        MotorCan motor[3];
+        Motor motor[3];
     };
 }

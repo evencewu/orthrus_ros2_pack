@@ -16,7 +16,7 @@ namespace orthrus_real
 
   OrthrusInterfacesNode::~OrthrusInterfacesNode()
   {
-    SafeStop();
+    //SafeStop();
     Ethercat.EcatStop();
   }
 
@@ -34,7 +34,7 @@ namespace orthrus_real
     body_imu.init(CAN2, IMU5);
 
     ImuIfUseMag(TRUE);
-    //ImuIfUseMag(FALSE);
+    // ImuIfUseMag(FALSE);
   }
 
   void OrthrusInterfacesNode::MainLoop()
@@ -43,7 +43,7 @@ namespace orthrus_real
     SetLED();
 
     // Leg
-    // SetLeg();
+    SetLeg();
     Ethercat.EcatSyncMsg();
     AnalyzeAll();
     UnifiedSensorData();
@@ -55,68 +55,15 @@ namespace orthrus_real
     // RCLCPP_INFO(this->get_logger(), "=================");
 
     RCLCPP_INFO(this->get_logger(), "=================");
-    // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[0].imu.Gyro[0], leg[0].imu.Gyro[1], leg[0].imu.Gyro[2]);
-    // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n", leg[1].imu.Gyro[0], leg[1].imu.Gyro[1], leg[1].imu.Gyro[2]);
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
+    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[3].imu.gyro_.z());
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
     RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
 
     RCLCPP_INFO(this->get_logger(), "=================");
 
-    if (imu_send_flag_ >= 10)
-    {
-      orthrus_imu_msg_.header.stamp = this->now();
-      orthrus_imu_msg_.orientation.w = body_imu.unified_gyro_.w();
-      orthrus_imu_msg_.orientation.x = body_imu.unified_gyro_.x();
-      orthrus_imu_msg_.orientation.y = body_imu.unified_gyro_.y();
-      orthrus_imu_msg_.orientation.z = body_imu.unified_gyro_.z();
-      orthrus_imu_pub_->publish(orthrus_imu_msg_);
-
-      geometry_msgs::msg::TransformStamped tf_stamped;
-      // orthrus_viewer_horizontal_pub_
-
-      orthrus_calibrating_imu_msg_.transforms.clear();
-
-      tf_stamped.header.stamp = this->now();
-
-      tf_stamped.header.frame_id = "horizontal";
-      tf_stamped.child_frame_id = "imu_3";
-
-      tf_stamped.transform.translation.x = 0.0;
-      tf_stamped.transform.translation.y = 0.0;
-      tf_stamped.transform.translation.z = 0.0;
-
-      tf_stamped.transform.rotation.w = leg[2].imu.unified_gyro_.w();
-      tf_stamped.transform.rotation.x = leg[2].imu.unified_gyro_.x();
-      tf_stamped.transform.rotation.y = leg[2].imu.unified_gyro_.y();
-      tf_stamped.transform.rotation.z = leg[2].imu.unified_gyro_.z();
-
-      orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
-
-      tf_stamped.header.stamp = this->now();
-
-      tf_stamped.header.frame_id = "horizontal";
-      tf_stamped.child_frame_id = "imu_4";
-
-      tf_stamped.transform.translation.x = 0.0;
-      tf_stamped.transform.translation.y = 0.0;
-      tf_stamped.transform.translation.z = 0.0;
-
-      tf_stamped.transform.rotation.w = leg[3].imu.unified_gyro_.w();
-      tf_stamped.transform.rotation.x = leg[3].imu.unified_gyro_.x();
-      tf_stamped.transform.rotation.y = leg[3].imu.unified_gyro_.y();
-      tf_stamped.transform.rotation.z = leg[3].imu.unified_gyro_.z();
-
-      orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
-
-      orthrus_calibrating_imu_pub_->publish(orthrus_calibrating_imu_msg_);
-
-      imu_send_flag_ = 0;
-    }
-    else
-    {
-      imu_send_flag_++;
-    }
+    ImuTfPub();
 
     // RCLCPP_INFO(this->get_logger(), "=================");
 
@@ -159,14 +106,16 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::SetLeg()
   {
-    if (motorcan_send_flag_++ < 9)
-    {
-      leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 0, 0, 0, 0, 10);
-    }
-    else
-    {
-      motorcan_send_flag_ = -1;
-    }
+    leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
+    //RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_tx[0].motor[0]->mode);
+    // if (motorcan_send_flag_++ < 9)
+    //{
+    //   leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 0, 0, 0, 0, 10);
+    // }
+    // else
+    //{
+    //   motorcan_send_flag_ = -1;
+    // }
   }
 
   void OrthrusInterfacesNode::AnalyzeAll()
@@ -180,9 +129,11 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::UnifiedSensorData()
   {
-    body_imu.unified_gyro_ = calibrate::RotatingCoordinates(body_imu.gyro_, M_PI * 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0));
-    leg[2].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[2].imu.gyro_, -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2 / 3, Eigen::Vector3d(1.0, 1.0, 1.0));
-    leg[3].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[3].imu.gyro_, -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2 / 3, Eigen::Vector3d(1.0, 1.0, 1.0));
+    body_imu.unified_gyro_ = calibrate::RotatingCoordinates(body_imu.gyro_, M_PI * 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI, Eigen::Vector3d(1.0, 0.0, 1.0));
+    leg[0].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[0].imu.gyro_, -M_PI/2, Eigen::Vector3d(1.0, 0.0, 0.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
+    leg[1].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[1].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
+    leg[2].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[2].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
+    leg[3].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[3].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
   }
 
   void OrthrusInterfacesNode::SafeStop()
@@ -190,6 +141,108 @@ namespace orthrus_real
     // TODO
 
     // safe stop code
+  }
+
+  void OrthrusInterfacesNode::ImuTfPub()
+  {
+    if (imu_send_flag_ >= 10)
+    {
+      orthrus_imu_msg_.header.stamp = this->now();
+      orthrus_imu_msg_.orientation.w = body_imu.unified_gyro_.w();
+      orthrus_imu_msg_.orientation.x = body_imu.unified_gyro_.x();
+      orthrus_imu_msg_.orientation.y = body_imu.unified_gyro_.y();
+      orthrus_imu_msg_.orientation.z = body_imu.unified_gyro_.z();
+      orthrus_imu_pub_->publish(orthrus_imu_msg_);
+
+      geometry_msgs::msg::TransformStamped tf_stamped;
+      // orthrus_viewer_horizontal_pub_
+
+      orthrus_calibrating_imu_msg_.transforms.clear();
+
+      tf_stamped.header.stamp = this->now();
+
+      tf_stamped.header.frame_id = "horizontal";
+      tf_stamped.child_frame_id = "imu_1";
+
+      tf_stamped.transform.translation.x = 0.0;
+      tf_stamped.transform.translation.y = 0.0;
+      tf_stamped.transform.translation.z = 0.0;
+
+      tf_stamped.transform.rotation.w = leg[0].imu.unified_gyro_.w();
+      tf_stamped.transform.rotation.x = leg[0].imu.unified_gyro_.x();
+      tf_stamped.transform.rotation.y = leg[0].imu.unified_gyro_.y();
+      tf_stamped.transform.rotation.z = leg[0].imu.unified_gyro_.z();
+
+      if (leg[0].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
+      {
+        orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
+      }
+
+      tf_stamped.header.stamp = this->now();
+
+      tf_stamped.header.frame_id = "horizontal";
+      tf_stamped.child_frame_id = "imu_2";
+
+      tf_stamped.transform.translation.x = 0.0;
+      tf_stamped.transform.translation.y = 0.0;
+      tf_stamped.transform.translation.z = 0.0;
+
+      tf_stamped.transform.rotation.w = leg[1].imu.unified_gyro_.w();
+      tf_stamped.transform.rotation.x = leg[1].imu.unified_gyro_.x();
+      tf_stamped.transform.rotation.y = leg[1].imu.unified_gyro_.y();
+      tf_stamped.transform.rotation.z = leg[1].imu.unified_gyro_.z();
+
+      if (leg[1].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
+      {
+        orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
+      }
+
+      tf_stamped.header.stamp = this->now();
+
+      tf_stamped.header.frame_id = "horizontal";
+      tf_stamped.child_frame_id = "imu_3";
+
+      tf_stamped.transform.translation.x = 0.0;
+      tf_stamped.transform.translation.y = 0.0;
+      tf_stamped.transform.translation.z = 0.0;
+
+      tf_stamped.transform.rotation.w = leg[2].imu.unified_gyro_.w();
+      tf_stamped.transform.rotation.x = leg[2].imu.unified_gyro_.x();
+      tf_stamped.transform.rotation.y = leg[2].imu.unified_gyro_.y();
+      tf_stamped.transform.rotation.z = leg[2].imu.unified_gyro_.z();
+
+      if (leg[2].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
+      {
+        orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
+      }
+
+      tf_stamped.header.stamp = this->now();
+
+      tf_stamped.header.frame_id = "horizontal";
+      tf_stamped.child_frame_id = "imu_4";
+
+      tf_stamped.transform.translation.x = 0.0;
+      tf_stamped.transform.translation.y = 0.0;
+      tf_stamped.transform.translation.z = 0.0;
+
+      tf_stamped.transform.rotation.w = leg[3].imu.unified_gyro_.w();
+      tf_stamped.transform.rotation.x = leg[3].imu.unified_gyro_.x();
+      tf_stamped.transform.rotation.y = leg[3].imu.unified_gyro_.y();
+      tf_stamped.transform.rotation.z = leg[3].imu.unified_gyro_.z();
+
+      if (leg[3].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
+      {
+        orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
+      }
+
+      orthrus_calibrating_imu_pub_->publish(orthrus_calibrating_imu_msg_);
+
+      imu_send_flag_ = 0;
+    }
+    else
+    {
+      imu_send_flag_++;
+    }
   }
 
   void OrthrusInterfacesNode::ImuIfUseMag(bool flag)

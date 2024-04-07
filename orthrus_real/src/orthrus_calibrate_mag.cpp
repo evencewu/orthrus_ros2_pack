@@ -40,7 +40,7 @@ void ImuCalibrateStop(orthrus_real::Ecat_Outputs_Pack *pack, int can_port)
     pack->can[can_port].Data[3] = 0;
 }
 
-int calibrate_flag = 2;
+int calibrate_flag = 0;
 
 int main()
 {

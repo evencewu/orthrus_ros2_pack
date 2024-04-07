@@ -23,24 +23,36 @@ namespace orthrus_real
         uint8_t Data[8];
     } __attribute__((packed)) can_pack;
 
-    typedef struct A1MotorPack
+    typedef struct A1MotorRxPack
     {
-        uint8_t motor_id;
-        uint8_t motor_mode;
-        uint16_t motor_temp;
-        uint16_t motor_error;
-        uint32_t motor_T;
-        uint32_t motor_W;
-        uint32_t motor_Pos;
-        uint32_t motor_LW;
-        uint16_t motor_Acc;
-    } __attribute__((packed)) A1MotorPack;
+        uint8_t id;
+        uint8_t mode;
+        uint16_t temp;
+        uint16_t error;
+        uint32_t T;
+        uint32_t W;
+        uint32_t Pos;
+        uint32_t LW;
+        uint16_t Acc;
+    } __attribute__((packed)) A1MotorRxPack;
+
+    typedef struct A1MotorTxPack
+    {
+        uint16_t mode;
+        uint32_t pos;
+        uint32_t w;
+        uint32_t kp;
+        uint32_t kd;
+        uint32_t t;
+    } __attribute__((packed)) A1MotorTxPack;
 
     typedef struct Ecat_Outputs_Pack
     {
         uint8_t LED;
         struct can_pack can[2];
         uint8_t null;
+
+        struct A1MotorTxPack motor[4][3];
     } __attribute__((packed)) Ecat_Outputs_Pack;
 
     /// @brief ecat pdo recive data (slv to master)
@@ -51,7 +63,7 @@ namespace orthrus_real
 
         struct can_pack can[2];
 
-        struct A1MotorPack Motor;
+        struct A1MotorRxPack motor[4][3];
 
     } __attribute__((packed)) Ecat_Inputs_Pack;
 }

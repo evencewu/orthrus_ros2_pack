@@ -33,7 +33,7 @@ namespace orthrus_real
 
                 printf("Slaves mapped, state to SAFE_OP.\n");
                 /* wait for all slaves to reach SAFE_OP state */
-                ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE * 4);
+                ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE * 6);
 
                 ec_configdc();
 
@@ -121,7 +121,7 @@ namespace orthrus_real
     /// @brief Stop the ecat connection and perform a secure stop before that
     void EcatBase::EcatStop()
     {
-        printf("\nRequest init state for all slaves\n");
+        //printf("\nRequest init state for all slaves\n");
         ec_slave[0].state = EC_STATE_INIT;
         /* request INIT state for all slaves */
         ec_writestate(0);

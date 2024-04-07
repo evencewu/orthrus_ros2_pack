@@ -14,8 +14,8 @@
 #include <vector>
 #include <cmath>
 
-#include <Eigen/Dense>  
-#include <Eigen/Geometry>  
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
 
 #include "orthrus_real/ethercat/ecat_base.hpp"
 #include "orthrus_real/ethercat/ecat_typedef.hpp"
@@ -40,19 +40,19 @@ namespace orthrus_real
     void Init();
     void MainLoop();
     void PubMsgLoop();
-    
+
     void SetLED();
     void SetLeg();
 
-    //Calibrating leg position 
+    // Calibrating leg position
     void LegPositionCalibrate();
 
-    //Ecat code
+    // Ecat code
     void SafeStop();
     void AnalyzeAll();
     void UnifiedSensorData();
 
-    //imu set
+    // imu set
     void ImuIfUseMag(bool flag);
 
     EcatBase Ethercat = EcatBase(1);
@@ -69,13 +69,14 @@ namespace orthrus_real
     int motor_send_flag_ = 0;
     int motorcan_send_flag_ = 0;
 
-    //ros2
+    // ros2
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr orthrus_imu_pub_;
     sensor_msgs::msg::Imu orthrus_imu_msg_;
-    int imu_send_flag_ = 0;
-
-    //Calibrating imu pub
+    
+    // Calibrating imu pub
     rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr orthrus_calibrating_imu_pub_;
     tf2_msgs::msg::TFMessage orthrus_calibrating_imu_msg_;
+    int imu_send_flag_ = 0;
+    void ImuTfPub();
   };
 }
