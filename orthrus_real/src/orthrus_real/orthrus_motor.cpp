@@ -10,21 +10,25 @@ namespace orthrus_real
 
     void Motor::analyze(Ecat_Inputs_Pack *pack)
     {
-        Pos_ = pack->motor[leg_id_][motor_id_].Pos;
-        T_ = pack->motor[leg_id_][motor_id_].T;
-        W_ = pack->motor[leg_id_][motor_id_].W;
-        Acc_ = pack->motor[leg_id_][motor_id_].Acc;
-        temp_ = pack->motor[leg_id_][motor_id_].temp;
-        error_ = pack->motor[leg_id_][motor_id_].error;
+        if (pack->motor.id == leg_id_ * 3 + motor_id_)
+        {
+            Pos_ = pack->motor.Pos;
+            T_ = pack->motor.T;
+            W_ = pack->motor.W;
+            Acc_ = pack->motor.Acc;
+            temp_ = pack->motor.temp;
+            error_ = pack->motor.error;
+        }
     }
 
     void Motor::SetOutput(Ecat_Outputs_Pack *pack, float k_p, float k_d, float W, float T, float Pos, int Mode)
     {
-        pack->motor[leg_id_][motor_id_].mode = Mode;
-        pack->motor[leg_id_][motor_id_].kp = k_p;
-        pack->motor[leg_id_][motor_id_].kd = k_d;
-        pack->motor[leg_id_][motor_id_].w = W;
-        pack->motor[leg_id_][motor_id_].t = T;
-        pack->motor[leg_id_][motor_id_].pos = Pos;
+        pack->motor_id = leg_id_ * 3 + motor_id_;
+        pack->motor.mode = Mode;
+        pack->motor.kp = k_p;
+        pack->motor.kd = k_d;
+        pack->motor.w = W;
+        pack->motor.t = T;
+        pack->motor.pos = Pos;
     }
 }

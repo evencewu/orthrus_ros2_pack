@@ -109,16 +109,16 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::SetLeg()
   {
-    leg[0].motor[0].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
-    leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
-    //  if (motorcan_send_flag_++ < 9)
-    //{
-    //    leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 0, 0, 0, 0, 10);
-    //  }
-    //  else
-    //{
-    //    motorcan_send_flag_ = -1;
-    //  }
+    if (motorcan_send_flag_ < 11)
+    {
+      leg[motorcan_send_flag_/3].motor[motorcan_send_flag_%3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
+      motorcan_send_flag_++;
+    }
+    else
+    {
+      leg[3].motor[2].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
+      motorcan_send_flag_ = 0;
+    }
   }
 
   void OrthrusInterfacesNode::AnalyzeAll()

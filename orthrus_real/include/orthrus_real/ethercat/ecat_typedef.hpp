@@ -25,12 +25,15 @@ namespace orthrus_real
 
     typedef struct A1MotorRxPack
     {
-        uint8_t temp;
-        uint8_t error;
+        uint8_t id;
+        uint8_t mode;
+        uint16_t temp;
+        uint16_t error;
         float T;
         float W;
         float Pos;
-        float Acc;
+        float LW;
+        uint16_t Acc;
     } __attribute__((packed)) A1MotorRxPack;
 
     typedef struct A1MotorTxPack
@@ -49,7 +52,11 @@ namespace orthrus_real
         struct can_pack can[2];
         uint8_t null;
 
-        struct A1MotorTxPack motor[4][3];
+        struct A1MotorTxPack motor;
+
+        uint16_t motor_id;
+        float null_2[5];
+
     } __attribute__((packed)) Ecat_Outputs_Pack;
 
     /// @brief ecat pdo recive data (slv to master)
@@ -60,7 +67,6 @@ namespace orthrus_real
 
         struct can_pack can[2];
 
-        struct A1MotorRxPack motor[4][3];
-
+        struct A1MotorRxPack motor;
     } __attribute__((packed)) Ecat_Inputs_Pack;
 }
