@@ -25,25 +25,22 @@ namespace orthrus_real
 
     typedef struct A1MotorRxPack
     {
-        uint8_t id;
-        uint8_t mode;
-        uint16_t temp;
-        uint16_t error;
-        uint32_t T;
-        uint32_t W;
-        uint32_t Pos;
-        uint32_t LW;
-        uint16_t Acc;
+        uint8_t temp;
+        uint8_t error;
+        float T;
+        float W;
+        float Pos;
+        float Acc;
     } __attribute__((packed)) A1MotorRxPack;
 
     typedef struct A1MotorTxPack
     {
         uint16_t mode;
-        uint32_t pos;
-        uint32_t w;
-        uint32_t kp;
-        uint32_t kd;
-        uint32_t t;
+        float pos;
+        float w;
+        float kp;
+        float kd;
+        float t;
     } __attribute__((packed)) A1MotorTxPack;
 
     typedef struct Ecat_Outputs_Pack

@@ -24,6 +24,8 @@ namespace orthrus_real
         float Pos_ = 0;
         float W_ = 0;
         float Acc_ = 0;
+        int temp_ = 0;
+        int error_ = 0;
 
         float RealPosition_ = 0;
 

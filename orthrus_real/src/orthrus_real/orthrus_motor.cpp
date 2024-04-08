@@ -1,6 +1,5 @@
 #include "orthrus_real/orthrus_motor.hpp"
 
-
 namespace orthrus_real
 {
     void Motor::init(uint8_t leg_id, uint8_t motor_id)
@@ -11,7 +10,12 @@ namespace orthrus_real
 
     void Motor::analyze(Ecat_Inputs_Pack *pack)
     {
-        // = pack->motor[leg_id_][motor_id_].Acc; 
+        Pos_ = pack->motor[leg_id_][motor_id_].Pos;
+        T_ = pack->motor[leg_id_][motor_id_].T;
+        W_ = pack->motor[leg_id_][motor_id_].W;
+        Acc_ = pack->motor[leg_id_][motor_id_].Acc;
+        temp_ = pack->motor[leg_id_][motor_id_].temp;
+        error_ = pack->motor[leg_id_][motor_id_].error;
     }
 
     void Motor::SetOutput(Ecat_Outputs_Pack *pack, float k_p, float k_d, float W, float T, float Pos, int Mode)

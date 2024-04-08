@@ -16,7 +16,7 @@ namespace orthrus_real
 
   OrthrusInterfacesNode::~OrthrusInterfacesNode()
   {
-    //SafeStop();
+    SafeStop();
     Ethercat.EcatStop();
   }
 
@@ -46,6 +46,9 @@ namespace orthrus_real
     SetLeg();
     Ethercat.EcatSyncMsg();
     AnalyzeAll();
+    RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[0].Pos_);
+    RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[1].Pos_);
+    
     UnifiedSensorData();
 
     // RCLCPP_INFO(this->get_logger(), "=================");
@@ -106,16 +109,16 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::SetLeg()
   {
+    leg[0].motor[0].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
     leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
-    //RCLCPP_INFO(this->get_logger(), "%d", Ethercat.packet_tx[0].motor[0]->mode);
-    // if (motorcan_send_flag_++ < 9)
+    //  if (motorcan_send_flag_++ < 9)
     //{
-    //   leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 0, 0, 0, 0, 10);
-    // }
-    // else
+    //    leg[motorcan_send_flag_ / 9].motor[(motorcan_send_flag_ / 3) % 3].SetOutput(&Ethercat.packet_tx[0], motorcan_send_flag_ % 3, 0, 0, 0, 0, 0, 10);
+    //  }
+    //  else
     //{
-    //   motorcan_send_flag_ = -1;
-    // }
+    //    motorcan_send_flag_ = -1;
+    //  }
   }
 
   void OrthrusInterfacesNode::AnalyzeAll()
@@ -130,7 +133,7 @@ namespace orthrus_real
   void OrthrusInterfacesNode::UnifiedSensorData()
   {
     body_imu.unified_gyro_ = calibrate::RotatingCoordinates(body_imu.gyro_, M_PI * 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI, Eigen::Vector3d(1.0, 0.0, 1.0));
-    leg[0].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[0].imu.gyro_, -M_PI/2, Eigen::Vector3d(1.0, 0.0, 0.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
+    leg[0].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[0].imu.gyro_, -M_PI / 2, Eigen::Vector3d(1.0, 0.0, 0.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
     leg[1].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[1].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
     leg[2].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[2].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
     leg[3].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[3].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
@@ -139,7 +142,13 @@ namespace orthrus_real
   void OrthrusInterfacesNode::SafeStop()
   {
     // TODO
-
+    for (int i = 0; i <= 100; i++)
+    {
+      leg[0].motor[0].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
+      leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
+      Ethercat.EcatSyncMsg();
+    }
+    RCLCPP_INFO(this->get_logger(), "motor stop!");
     // safe stop code
   }
 
