@@ -39,39 +39,37 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::MainLoop()
   {
-    // LED
     SetLED();
-
-    // Leg
     SetLeg();
+
     Ethercat.EcatSyncMsg();
     AnalyzeAll();
-    RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[0].Pos_);
-    RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[1].Pos_);
 
     UnifiedSensorData();
-
-    // RCLCPP_INFO(this->get_logger(), "=================");
-    // RCLCPP_INFO(this->get_logger(), "0x%f", leg[0].motor[0].Pos_);
-    // RCLCPP_INFO(this->get_logger(), "0x%f", leg[0].motor[1].Pos_);
-    // RCLCPP_INFO(this->get_logger(), "0x%f", leg[0].motor[2].Pos_);
-    // RCLCPP_INFO(this->get_logger(), "=================");
-
-    RCLCPP_INFO(this->get_logger(), "=================");
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[3].imu.gyro_.z());
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
-    RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
-
-    RCLCPP_INFO(this->get_logger(), "=================");
-
     ImuTfPub();
+
+    Log(LOG_FLAG);
+  }
+
+  void OrthrusInterfacesNode::Log(int flag)
+  {
+    if (flag == true)
+    {
+      RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[0].Pos_);
+      RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[1].Pos_);
+      RCLCPP_INFO(this->get_logger(), "=================");
+      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
+      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
+      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[3].imu.gyro_.z());
+      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
+      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
+      RCLCPP_INFO(this->get_logger(), "=================");
+    }
   }
 
   void OrthrusInterfacesNode::SetLED()
   {
-    if (led_flag_++ >= 10)
+    if (led_flag_++ <= 10)
     {
       Ethercat.packet_tx[0].LED = 0x01;
       led_flag_ = 0;
