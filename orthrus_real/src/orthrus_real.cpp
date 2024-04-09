@@ -48,7 +48,7 @@ namespace orthrus_real
     AnalyzeAll();
     RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[0].Pos_);
     RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[1].Pos_);
-    
+
     UnifiedSensorData();
 
     // RCLCPP_INFO(this->get_logger(), "=================");
@@ -67,31 +67,6 @@ namespace orthrus_real
     RCLCPP_INFO(this->get_logger(), "=================");
 
     ImuTfPub();
-
-    // RCLCPP_INFO(this->get_logger(), "=================");
-
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[0].StdId);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[0].Data[0]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[0].Data[1]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[0].Data[2]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[0].Data[3]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[0].Data[4]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[0].Data[5]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[0].Data[6]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_tx[0].can[0].Data[7]);
-
-    // RCLCPP_INFO(this->get_logger(), "=================");
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].StdId);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].DLC);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[0]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[1]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[2]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[3]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[4]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[5]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[6]);
-    // RCLCPP_INFO(this->get_logger(), "0x%x", Ethercat.packet_rx[0].can[1].Data[7]);
-    // RCLCPP_INFO(this->get_logger(), "=================");
   }
 
   void OrthrusInterfacesNode::SetLED()
@@ -111,7 +86,7 @@ namespace orthrus_real
   {
     if (motorcan_send_flag_ < 11)
     {
-      leg[motorcan_send_flag_/3].motor[motorcan_send_flag_%3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
+      leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
       motorcan_send_flag_++;
     }
     else
@@ -130,6 +105,7 @@ namespace orthrus_real
     body_imu.analyze(&Ethercat.packet_rx[0]);
   }
 
+  /// @brief 统一imu姿态
   void OrthrusInterfacesNode::UnifiedSensorData()
   {
     body_imu.unified_gyro_ = calibrate::RotatingCoordinates(body_imu.gyro_, M_PI * 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI, Eigen::Vector3d(1.0, 0.0, 1.0));
@@ -139,19 +115,22 @@ namespace orthrus_real
     leg[3].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[3].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
   }
 
+  /// @brief 用于程序退出前电机数据的处理
   void OrthrusInterfacesNode::SafeStop()
   {
-    // TODO
-    for (int i = 0; i <= 100; i++)
+    for (int i = 0; i <= 20; i++)
     {
-      leg[0].motor[0].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
-      leg[0].motor[1].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
-      Ethercat.EcatSyncMsg();
+      for (int j = 0; j < 12; j++)
+      {
+        leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
+        Ethercat.EcatSyncMsg();
+      }
     }
+
     RCLCPP_INFO(this->get_logger(), "motor stop!");
-    // safe stop code
   }
 
+  /// @brief 发布imu的tf数据
   void OrthrusInterfacesNode::ImuTfPub()
   {
     if (imu_send_flag_ >= 10)
@@ -254,39 +233,27 @@ namespace orthrus_real
     }
   }
 
+  /// @brief 是否启用磁力计
+  /// @param flag 启用标志位
   void OrthrusInterfacesNode::ImuIfUseMag(bool flag)
   {
     if (flag)
     {
-      Ethercat.packet_tx[0].can[0].StdId = 0x11;
-      Ethercat.packet_tx[0].can[0].DLC = 0x04;
-      Ethercat.packet_tx[0].can[0].Data[0] = 0;
-      Ethercat.packet_tx[0].can[0].Data[1] = 0;
-      Ethercat.packet_tx[0].can[0].Data[2] = 0;
-      Ethercat.packet_tx[0].can[0].Data[3] = 1;
-
-      Ethercat.packet_tx[0].can[1].StdId = 0x11;
-      Ethercat.packet_tx[0].can[1].DLC = 0x04;
-      Ethercat.packet_tx[0].can[1].Data[0] = 0;
-      Ethercat.packet_tx[0].can[1].Data[1] = 0;
-      Ethercat.packet_tx[0].can[1].Data[2] = 0;
-      Ethercat.packet_tx[0].can[1].Data[3] = 1;
+      Ethercat.packet_tx[0].can[CAN2].StdId = 0x11;
+      Ethercat.packet_tx[0].can[CAN2].DLC = 0x04;
+      Ethercat.packet_tx[0].can[CAN2].Data[0] = 0;
+      Ethercat.packet_tx[0].can[CAN2].Data[1] = 0;
+      Ethercat.packet_tx[0].can[CAN2].Data[2] = 0;
+      Ethercat.packet_tx[0].can[CAN2].Data[3] = 1;
     }
     else
     {
-      Ethercat.packet_tx[0].can[0].StdId = 0x11;
-      Ethercat.packet_tx[0].can[0].DLC = 0x04;
-      Ethercat.packet_tx[0].can[0].Data[0] = 0;
-      Ethercat.packet_tx[0].can[0].Data[1] = 0;
-      Ethercat.packet_tx[0].can[0].Data[2] = 0;
-      Ethercat.packet_tx[0].can[0].Data[3] = 0;
-
-      Ethercat.packet_tx[0].can[1].StdId = 0x11;
-      Ethercat.packet_tx[0].can[1].DLC = 0x04;
-      Ethercat.packet_tx[0].can[1].Data[0] = 0;
-      Ethercat.packet_tx[0].can[1].Data[1] = 0;
-      Ethercat.packet_tx[0].can[1].Data[2] = 0;
-      Ethercat.packet_tx[0].can[1].Data[3] = 0;
+      Ethercat.packet_tx[0].can[CAN2].StdId = 0x11;
+      Ethercat.packet_tx[0].can[CAN2].DLC = 0x04;
+      Ethercat.packet_tx[0].can[CAN2].Data[0] = 0;
+      Ethercat.packet_tx[0].can[CAN2].Data[1] = 0;
+      Ethercat.packet_tx[0].can[CAN2].Data[2] = 0;
+      Ethercat.packet_tx[0].can[CAN2].Data[3] = 0;
     }
   }
 }
