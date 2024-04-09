@@ -22,9 +22,14 @@ find_package(pinocchio REQUIRED)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(orthrus_controllers
-  src/orthrus_controllers/orthrus_ctrl.cpp
-  src/orthrus_controllers/orthrus_wbc.cpp
+  src/orthrus_ctrl.cpp
+  src/orthrus_wbc.cpp
 )
+
+ament_auto_add_executable(orthrus_cmd
+  src/orthrus_cmd.cpp
+)
+
 
 target_link_libraries(orthrus_controllers Eigen3::Eigen)
 
