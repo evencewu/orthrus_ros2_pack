@@ -30,12 +30,8 @@ ament_auto_add_executable(orthrus_controllers
 ament_auto_add_executable(orthrus_ctrl
   src/OrthrusControl.cpp
   src/OrthrusNmpc.cpp
+  src/visualization/OrthrusVisualizer.cpp
 )
-
-ament_auto_add_executable(orthrus_cmd
-  src/orthrus_cmd.cpp
-)
-
 
 target_link_libraries(orthrus_controllers Eigen3::Eigen)
 target_link_libraries(orthrus_ctrl Eigen3::Eigen Boost::log) 
