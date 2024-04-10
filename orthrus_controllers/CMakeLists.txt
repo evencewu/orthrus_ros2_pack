@@ -19,11 +19,17 @@ endif ()
 find_package(ament_cmake_auto REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(pinocchio REQUIRED)
+find_package(Boost REQUIRED COMPONENTS log)
 ament_auto_find_build_dependencies()
 
 ament_auto_add_executable(orthrus_controllers
   src/orthrus_ctrl.cpp
   src/orthrus_wbc.cpp
+)
+
+ament_auto_add_executable(orthrus_ctrl
+  src/OrthrusControl.cpp
+  src/OrthrusNmpc.cpp
 )
 
 ament_auto_add_executable(orthrus_cmd
@@ -32,6 +38,7 @@ ament_auto_add_executable(orthrus_cmd
 
 
 target_link_libraries(orthrus_controllers Eigen3::Eigen)
+target_link_libraries(orthrus_ctrl Eigen3::Eigen Boost::log) 
 
 #############
 ## Testing ##
