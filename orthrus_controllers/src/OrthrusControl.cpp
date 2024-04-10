@@ -3,11 +3,9 @@
 namespace orthrus_control
 {
     OrthrusControlNode::OrthrusControlNode()
-        : Node("orthrus_control"),
-          goalToTargetTrajectories_(std::move(goalToTargetTrajectories)),
-          cmdVelToTargetTrajectories_(std::move(cmdVelToTargetTrajectories))
+        : Node("orthrus_control")
     {
-        vector_t cmdGoal = vector_t::Zero(6);
+        ocs2::vector_t cmdGoal = ocs2::vector_t::Zero(6);
         //cmdGoal[0] = pose.pose.position.x;
         //cmdGoal[1] = pose.pose.position.y;
         //cmdGoal[2] = pose.pose.position.z;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <geometry_msgs/msg/transform_stamped.hpp>
-#include <geometry_msgs/msg/PoseStamped.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <tf2_msgs/msg/tf_message.hpp>
 #include <mutex>
 
@@ -15,7 +15,7 @@ namespace orthrus_control
     class OrthrusControlNode : public rclcpp::Node
     {
     public:
-        using CmdToTargetTrajectories = std::function<TargetTrajectories(const vector_t &cmd, const SystemObservation &observation)>;
+        using CmdToTargetTrajectories = std::function<ocs2::TargetTrajectories(const ocs2::vector_t &cmd, const ocs2::SystemObservation &observation)>;
 
         OrthrusControlNode();
 
