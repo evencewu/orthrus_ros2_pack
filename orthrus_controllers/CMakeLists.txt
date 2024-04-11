@@ -22,14 +22,14 @@ find_package(pinocchio REQUIRED)
 find_package(Boost REQUIRED COMPONENTS log)
 ament_auto_find_build_dependencies()
 
-ament_auto_add_executable(orthrus_controllers
+ament_auto_add_executable(orthrus_ctrl
   src/orthrus_ctrl.cpp
   src/orthrus_wbc.cpp
 )
 
-ament_auto_add_executable(orthrus_ctrl
+ament_auto_add_executable(orthrus_controllers
   src/OrthrusControl.cpp
-  src/OrthrusNmpc.cpp
+  src/nmpc/OrthrusNmpc.cpp
   src/visualization/OrthrusVisualizer.cpp
 )
 

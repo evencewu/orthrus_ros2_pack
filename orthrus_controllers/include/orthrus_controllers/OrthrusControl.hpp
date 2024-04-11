@@ -1,17 +1,28 @@
 #pragma once
 
-#include <sensor_msgs/msg/joint_state.hpp>
-#include <sensor_msgs/msg/imu.hpp>
 #include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
 #include <orthrus_interfaces/msg/orthrus_joint_state.hpp>
+#include <orthrus_controllers/visualization/OrthrusVisualizer.hpp>
+
+// ros2
+#include <sensor_msgs/msg/joint_state.hpp>
+#include <sensor_msgs/msg/imu.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <tf2_msgs/msg/tf_message.hpp>
 
-#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <mutex>
 
+// ocs2
+#include <ocs2_sqp/SqpMpc.h>
 #include <ocs2_mpc/SystemObservation.h>
+#include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
+#include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
+#include <ocs2_ros_interfaces/synchronized_module/RosReferenceManager.h>
 #include <ocs2_ros_interfaces/command/TargetTrajectoriesRosPublisher.h>
+#include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
+#include <ocs2_legged_robot/LeggedRobotInterface.h>
+
 
 namespace orthrus_control
 {
@@ -25,6 +36,20 @@ namespace orthrus_control
     private:
         void MainLoop();
 
+        // ocs2
+        rclcpp::Node::SharedPtr node_ = std::make_shared<OrthrusControlNode>();
+
+        const std::string robotName = "orthrus";
+
+        // Robot interface
+        std::string taskFile_;
+        std::string urdfFile_;
+        std::string referenceFile_;
+
+        std::shared_ptr<ocs2::legged_robot::LeggedRobotInterface> robot_interface_ptr_;
+        std::shared_ptr<ocs2::legged_robot::GaitReceiver> gait_receiver_ptr_;
+        std::shared_ptr<ocs2::RosReferenceManager> ros_reference_manager_ptr_;
+        
         struct JointParam
         {
             double position;
@@ -35,7 +60,7 @@ namespace orthrus_control
         struct OrthrusParam
         {
             JointParam joint[12];
-        }OrthrusParam_;
+        } OrthrusParam_;
 
         std::vector<std::string> joint_name_{"hip_RF_joint", "leg1_RF_joint", "leg2_RF_joint", "hip_LF_joint", "leg1_LF_joint", "leg2_LF_joint", "hip_RB_joint", "leg1_RB_joint", "leg2_RB_joint", "hip_LB_joint", "leg1_LB_joint", "leg2_LB_joint"};
 

@@ -53,23 +53,23 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <kdl_parser/kdl_parser.hpp>
 
-namespace orthrus_ctrl
+namespace orthrus_control
 {
 
   /******************************************************************************************************/
   /******************************************************************************************************/
   /******************************************************************************************************/
   OrthrusVisualizer::OrthrusVisualizer(
-      PinocchioInterface pinocchioInterface,
-      CentroidalModelInfo centroidalModelInfo,
-      const PinocchioEndEffectorKinematics &endEffectorKinematics,
-      const rclcpp::Node::SharedPtr &node, scalar_t maxUpdateFrequency)
+      ocs2::PinocchioInterface pinocchioInterface,
+      ocs2::CentroidalModelInfo centroidalModelInfo,
+      const ocs2::PinocchioEndEffectorKinematics &endEffectorKinematics,
+      const rclcpp::Node::SharedPtr &node, ocs2::scalar_t maxUpdateFrequency)
       : node_(node),
         pinocchioInterface_(std::move(pinocchioInterface)),
         centroidalModelInfo_(std::move(centroidalModelInfo)),
         endEffectorKinematicsPtr_(endEffectorKinematics.clone()),
         tfBroadcaster_(node),
-        lastTime_(std::numeric_limits<scalar_t>::lowest()),
+        lastTime_(std::numeric_limits<ocs2::scalar_t>::lowest()),
         minPublishTimeDifference_(1.0 / maxUpdateFrequency)
   {
     endEffectorKinematicsPtr_->setPinocchioInterface(pinocchioInterface_);
@@ -104,16 +104,16 @@ namespace orthrus_ctrl
   /******************************************************************************************************/
   /******************************************************************************************************/
   /******************************************************************************************************/
-  void  OrthrusVisualizer::update(const SystemObservation &observation,
-                                     const PrimalSolution &primalSolution,
-                                     const CommandData &command)
+  void  OrthrusVisualizer::update(const ocs2::SystemObservation &observation,
+                                     const ocs2::PrimalSolution &primalSolution,
+                                     const ocs2::CommandData &command)
   {
     if (observation.time - lastTime_ > minPublishTimeDifference_)
     {
       const auto &model = pinocchioInterface_.getModel();
       auto &data = pinocchioInterface_.getData();
       pinocchio::forwardKinematics(model, data,
-                                   centroidal_model::getGeneralizedCoordinates(
+                                   ocs2::centroidal_model::getGeneralizedCoordinates(
                                        observation.state, centroidalModelInfo_));
       pinocchio::updateFramePlacements(model, data);
 
@@ -131,28 +131,28 @@ namespace orthrus_ctrl
   /******************************************************************************************************/
   /******************************************************************************************************/
   void  OrthrusVisualizer::publishObservation(
-      rclcpp::Time timeStamp, const SystemObservation &observation)
+      rclcpp::Time timeStamp, const ocs2::SystemObservation &observation)
   {
     // Extract components from state
     const auto basePose =
-        centroidal_model::getBasePose(observation.state, centroidalModelInfo_);
+        ocs2::centroidal_model::getBasePose(observation.state, centroidalModelInfo_);
     const auto qJoints =
-        centroidal_model::getJointAngles(observation.state, centroidalModelInfo_);
+        ocs2::centroidal_model::getJointAngles(observation.state, centroidalModelInfo_);
 
     // Compute cartesian state and inputs
     const auto feetPositions =
         endEffectorKinematicsPtr_->getPosition(observation.state);
-    std::vector<vector3_t> feetForces(centroidalModelInfo_.numThreeDofContacts);
+    std::vector<switched_model::vector3_t> feetForces(centroidalModelInfo_.numThreeDofContacts);
     for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++)
     {
-      feetForces[i] = centroidal_model::getContactForces(observation.input, i,
+      feetForces[i] = ocs2::centroidal_model::getContactForces(observation.input, i,
                                                          centroidalModelInfo_);
     }
 
     // Publish
     publishJointTransforms(timeStamp, qJoints);
     publishBaseTransform(timeStamp, basePose);
-    publishCartesianMarkers(timeStamp, modeNumber2StanceLeg(observation.mode),
+    publishCartesianMarkers(timeStamp, ocs2::legged_robot::modeNumber2StanceLeg(observation.mode),
                             feetPositions, feetForces);
   }
 
@@ -160,7 +160,7 @@ namespace orthrus_ctrl
   /******************************************************************************************************/
   /******************************************************************************************************/
   void  OrthrusVisualizer::publishJointTransforms(
-      rclcpp::Time timeStamp, const vector_t &jointAngles) const
+      rclcpp::Time timeStamp, const ocs2::vector_t &jointAngles) const
   {
     if (jointPublisher_ != nullptr)
     {
@@ -168,6 +168,7 @@ namespace orthrus_ctrl
       joint_state.header.stamp = node_->get_clock()->now();
       joint_state.name.resize(12);
       joint_state.position.resize(12);
+      
       joint_state.name[0] = "LF_HAA";
       joint_state.name[1] = "LF_HFE";
       joint_state.name[2] = "LF_KFE";
@@ -180,6 +181,7 @@ namespace orthrus_ctrl
       joint_state.name[9] = "RH_HAA";
       joint_state.name[10] = "RH_HFE";
       joint_state.name[11] = "RH_KFE";
+
       joint_state.position[0] = jointAngles[0];
       joint_state.position[1] = jointAngles[1];
       joint_state.position[2] = jointAngles[2];
@@ -192,6 +194,7 @@ namespace orthrus_ctrl
       joint_state.position[9] = jointAngles[9];
       joint_state.position[10] = jointAngles[10];
       joint_state.position[11] = jointAngles[11];
+
       jointPublisher_->publish(joint_state);
     }
   }
@@ -200,19 +203,19 @@ namespace orthrus_ctrl
   /******************************************************************************************************/
   /******************************************************************************************************/
   void  OrthrusVisualizer::publishBaseTransform(rclcpp::Time timeStamp,
-                                                   const vector_t &basePose)
+                                                   const ocs2::vector_t &basePose)
   {
     if (jointPublisher_ != nullptr)
     {
       geometry_msgs::msg::TransformStamped baseToWorldTransform;
-      baseToWorldTransform.header = getHeaderMsg(frameId_, timeStamp);
+      baseToWorldTransform.header = ocs2::getHeaderMsg(frameId_, timeStamp);
       baseToWorldTransform.child_frame_id = "base";
 
-      const Eigen::Quaternion<scalar_t> q_world_base =
-          getQuaternionFromEulerAnglesZyx(vector3_t(basePose.tail<3>()));
-      baseToWorldTransform.transform.rotation = getOrientationMsg(q_world_base);
+      const Eigen::Quaternion<ocs2::scalar_t> q_world_base =
+          ocs2::getQuaternionFromEulerAnglesZyx(switched_model::vector3_t(basePose.tail<3>()));
+      baseToWorldTransform.transform.rotation = ocs2::getOrientationMsg(q_world_base);
       baseToWorldTransform.transform.translation =
-          getVectorMsg(basePose.head<3>());
+          ocs2::getVectorMsg(basePose.head<3>());
       tfBroadcaster_.sendTransform(baseToWorldTransform);
     }
   }
@@ -221,14 +224,14 @@ namespace orthrus_ctrl
   /******************************************************************************************************/
   /******************************************************************************************************/
   void  OrthrusVisualizer::publishTrajectory(
-      const std::vector<SystemObservation> &system_observation_array,
-      scalar_t speed)
+      const std::vector<ocs2::SystemObservation> &system_observation_array,
+      ocs2::scalar_t speed)
   {
     for (size_t k = 0; k < system_observation_array.size() - 1; k++)
     {
-      scalar_t frameDuration = speed * (system_observation_array[k + 1].time -
+      ocs2::scalar_t frameDuration = speed * (system_observation_array[k + 1].time -
                                         system_observation_array[k].time);
-      scalar_t publishDuration = timedExecutionInSeconds([&]()
+      ocs2::scalar_t publishDuration = ocs2::timedExecutionInSeconds([&]()
                                                          { publishObservation(node_->get_clock()->now(),
                                                                               system_observation_array[k]); });
       if (frameDuration > publishDuration)
@@ -244,9 +247,9 @@ namespace orthrus_ctrl
   /******************************************************************************************************/
   /******************************************************************************************************/
   void  OrthrusVisualizer::publishCartesianMarkers(
-      rclcpp::Time timeStamp, const contact_flag_t &contactFlags,
-      const std::vector<vector3_t> &feetPositions,
-      const std::vector<vector3_t> &feetForces) const
+      rclcpp::Time timeStamp, const switched_model::contact_flag_t &contactFlags,
+      const std::vector<switched_model::vector3_t> &feetPositions,
+      const std::vector<switched_model::vector3_t> &feetForces) const
   {
     // Reserve message
     const size_t numberOfCartesianMarkers = 10;
@@ -261,23 +264,23 @@ namespace orthrus_ctrl
                         footMarkerDiameter_, footAlphaWhenLifted_));
       markerArray.markers.emplace_back(
           getForceMarker(feetForces[i], feetPositions[i], contactFlags[i],
-                         Color::green, forceScale_));
+                         ocs2::Color::green, forceScale_));
     }
 
     // Center of pressure
     markerArray.markers.emplace_back(getCenterOfPressureMarker(
         feetForces.begin(), feetForces.end(), feetPositions.begin(),
-        contactFlags.begin(), Color::green, copMarkerDiameter_));
+        contactFlags.begin(), ocs2::Color::green, copMarkerDiameter_));
 
     // Support polygon
     markerArray.markers.emplace_back(getSupportPolygonMarker(
         feetPositions.begin(), feetPositions.end(), contactFlags.begin(),
-        Color::black, supportPolygonLineWidth_));
+        ocs2::Color::black, supportPolygonLineWidth_));
 
     // Give markers an id and a frame
-    assignHeader(markerArray.markers.begin(), markerArray.markers.end(),
-                 getHeaderMsg(frameId_, timeStamp));
-    assignIncreasingId(markerArray.markers.begin(), markerArray.markers.end());
+    ocs2::assignHeader(markerArray.markers.begin(), markerArray.markers.end(),
+                 ocs2::getHeaderMsg(frameId_, timeStamp));
+    ocs2::assignIncreasingId(markerArray.markers.begin(), markerArray.markers.end());
 
     // Publish cartesian markers (minus the CoM Pose)
     currentStatePublisher_->publish(markerArray);
@@ -287,7 +290,7 @@ namespace orthrus_ctrl
   /******************************************************************************************************/
   /******************************************************************************************************/
   void  OrthrusVisualizer::publishDesiredTrajectory(
-      rclcpp::Time timeStamp, const TargetTrajectories &targetTrajectories)
+      rclcpp::Time timeStamp, const ocs2::TargetTrajectories &targetTrajectories)
   {
     const auto &stateTrajectory = targetTrajectories.stateTrajectory;
     const auto &inputTrajectory = targetTrajectories.inputTrajectory;
@@ -297,7 +300,7 @@ namespace orthrus_ctrl
     desiredBasePositionMsg.reserve(stateTrajectory.size());
 
     // Reserve feet messages
-    feet_array_t<std::vector<geometry_msgs::msg::Point>> desiredFeetPositionMsgs;
+    switched_model::feet_array_t<std::vector<geometry_msgs::msg::Point>> desiredFeetPositionMsgs;
     for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++)
     {
       desiredFeetPositionMsgs[i].reserve(stateTrajectory.size());
@@ -306,7 +309,7 @@ namespace orthrus_ctrl
     for (size_t j = 0; j < stateTrajectory.size(); j++)
     {
       const auto state = stateTrajectory.at(j);
-      vector_t input(centroidalModelInfo_.inputDim);
+      ocs2::vector_t input(centroidalModelInfo_.inputDim);
       if (j < inputTrajectory.size())
       {
         input = inputTrajectory.at(j);
@@ -318,9 +321,9 @@ namespace orthrus_ctrl
 
       // Construct base pose msg
       const auto basePose =
-          centroidal_model::getBasePose(state, centroidalModelInfo_);
+          ocs2::centroidal_model::getBasePose(state, centroidalModelInfo_);
       geometry_msgs::msg::Pose pose;
-      pose.position = getPointMsg(basePose.head<3>());
+      pose.position = ocs2::getPointMsg(basePose.head<3>());
 
       // Fill message containers
       desiredBasePositionMsg.push_back(pose.position);
@@ -329,7 +332,7 @@ namespace orthrus_ctrl
       const auto &model = pinocchioInterface_.getModel();
       auto &data = pinocchioInterface_.getData();
       pinocchio::forwardKinematics(model, data,
-                                   centroidal_model::getGeneralizedCoordinates(
+                                   ocs2::centroidal_model::getGeneralizedCoordinates(
                                        state, centroidalModelInfo_));
       pinocchio::updateFramePlacements(model, data);
 
@@ -337,15 +340,15 @@ namespace orthrus_ctrl
       for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++)
       {
         geometry_msgs::msg::Pose footPose;
-        footPose.position = getPointMsg(feetPositions[i]);
+        footPose.position = ocs2::getPointMsg(feetPositions[i]);
         desiredFeetPositionMsgs[i].push_back(footPose.position);
       }
     }
 
     // Headers
-    auto comLineMsg = getLineMsg(std::move(desiredBasePositionMsg), Color::green,
+    auto comLineMsg = getLineMsg(std::move(desiredBasePositionMsg), ocs2::Color::green,
                                  trajectoryLineWidth_);
-    comLineMsg.header = getHeaderMsg(frameId_, timeStamp);
+    comLineMsg.header = ocs2::getHeaderMsg(frameId_, timeStamp);
     comLineMsg.id = 0;
 
     // Publish
@@ -354,7 +357,7 @@ namespace orthrus_ctrl
     {
       auto footLineMsg = getLineMsg(std::move(desiredFeetPositionMsgs[i]),
                                     feetColorMap_[i], trajectoryLineWidth_);
-      footLineMsg.header = getHeaderMsg(frameId_, timeStamp);
+      footLineMsg.header = ocs2::getHeaderMsg(frameId_, timeStamp);
       footLineMsg.id = 0;
       costDesiredFeetPositionPublishers_[i]->publish(footLineMsg);
     }
@@ -364,9 +367,9 @@ namespace orthrus_ctrl
   /******************************************************************************************************/
   /******************************************************************************************************/
   void  OrthrusVisualizer::publishOptimizedStateTrajectory(
-      rclcpp::Time timeStamp, const scalar_array_t &mpcTimeTrajectory,
-      const vector_array_t &mpcStateTrajectory,
-      const ModeSchedule &modeSchedule)
+      rclcpp::Time timeStamp, const ocs2::scalar_array_t &mpcTimeTrajectory,
+      const ocs2::vector_array_t &mpcStateTrajectory,
+      const ocs2::ModeSchedule &modeSchedule)
   {
     if (mpcTimeTrajectory.empty() || mpcStateTrajectory.empty())
     {
@@ -374,7 +377,7 @@ namespace orthrus_ctrl
     }
 
     // Reserve Feet msg
-    feet_array_t<std::vector<geometry_msgs::msg::Point>> feetMsgs;
+    switched_model::feet_array_t<std::vector<geometry_msgs::msg::Point>> feetMsgs;
     std::for_each(feetMsgs.begin(), feetMsgs.end(),
                   [&](std::vector<geometry_msgs::msg::Point> &v)
                   {
@@ -388,14 +391,14 @@ namespace orthrus_ctrl
     // Extract Com and Feet from state
     std::for_each(
         mpcStateTrajectory.begin(), mpcStateTrajectory.end(),
-        [&](const vector_t &state)
+        [&](const ocs2::vector_t &state)
         {
           const auto basePose =
-              centroidal_model::getBasePose(state, centroidalModelInfo_);
+              ocs2::centroidal_model::getBasePose(state, centroidalModelInfo_);
 
           // Fill com position and pose msgs
           geometry_msgs::msg::Pose pose;
-          pose.position = getPointMsg(basePose.head<3>());
+          pose.position = ocs2::getPointMsg(basePose.head<3>());
           mpcComPositionMsgs.push_back(pose.position);
 
           // Fill feet msgs
@@ -403,7 +406,7 @@ namespace orthrus_ctrl
           auto &data = pinocchioInterface_.getData();
           pinocchio::forwardKinematics(
               model, data,
-              centroidal_model::getGeneralizedCoordinates(state,
+              ocs2::centroidal_model::getGeneralizedCoordinates(state,
                                                           centroidalModelInfo_));
           pinocchio::updateFramePlacements(model, data);
 
@@ -411,7 +414,7 @@ namespace orthrus_ctrl
               endEffectorKinematicsPtr_->getPosition(state);
           for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++)
           {
-            const auto position = getPointMsg(feetPositions[i]);
+            const auto position = ocs2::getPointMsg(feetPositions[i]);
             feetMsgs[i].push_back(position);
           }
         });
@@ -428,7 +431,7 @@ namespace orthrus_ctrl
       markerArray.markers.back().ns = "EE Trajectories";
     }
     markerArray.markers.emplace_back(getLineMsg(
-        std::move(mpcComPositionMsgs), Color::red, trajectoryLineWidth_));
+        std::move(mpcComPositionMsgs), ocs2::Color::red, trajectoryLineWidth_));
     markerArray.markers.back().ns = "CoM Trajectory";
 
     // Future footholds
@@ -438,7 +441,7 @@ namespace orthrus_ctrl
     sphereList.scale.y = footMarkerDiameter_;
     sphereList.scale.z = footMarkerDiameter_;
     sphereList.ns = "Future footholds";
-    sphereList.pose.orientation = getOrientationMsg({1., 0., 0., 0.});
+    sphereList.pose.orientation = ocs2::getOrientationMsg({1., 0., 0., 0.});
     const auto &eventTimes = modeSchedule.eventTimes;
     const auto &subsystemSequence = modeSchedule.modeSequence;
     const auto tStart = mpcTimeTrajectory.front();
@@ -450,16 +453,16 @@ namespace orthrus_ctrl
       { // Only publish future footholds within the
         // optimized horizon
         const auto preEventContactFlags =
-            modeNumber2StanceLeg(subsystemSequence[event]);
+            ocs2::legged_robot::modeNumber2StanceLeg(subsystemSequence[event]);
         const auto postEventContactFlags =
-            modeNumber2StanceLeg(subsystemSequence[event + 1]);
-        const auto postEventState = LinearInterpolation::interpolate(
+            ocs2::legged_robot::modeNumber2StanceLeg(subsystemSequence[event + 1]);
+        const auto postEventState = ocs2::LinearInterpolation::interpolate(
             eventTimes[event], mpcTimeTrajectory, mpcStateTrajectory);
 
         const auto &model = pinocchioInterface_.getModel();
         auto &data = pinocchioInterface_.getData();
         pinocchio::forwardKinematics(model, data,
-                                     centroidal_model::getGeneralizedCoordinates(
+                                     ocs2::centroidal_model::getGeneralizedCoordinates(
                                          postEventState, centroidalModelInfo_));
         pinocchio::updateFramePlacements(model, data);
 
@@ -471,8 +474,8 @@ namespace orthrus_ctrl
               postEventContactFlags[i])
           { // If a foot lands, a marker is added
             // at that location.
-            sphereList.points.emplace_back(getPointMsg(feetPosition[i]));
-            sphereList.colors.push_back(getColor(feetColorMap_[i]));
+            sphereList.points.emplace_back(ocs2::getPointMsg(feetPosition[i]));
+            sphereList.colors.push_back(ocs2::getColor(feetColorMap_[i]));
           }
         }
       }
@@ -480,9 +483,9 @@ namespace orthrus_ctrl
     markerArray.markers.push_back(std::move(sphereList));
 
     // Add headers and Id
-    assignHeader(markerArray.markers.begin(), markerArray.markers.end(),
-                 getHeaderMsg(frameId_, timeStamp));
-    assignIncreasingId(markerArray.markers.begin(), markerArray.markers.end());
+    ocs2::assignHeader(markerArray.markers.begin(), markerArray.markers.end(),
+                 ocs2::getHeaderMsg(frameId_, timeStamp));
+    ocs2::assignIncreasingId(markerArray.markers.begin(), markerArray.markers.end());
 
     stateOptimizedPublisher_->publish(markerArray);
   }

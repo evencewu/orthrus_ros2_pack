@@ -4,39 +4,58 @@ namespace orthrus_control
 {
     OrthrusControlNode::OrthrusControlNode() : Node("orthrus_control")
     {
+        // ocs2
+        taskFile_ = this->get_parameter("taskFile").as_string();
+        urdfFile_ = this->get_parameter("urdfFile").as_string();
+        referenceFile_ = this->get_parameter("referenceFile").as_string();
+
+        robot_interface_ptr_ = std::make_shared<ocs2::legged_robot::LeggedRobotInterface>(
+            taskFile_, urdfFile_, referenceFile_);
+
+        // Gait receiver
+        // rclcpp::Node::SharedPtr node;
+
+        // 步态转换
+        gait_receiver_ptr_ = std::make_shared<ocs2::legged_robot::GaitReceiver>(
+            node_, robot_interface_ptr_->getSwitchedModelReferenceManagerPtr()->getGaitSchedule(),
+            robotName);
+
+        // ROS ReferenceManager
+        ros_reference_manager_ptr_ = std::make_shared<ocs2::RosReferenceManager>(
+            robotName, robot_interface_ptr_->getReferenceManagerPtr());
+        ros_reference_manager_ptr_->subscribe(node_);
+        
+        // MPC
+        ocs2::SqpMpc mpc(robot_interface_ptr_->mpcSettings(), robot_interface_ptr_->sqpSettings(),
+                   robot_interface_ptr_->getOptimalControlProblem(), robot_interface_ptr_->getInitializer());
+        mpc.getSolverPtr()->setReferenceManager(ros_reference_manager_ptr_);
+        mpc.getSolverPtr()->addSynchronizedModule(gait_receiver_ptr_);
+
+        //// Visualization
+        // ocs2::CentroidalModelPinocchioMapping pinocchioMapping(
+        //     robot_interface_->getCentroidalModelInfo());
+        //
+        // ocs2::PinocchioEndEffectorKinematics endEffectorKinematics(
+        //     robot_interface_->getPinocchioInterface(), pinocchioMapping,
+        //     robot_interface_->modelSettings().contactNames3DoF);
+
+        // auto leggedRobotVisualizer = std::make_shared<OrthrusVisualizer>(
+        //     robot_interface_->getPinocchioInterface(), robot_interface_->getCentroidalModelInfo(),
+        //     endEffectorKinematics, Node);
+        
         orthrus_joint_state_sub_ = this->create_subscription<orthrus_interfaces::msg::OrthrusJointState>("/orthrus_interface/joint_state", 10, std::bind(&OrthrusControlNode::OrthrusJointStateSubCallback, this, std::placeholders::_1));
         orthrus_imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>("/orthrus_interface/imu", 10, std::bind(&OrthrusControlNode::OrthrusImuSubCallback, this, std::placeholders::_1));
         orthrus_joint_control_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10);
         orthrus_viewer_joint_state_pub_ = this->create_publisher<sensor_msgs::msg::JointState>("/orthrus_viewer/joint_state", 10);
         orthrus_viewer_horizontal_pub_ = this->create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
         timer_ = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&OrthrusControlNode::MainLoop, this));
-
-        ocs2::vector_t cmdGoal = ocs2::vector_t::Zero(6);
-
-        // cmdGoal[0] = pose.pose.position.x;
-        // cmdGoal[1] = pose.pose.position.y;
-        // cmdGoal[2] = pose.pose.position.z;
-        // Eigen::Quaternion<scalar_t> q(pose.pose.orientation.w, pose.pose.orientation.x, pose.pose.orientation.y, pose.pose.orientation.z);
-        // cmdGoal[3] = q.toRotationMatrix().eulerAngles(0, 1, 2).z();
-        // cmdGoal[4] = q.toRotationMatrix().eulerAngles(0, 1, 2).y();
-        // cmdGoal[5] = q.toRotationMatrix().eulerAngles(0, 1, 2).x();
-
-        cmdGoal[0] = 0;
-        cmdGoal[1] = 0;
-        cmdGoal[2] = 0.3;
-        cmdGoal[3] = 0;
-        cmdGoal[4] = 0;
-        cmdGoal[5] = 0;
-
-        // const auto trajectories = goalToTargetTrajectories_(cmdGoal, latestObservation_);
-        // targetTrajectoriesPublisher_->publishTargetTrajectories(trajectories);
     }
 
     void OrthrusControlNode::MainLoop()
     {
-        //UpdateRobotParma();
-        //orthrus_joint_control_msg_ = PositonCtrl_.StandUp();
-        //orthrus_joint_control_pub_->publish(orthrus_joint_control_msg_);
+        // UpdateRobotParma();
+        // orthrus_joint_control_msg_ = PositonCtrl_.StandUp();
+        // orthrus_joint_control_pub_->publish(orthrus_joint_control_msg_);
     }
 
     void OrthrusControlNode::OrthrusJointStateSubCallback(const orthrus_interfaces::msg::OrthrusJointState::SharedPtr msg)
@@ -72,7 +91,7 @@ namespace orthrus_control
     {
         geometry_msgs::msg::TransformStamped tf_stamped;
         // orthrus_viewer_horizontal_pub_
-        tf_stamped.header.stamp = this->now();  
+        tf_stamped.header.stamp = this->now();
 
         tf_stamped.header.frame_id = "horizontal";
         tf_stamped.child_frame_id = "body";

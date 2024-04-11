@@ -29,6 +29,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #pragma once
 #include <ocs2_centroidal_model/CentroidalModelInfo.h>
+#include <ocs2_switched_model_interface/core/SwitchedModel.h>
+
 #include <ocs2_core/Types.h>
 #include <ocs2_legged_robot/common/Types.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
@@ -41,9 +43,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <visualization_msgs/msg/marker.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 
+
+
 #include "rclcpp/rclcpp.hpp"
 
-namespace orthrus_ctrl
+namespace orthrus_control
 {
 
     class OrthrusVisualizer : public ocs2::DummyObserver
@@ -105,12 +109,12 @@ namespace orthrus_ctrl
         void publishBaseTransform(rclcpp::Time timeStamp, const ocs2::vector_t &basePose);
         void publishCartesianMarkers(rclcpp::Time timeStamp,
                                      const switched_model::contact_flag_t &contactFlags,
-                                     const std::vector<ocs2::vector3_t> &feetPositions,
-                                     const std::vector<ocs2::vector3_t> &feetForces) const;
+                                     const std::vector<switched_model::vector3_t> &feetPositions,
+                                     const std::vector<switched_model::vector3_t> &feetForces) const;
 
-        PinocchioInterface pinocchioInterface_;
-        const CentroidalModelInfo centroidalModelInfo_;
-        std::unique_ptr<PinocchioEndEffectorKinematics> endEffectorKinematicsPtr_;
+        ocs2::PinocchioInterface pinocchioInterface_;
+        const ocs2::CentroidalModelInfo centroidalModelInfo_;
+        std::unique_ptr<ocs2::PinocchioEndEffectorKinematics> endEffectorKinematicsPtr_;
 
         tf2_ros::TransformBroadcaster tfBroadcaster_;
         rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr jointPublisher_;
@@ -126,8 +130,8 @@ namespace orthrus_ctrl
         rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr
             currentStatePublisher_;
 
-        scalar_t lastTime_;
-        scalar_t minPublishTimeDifference_;
+        ocs2::scalar_t lastTime_;
+        ocs2::scalar_t minPublishTimeDifference_;
     };
 
 }
