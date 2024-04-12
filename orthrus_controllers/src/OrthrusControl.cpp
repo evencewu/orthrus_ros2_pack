@@ -4,25 +4,30 @@ namespace orthrus_control
 {
     OrthrusControlNode::OrthrusControlNode() : Node("orthrus_control")
     {
-
+        /*
         node_ = rclcpp::Node::make_shared(
             robotName + "_mpc",
             rclcpp::NodeOptions()
             .allow_undeclared_parameters(true)
             .automatically_declare_parameters_from_overrides(true));
-
+        */
+       
         // ocs2
+        
         taskFile_ = this->get_parameter("taskFile").as_string();
         urdfFile_ = this->get_parameter("urdfFile").as_string();
         referenceFile_ = this->get_parameter("referenceFile").as_string();
-
+        
+        /*
         robot_interface_ptr_ = std::make_shared<ocs2::legged_robot::LeggedRobotInterface>(
             taskFile_, urdfFile_, referenceFile_);
+        */
 
         // Gait receiver
         // rclcpp::Node::SharedPtr node;
 
         // 步态转换
+        /*
         gait_receiver_ptr_ = std::make_shared<ocs2::legged_robot::GaitReceiver>(
             node_, robot_interface_ptr_->getSwitchedModelReferenceManagerPtr()->getGaitSchedule(),
             robotName);
@@ -37,6 +42,7 @@ namespace orthrus_control
                          robot_interface_ptr_->getOptimalControlProblem(), robot_interface_ptr_->getInitializer());
         mpc.getSolverPtr()->setReferenceManager(ros_reference_manager_ptr_);
         mpc.getSolverPtr()->addSynchronizedModule(gait_receiver_ptr_);
+        */
 
         //// Visualization
         // ocs2::CentroidalModelPinocchioMapping pinocchioMapping(

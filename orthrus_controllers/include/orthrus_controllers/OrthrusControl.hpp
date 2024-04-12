@@ -39,7 +39,7 @@ namespace orthrus_control
         // rclcpp::Node::SharedPtr node_ = std::make_shared<OrthrusControlNode>();
 
         //  npc node
-        rclcpp::Node::SharedPtr node_;
+        //rclcpp::Node::SharedPtr node_;
 
         const std::string robotName = "orthrus";
 
