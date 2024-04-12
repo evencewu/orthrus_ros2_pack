@@ -23,7 +23,6 @@
 #include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
 #include <ocs2_legged_robot/LeggedRobotInterface.h>
 
-
 namespace orthrus_control
 {
     class OrthrusControlNode : public rclcpp::Node
@@ -37,7 +36,10 @@ namespace orthrus_control
         void MainLoop();
 
         // ocs2
-        rclcpp::Node::SharedPtr node_ = std::make_shared<OrthrusControlNode>();
+        // rclcpp::Node::SharedPtr node_ = std::make_shared<OrthrusControlNode>();
+
+        //  npc node
+        rclcpp::Node::SharedPtr node_;
 
         const std::string robotName = "orthrus";
 
@@ -49,7 +51,7 @@ namespace orthrus_control
         std::shared_ptr<ocs2::legged_robot::LeggedRobotInterface> robot_interface_ptr_;
         std::shared_ptr<ocs2::legged_robot::GaitReceiver> gait_receiver_ptr_;
         std::shared_ptr<ocs2::RosReferenceManager> ros_reference_manager_ptr_;
-        
+
         struct JointParam
         {
             double position;

@@ -4,6 +4,13 @@ namespace orthrus_control
 {
     OrthrusControlNode::OrthrusControlNode() : Node("orthrus_control")
     {
+
+        node_ = rclcpp::Node::make_shared(
+            robotName + "_mpc",
+            rclcpp::NodeOptions()
+            .allow_undeclared_parameters(true)
+            .automatically_declare_parameters_from_overrides(true));
+
         // ocs2
         taskFile_ = this->get_parameter("taskFile").as_string();
         urdfFile_ = this->get_parameter("urdfFile").as_string();
@@ -24,10 +31,10 @@ namespace orthrus_control
         ros_reference_manager_ptr_ = std::make_shared<ocs2::RosReferenceManager>(
             robotName, robot_interface_ptr_->getReferenceManagerPtr());
         ros_reference_manager_ptr_->subscribe(node_);
-        
+
         // MPC
         ocs2::SqpMpc mpc(robot_interface_ptr_->mpcSettings(), robot_interface_ptr_->sqpSettings(),
-                   robot_interface_ptr_->getOptimalControlProblem(), robot_interface_ptr_->getInitializer());
+                         robot_interface_ptr_->getOptimalControlProblem(), robot_interface_ptr_->getInitializer());
         mpc.getSolverPtr()->setReferenceManager(ros_reference_manager_ptr_);
         mpc.getSolverPtr()->addSynchronizedModule(gait_receiver_ptr_);
 
@@ -42,7 +49,7 @@ namespace orthrus_control
         // auto leggedRobotVisualizer = std::make_shared<OrthrusVisualizer>(
         //     robot_interface_->getPinocchioInterface(), robot_interface_->getCentroidalModelInfo(),
         //     endEffectorKinematics, Node);
-        
+
         orthrus_joint_state_sub_ = this->create_subscription<orthrus_interfaces::msg::OrthrusJointState>("/orthrus_interface/joint_state", 10, std::bind(&OrthrusControlNode::OrthrusJointStateSubCallback, this, std::placeholders::_1));
         orthrus_imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>("/orthrus_interface/imu", 10, std::bind(&OrthrusControlNode::OrthrusImuSubCallback, this, std::placeholders::_1));
         orthrus_joint_control_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10);
