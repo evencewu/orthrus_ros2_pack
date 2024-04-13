@@ -5,7 +5,7 @@
 #include <inttypes.h>
 
 #include "soem_ros2/soem.h"
-#include "orthrus_real/ethercat/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/TypeDef.hpp"
 
 #define EC_VER1
 

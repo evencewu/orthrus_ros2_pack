@@ -1,5 +1,5 @@
 #include "orthrus_real/ethercat/ecat_base.hpp"
-#include "orthrus_real/ethercat/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/TypeDef.hpp"
 #include "orthrus_real/orthrus_leg.hpp"
 
 #include <array>
@@ -40,7 +40,7 @@ void ImuCalibrateStop(orthrus_real::Ecat_Outputs_Pack *pack, int can_port)
     pack->can[can_port].Data[3] = 0;
 }
 
-int calibrate_flag = 0;
+int calibrate_flag = 2;
 
 int main()
 {

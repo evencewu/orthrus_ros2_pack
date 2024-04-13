@@ -2,10 +2,10 @@
 
 #include <inttypes.h>
 
-#include "orthrus_real/ethercat/ecat_typedef.hpp"
-#include "orthrus_real/orthrus_imu.hpp"
-#include "orthrus_real/orthrus_angle.hpp"
-#include "orthrus_real/orthrus_motor.hpp"
+#include "orthrus_real/ethercat/TypeDef.hpp"
+#include "orthrus_real/assembly/Imu.hpp"
+#include "orthrus_real/assembly/Encoder.hpp"
+#include "orthrus_real/assembly/Motor.hpp"
 
 #include <cstdio>
 
@@ -19,11 +19,11 @@ namespace orthrus_real
     class Leg
     {
     public:
-        void init(uint8_t can_id, uint8_t imu_id, uint8_t usart_id);
-        void analyze(Ecat_Inputs_Pack *pack);
+        void Init(uint8_t can_id, uint8_t imu_id, uint8_t usart_id);
+        void Analyze(Ecat_Inputs_Pack *pack);
 
         Imu imu;
-        Angle angle;
+        Encoder angle;
         Motor motor[3];
     };
 }

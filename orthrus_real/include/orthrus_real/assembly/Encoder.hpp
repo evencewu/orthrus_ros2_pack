@@ -2,15 +2,15 @@
 
 #include <inttypes.h>
 
-#include "orthrus_real/ethercat/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/TypeDef.hpp"
 
 namespace orthrus_real
 {
-    class Angle
+    class Encoder
     {
     public:
-        void init(uint8_t can_id, uint8_t imu_id);
-        void analyze(Ecat_Inputs_Pack *pack);
+        void Init(uint8_t can_id, uint8_t imu_id);
+        void Analyze(Ecat_Inputs_Pack *pack);
 
         float Pos; //角度
 

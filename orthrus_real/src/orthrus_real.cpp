@@ -27,11 +27,11 @@ namespace orthrus_real
     RCLCPP_INFO(this->get_logger(), "wl_driver启动,网口%s\n", phy);
     Ethercat.EcatStart(phy);
 
-    leg[0].init(CAN2, IMU1, USART1);
-    leg[1].init(CAN2, IMU2, USART2);
-    leg[2].init(CAN2, IMU3, USART3);
-    leg[3].init(CAN2, IMU4, USART6);
-    body_imu.init(CAN2, IMU5);
+    leg[0].Init(CAN2, IMU1, USART1);
+    leg[1].Init(CAN2, IMU2, USART2);
+    leg[2].Init(CAN2, IMU3, USART3);
+    leg[3].Init(CAN2, IMU4, USART6);
+    body_imu.Init(CAN2, IMU5);
 
     ImuIfUseMag(TRUE);
     // ImuIfUseMag(FALSE);
@@ -39,7 +39,7 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::MainLoop()
   {
-    SetLED();
+    SetLED(10);
     SetLeg();
 
     Ethercat.EcatSyncMsg();
@@ -67,16 +67,17 @@ namespace orthrus_real
     }
   }
 
-  void OrthrusInterfacesNode::SetLED()
+  void OrthrusInterfacesNode::SetLED(int frequency_division)
   {
-    if (led_flag_++ <= 10)
+    if (led_flag_ < frequency_division)
     {
-      Ethercat.packet_tx[0].LED = 0x01;
-      led_flag_ = 0;
+      Ethercat.packet_tx[0].LED = 0x02;
+      led_flag_++;
     }
     else
     {
-      Ethercat.packet_tx[0].LED = 0x00;
+      Ethercat.packet_tx[0].LED = 0x05;
+      led_flag_ = 0;
     }
   }
 
@@ -101,11 +102,11 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::AnalyzeAll()
   {
-    leg[0].analyze(&Ethercat.packet_rx[0]);
-    leg[1].analyze(&Ethercat.packet_rx[0]);
-    leg[2].analyze(&Ethercat.packet_rx[1]);
-    leg[3].analyze(&Ethercat.packet_rx[1]);
-    body_imu.analyze(&Ethercat.packet_rx[0]);
+    leg[0].Analyze(&Ethercat.packet_rx[0]);
+    leg[1].Analyze(&Ethercat.packet_rx[0]);
+    leg[2].Analyze(&Ethercat.packet_rx[1]);
+    leg[3].Analyze(&Ethercat.packet_rx[1]);
+    body_imu.Analyze(&Ethercat.packet_rx[0]);
   }
 
   /// @brief 统一imu姿态

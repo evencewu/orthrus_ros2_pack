@@ -5,7 +5,7 @@
 #include <Eigen/Dense>  
 #include <Eigen/Geometry>  
 
-#include "orthrus_real/ethercat/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/TypeDef.hpp"
 
 #define IMU1 0
 #define IMU2 3
@@ -18,12 +18,8 @@ namespace orthrus_real
     class Imu
     {
     public:
-        void init(uint8_t can_id, uint8_t device_id);
-        void analyze(Ecat_Inputs_Pack *pack);
-
-        double yaw;
-        double pitch;
-        double roll;
+        void Init(uint8_t can_id, uint8_t device_id);
+        void Analyze(Ecat_Inputs_Pack *pack);
 
         Eigen::Quaterniond gyro_;
 
@@ -35,7 +31,7 @@ namespace orthrus_real
             uint8_t uint_data[4];
         }data;
         
-        uint8_t can_id;
-        uint8_t device_id;
+        uint8_t can_id_;
+        uint8_t device_id_;
     };
 }

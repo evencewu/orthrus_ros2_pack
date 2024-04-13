@@ -22,28 +22,22 @@ ament_auto_find_build_dependencies()
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 
-file(GLOB_RECURSE SOURCES "src/orthrus_real/*.cpp")
+file(GLOB_RECURSE MAIN_SOURCES "src/*.cpp")
 
 ament_auto_add_executable(orthrus_real
   src/orthrus_real.cpp
-  ${SOURCES}
-
+  ${MAIN_SOURCES}
 )
 
-ament_auto_add_executable(test1
-  src/test/test1.cpp
-  ${SOURCES}
-)
+#ament_auto_add_executable(orthrus_calibrate_gyro
+#  src/orthrus_calibrate.cpp
+#  ${SOURCES}
+#)
 
-ament_auto_add_executable(orthrus_calibrate_gyro
-  src/orthrus_calibrate.cpp
-  ${SOURCES}
-)
-
-ament_auto_add_executable(orthrus_calibrate_mag
-  src/orthrus_calibrate_mag.cpp
-  ${SOURCES}
-)
+#ament_auto_add_executable(orthrus_calibrate_mag
+#  src/orthrus_calibrate_mag.cpp
+#  ${SOURCES}
+#)
 
 
 

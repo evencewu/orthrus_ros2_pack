@@ -18,11 +18,11 @@
 #include <Eigen/Geometry>
 
 #include "orthrus_real/ethercat/ecat_base.hpp"
-#include "orthrus_real/ethercat/ecat_typedef.hpp"
+#include "orthrus_real/ethercat/TypeDef.hpp"
 #include "orthrus_real/calibrate/calibrate_imu.hpp"
 #include "orthrus_real/calibrate/calibrate_leg.hpp"
 #include "orthrus_real/orthrus_leg.hpp"
-#include "orthrus_real/orthrus_imu.hpp"
+#include "orthrus_real/assembly/Imu.hpp"
 
 #include <sensor_msgs/msg/imu.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
@@ -45,7 +45,11 @@ namespace orthrus_real
     void Log(int flag);
 
     /*Ecat数据写入*/
-    void SetLED();
+    int led_flag_ = 0;
+    void SetLED(int frequency_division);
+
+    int motorcan_send_flag_ = 0;
+    int motor_send_flag_ = 0;
     void SetLeg();
 
     // Ecat code
@@ -65,13 +69,6 @@ namespace orthrus_real
 
     /*ros2*/
     rclcpp::TimerBase::SharedPtr timer_;// ecat定时收发
-
-    int led_flag_ = 0;
-    int motor_send_flag_ = 0;
-    int motorcan_send_flag_ = 0;
-
-
-    
 
     // ros2
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr orthrus_imu_pub_;

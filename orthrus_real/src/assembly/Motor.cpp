@@ -1,14 +1,14 @@
-#include "orthrus_real/orthrus_motor.hpp"
+#include "orthrus_real/assembly/Motor.hpp"
 
 namespace orthrus_real
 {
-    void Motor::init(uint8_t leg_id, uint8_t motor_id)
+    void Motor::Init(uint8_t leg_id, uint8_t motor_id)
     {
         leg_id_ = leg_id;
         motor_id_ = motor_id;
     }
 
-    void Motor::analyze(Ecat_Inputs_Pack *pack)
+    void Motor::Analyze(Ecat_Inputs_Pack *pack)
     {
         if (pack->motor.id == (leg_id_%2) * 3 + motor_id_)
         {
