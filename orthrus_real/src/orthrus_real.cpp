@@ -82,9 +82,14 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::SetLeg()
   {
-    if (motorcan_send_flag_ < 11)
+    if (motorcan_send_flag_ < 6)
     {
       leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
+      motorcan_send_flag_++;
+    }
+    else if (motorcan_send_flag_ < 11 && motorcan_send_flag_ >= 5)
+    {
+      leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 10);
       motorcan_send_flag_++;
     }
     else
@@ -98,8 +103,8 @@ namespace orthrus_real
   {
     leg[0].analyze(&Ethercat.packet_rx[0]);
     leg[1].analyze(&Ethercat.packet_rx[0]);
-    leg[2].analyze(&Ethercat.packet_rx[0]);
-    leg[3].analyze(&Ethercat.packet_rx[0]);
+    leg[2].analyze(&Ethercat.packet_rx[1]);
+    leg[3].analyze(&Ethercat.packet_rx[1]);
     body_imu.analyze(&Ethercat.packet_rx[0]);
   }
 

@@ -59,7 +59,7 @@ namespace orthrus_real
     void LegPositionCalibrate();
 
     /*实例化Ecat motor imu 结构体*/
-    EcatBase Ethercat = EcatBase(1);
+    EcatBase Ethercat = EcatBase(2);
     Leg leg[4];
     Imu body_imu;
 

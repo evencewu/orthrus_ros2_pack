@@ -10,7 +10,7 @@ namespace orthrus_real
 
     void Motor::analyze(Ecat_Inputs_Pack *pack)
     {
-        if (pack->motor.id == leg_id_ * 3 + motor_id_)
+        if (pack->motor.id == (leg_id_%2) * 3 + motor_id_)
         {
             Pos_ = pack->motor.Pos;
             T_ = pack->motor.T;
@@ -23,7 +23,7 @@ namespace orthrus_real
 
     void Motor::SetOutput(Ecat_Outputs_Pack *pack, float k_p, float k_d, float W, float T, float Pos, int Mode)
     {
-        pack->motor_id = leg_id_ * 3 + motor_id_;
+        pack->motor_id = (leg_id_%2) * 3 + motor_id_;
         pack->motor.mode = Mode;
         pack->motor.kp = k_p;
         pack->motor.kd = k_d;
