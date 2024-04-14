@@ -33,13 +33,16 @@ namespace orthrus_real
     leg[3].Init(CAN2, IMU4, USART6);
     body_imu.Init(CAN2, IMU5);
 
+    //usleep(100000);//100ms
+
     ImuIfUseMag(TRUE);
+    Ethercat.EcatSyncMsg();
     // ImuIfUseMag(FALSE);
   }
 
   void OrthrusInterfacesNode::MainLoop()
   {
-    SetLED(10);
+    SetLED(1000);
     SetLeg();
 
     Ethercat.EcatSyncMsg();
@@ -55,28 +58,40 @@ namespace orthrus_real
   {
     if (flag == true)
     {
-      RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[0].Pos_);
-      RCLCPP_INFO(this->get_logger(), "%f", leg[0].motor[1].Pos_);
-      RCLCPP_INFO(this->get_logger(), "=================");
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[3].imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "=================");
+      //RCLCPP_INFO(this->get_logger(), "=================");
+      //RCLCPP_INFO(this->get_logger(), "%f %f %f %f %f %f %f %f %f %f %f %f ", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_, leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_, leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_, leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
+      //RCLCPP_INFO(this->get_logger(), "=================");
+      
+      //RCLCPP_INFO(this->get_logger(), "id 0x%x pos %f",Ethercat.packet_rx[0].motor.id,Ethercat.packet_rx[0].motor.Pos);
+      // RCLCPP_INFO(this->get_logger(), "=================");
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[3].imu.gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "=================");
+
+      // RCLCPP_INFO(this->get_logger(), "imu 0x%x\n",Ethercat.packet_rx[1].can[1].StdId);
+      // RCLCPP_INFO(this->get_logger(), "imu 0x%x\n",Ethercat.packet_tx[0].can[1].StdId);
     }
   }
 
   void OrthrusInterfacesNode::SetLED(int frequency_division)
   {
-    if (led_flag_ < frequency_division)
+    if (led_flag_ < frequency_division / 2)
     {
       Ethercat.packet_tx[0].LED = 0x02;
+      Ethercat.packet_tx[1].LED = 0x02;
+      led_flag_++;
+    }
+    else if (led_flag_ < frequency_division)
+    {
+      Ethercat.packet_tx[0].LED = 0x05;
+      Ethercat.packet_tx[1].LED = 0x05;
       led_flag_++;
     }
     else
     {
-      Ethercat.packet_tx[0].LED = 0x05;
       led_flag_ = 0;
     }
   }
@@ -88,14 +103,14 @@ namespace orthrus_real
       leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
       motorcan_send_flag_++;
     }
-    else if (motorcan_send_flag_ < 11 && motorcan_send_flag_ >= 5)
+    else if (motorcan_send_flag_ < 11 && motorcan_send_flag_ >= 6)
     {
       leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 10);
       motorcan_send_flag_++;
     }
     else
     {
-      leg[3].motor[2].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
+      leg[3].motor[2].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 10);
       motorcan_send_flag_ = 0;
     }
   }
@@ -106,7 +121,7 @@ namespace orthrus_real
     leg[1].Analyze(&Ethercat.packet_rx[0]);
     leg[2].Analyze(&Ethercat.packet_rx[1]);
     leg[3].Analyze(&Ethercat.packet_rx[1]);
-    body_imu.Analyze(&Ethercat.packet_rx[0]);
+    body_imu.Analyze(&Ethercat.packet_rx[1]);
   }
 
   /// @brief 统一imu姿态
@@ -126,8 +141,16 @@ namespace orthrus_real
     {
       for (int j = 0; j < 12; j++)
       {
-        leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
-        Ethercat.EcatSyncMsg();
+        if (j > 5)
+        {
+          leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 0);
+          Ethercat.EcatSyncMsg();
+        }
+        else
+        {
+          leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
+          Ethercat.EcatSyncMsg();
+        }
       }
     }
 

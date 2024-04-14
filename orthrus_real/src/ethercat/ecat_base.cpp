@@ -33,7 +33,7 @@ namespace orthrus_real
 
                 printf("Slaves mapped, state to SAFE_OP.\n");
                 /* wait for all slaves to reach SAFE_OP state */
-                ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE * 6);
+                ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE * 8);
 
                 ec_configdc();
 
@@ -48,14 +48,16 @@ namespace orthrus_real
                 /* request OP state for all slaves */
                 ec_writestate(0);
 
-                chk = 200;
+                chk = 1000;
                 /* wait for all slaves to reach OP state */
                 do
                 {
                     ec_send_processdata();
                     ec_receive_processdata(EC_TIMEOUTRET);
-                    ec_statecheck(0, EC_STATE_OPERATIONAL, EC_TIMEOUTRET);
-                } while (chk-- && (ec_slave[0].state != EC_STATE_OPERATIONAL));
+                    ec_statecheck(0, EC_STATE_OPERATIONAL, 50000);
+                } while ((ec_slave[0].state != EC_STATE_OPERATIONAL));
+                
+                //while (chk-- && (ec_slave[0].state != EC_STATE_OPERATIONAL) && (ec_slave[1].state != EC_STATE_OPERATIONAL) && (ec_slave[2].state != EC_STATE_OPERATIONAL));
             }
             else
             {
@@ -121,7 +123,7 @@ namespace orthrus_real
     /// @brief Stop the ecat connection and perform a secure stop before that
     void EcatBase::EcatStop()
     {
-        //printf("\nRequest init state for all slaves\n");
+        // printf("\nRequest init state for all slaves\n");
         ec_slave[0].state = EC_STATE_INIT;
         /* request INIT state for all slaves */
         ec_writestate(0);
