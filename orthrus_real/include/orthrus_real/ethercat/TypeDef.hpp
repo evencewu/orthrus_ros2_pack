@@ -25,8 +25,7 @@ namespace orthrus_real
 
     typedef struct A1MotorRxPack
     {
-        uint8_t id;
-        uint8_t mode;
+        uint16_t mode;
         uint16_t temp;
         uint16_t error;
         float T;
@@ -49,13 +48,13 @@ namespace orthrus_real
     typedef struct Ecat_Outputs_Pack
     {
         uint8_t LED;
-        struct can_pack can[2];
         uint8_t null;
+        struct can_pack can;
 
         struct A1MotorTxPack motor;
 
         uint16_t motor_id;
-        float null_2[5];
+
 
     } __attribute__((packed)) Ecat_Outputs_Pack;
 
@@ -65,8 +64,11 @@ namespace orthrus_real
         uint8_t switch_io;
         uint8_t null[5];
 
-        struct can_pack can[2];
+        struct can_pack can;
 
         struct A1MotorRxPack motor;
+
+        uint16_t motor_id;
+        
     } __attribute__((packed)) Ecat_Inputs_Pack;
 }

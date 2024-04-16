@@ -15,11 +15,14 @@
 
 namespace orthrus_real
 {
+    
+
     class Imu
     {
     public:
         void Init(uint8_t can_id, uint8_t device_id);
         void Analyze(Ecat_Inputs_Pack *pack);
+        static void IfUseMag(bool flag, can_pack can);
 
         Eigen::Quaterniond gyro_;
 

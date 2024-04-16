@@ -55,10 +55,9 @@ namespace orthrus_real
     // Ecat code
     void SafeStop();
     void AnalyzeAll();
-    
+
     // imu set
     void UnifiedSensorData();
-    void ImuIfUseMag(bool flag);
     // Calibrating leg position
     void LegPositionCalibrate();
 
@@ -68,12 +67,12 @@ namespace orthrus_real
     Imu body_imu;
 
     /*ros2*/
-    rclcpp::TimerBase::SharedPtr timer_;// ecat定时收发
+    rclcpp::TimerBase::SharedPtr timer_; // ecat定时收发
 
     // ros2
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr orthrus_imu_pub_;
     sensor_msgs::msg::Imu orthrus_imu_msg_;
-    
+
     // Calibrating imu pub
     rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr orthrus_calibrating_imu_pub_;
     tf2_msgs::msg::TFMessage orthrus_calibrating_imu_msg_;

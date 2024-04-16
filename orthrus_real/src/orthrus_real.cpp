@@ -33,9 +33,9 @@ namespace orthrus_real
     leg[3].Init(CAN2, IMU4, USART6);
     body_imu.Init(CAN2, IMU5);
 
-    //usleep(100000);//100ms
+    // usleep(100000);//100ms
 
-    ImuIfUseMag(TRUE);
+    Imu::IfUseMag(TRUE,Ethercat.packet_rx[1].can);
     Ethercat.EcatSyncMsg();
     // ImuIfUseMag(FALSE);
   }
@@ -58,18 +58,18 @@ namespace orthrus_real
   {
     if (flag == true)
     {
-      //RCLCPP_INFO(this->get_logger(), "=================");
-      //RCLCPP_INFO(this->get_logger(), "%f %f %f %f %f %f %f %f %f %f %f %f ", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_, leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_, leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_, leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
-      //RCLCPP_INFO(this->get_logger(), "=================");
-      
-      //RCLCPP_INFO(this->get_logger(), "id 0x%x pos %f",Ethercat.packet_rx[0].motor.id,Ethercat.packet_rx[0].motor.Pos);
       // RCLCPP_INFO(this->get_logger(), "=================");
-      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
-      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
-      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[3].imu.gyro_.z());
-      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
-      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "%f %f %f %f %f %f %f %f %f %f %f %f ", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_, leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_, leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_, leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
       // RCLCPP_INFO(this->get_logger(), "=================");
+
+      // RCLCPP_INFO(this->get_logger(), "id 0x%x pos %f",Ethercat.packet_rx[0].motor.id,Ethercat.packet_rx[0].motor.Pos);
+      //  RCLCPP_INFO(this->get_logger(), "=================");
+      //  RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
+      //  RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
+      //  RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[3].imu.gyro_.z());
+      //  RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
+      //  RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
+      //  RCLCPP_INFO(this->get_logger(), "=================");
 
       // RCLCPP_INFO(this->get_logger(), "imu 0x%x\n",Ethercat.packet_rx[1].can[1].StdId);
       // RCLCPP_INFO(this->get_logger(), "imu 0x%x\n",Ethercat.packet_tx[0].can[1].StdId);
@@ -257,30 +257,6 @@ namespace orthrus_real
     else
     {
       imu_send_flag_++;
-    }
-  }
-
-  /// @brief 是否启用磁力计
-  /// @param flag 启用标志位
-  void OrthrusInterfacesNode::ImuIfUseMag(bool flag)
-  {
-    if (flag)
-    {
-      Ethercat.packet_tx[0].can[CAN2].StdId = 0x11;
-      Ethercat.packet_tx[0].can[CAN2].DLC = 0x04;
-      Ethercat.packet_tx[0].can[CAN2].Data[0] = 0;
-      Ethercat.packet_tx[0].can[CAN2].Data[1] = 0;
-      Ethercat.packet_tx[0].can[CAN2].Data[2] = 0;
-      Ethercat.packet_tx[0].can[CAN2].Data[3] = 1;
-    }
-    else
-    {
-      Ethercat.packet_tx[0].can[CAN2].StdId = 0x11;
-      Ethercat.packet_tx[0].can[CAN2].DLC = 0x04;
-      Ethercat.packet_tx[0].can[CAN2].Data[0] = 0;
-      Ethercat.packet_tx[0].can[CAN2].Data[1] = 0;
-      Ethercat.packet_tx[0].can[CAN2].Data[2] = 0;
-      Ethercat.packet_tx[0].can[CAN2].Data[3] = 0;
     }
   }
 }

@@ -26,8 +26,8 @@ namespace orthrus_real
 
     private:
         int slave_num = 1;
-        int pdo_output_byte = 74;//30
-        int pdo_input_byte = 84;//34
+        int pdo_output_byte = 40;//30
+        int pdo_input_byte = 20;//34
         char IOmap[4096];
         volatile int wkc;
         int expectedWKC;

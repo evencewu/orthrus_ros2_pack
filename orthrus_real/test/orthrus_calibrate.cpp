@@ -21,9 +21,9 @@ orthrus_real::Imu body_imu;
 /// @param can_port 
 void ImuCalibrateStart(orthrus_real::Ecat_Outputs_Pack *pack, int can_port,int calibrate_flag)
 {
-    pack->can[can_port].StdId = 0x11;
-    pack->can[can_port].DLC = 0x04;
-    pack->can[can_port].Data[calibrate_flag] = 1;
+    pack->can.StdId = 0x11;
+    pack->can.DLC = 0x04;
+    pack->can.Data[calibrate_flag] = 1;
     //pack->can[can_port].Data[0] = 0;//磁力计校准
     //pack->can[can_port].Data[1] = 0;//pos零点
     //pack->can[can_port].Data[2] = 1;//静止校准
@@ -32,12 +32,12 @@ void ImuCalibrateStart(orthrus_real::Ecat_Outputs_Pack *pack, int can_port,int c
 
 void ImuCalibrateStop(orthrus_real::Ecat_Outputs_Pack *pack, int can_port)
 {
-    pack->can[can_port].StdId = 0x11;
-    pack->can[can_port].DLC = 0x04;
-    pack->can[can_port].Data[0] = 0;
-    pack->can[can_port].Data[1] = 0;
-    pack->can[can_port].Data[2] = 0;
-    pack->can[can_port].Data[3] = 0;
+    pack->can.StdId = 0x11;
+    pack->can.DLC = 0x04;
+    pack->can.Data[0] = 0;
+    pack->can.Data[1] = 0;
+    pack->can.Data[2] = 0;
+    pack->can.Data[3] = 0;
 }
 
 int calibrate_flag = 2;

@@ -10,7 +10,7 @@ namespace orthrus_real
 
     void Motor::Analyze(Ecat_Inputs_Pack *pack)
     {
-        if (pack->motor.id == (leg_id_%2) * 3 + motor_id_)
+        if (pack->motor_id == (leg_id_%2) * 3 + motor_id_)
         {
             Pos_ = pack->motor.Pos;
             T_ = pack->motor.T;
