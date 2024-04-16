@@ -26,12 +26,11 @@ namespace orthrus_real
     typedef struct A1MotorRxPack
     {
         uint16_t mode;
-        uint16_t temp;
-        uint16_t error;
+        uint8_t temp;
+        uint8_t error;
         float T;
         float W;
         float Pos;
-        float LW;
         uint16_t Acc;
     } __attribute__((packed)) A1MotorRxPack;
 
