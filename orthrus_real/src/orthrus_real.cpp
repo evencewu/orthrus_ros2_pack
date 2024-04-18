@@ -25,6 +25,7 @@ namespace orthrus_real
     char phy[] = "enp5s0";
 
     RCLCPP_INFO(this->get_logger(), "wl_driver启动,网口%s\n", phy);
+
     Ethercat.EcatStart(phy);
 
     leg[0].Init(CAN2, IMU1, USART1);
@@ -35,7 +36,8 @@ namespace orthrus_real
 
     // usleep(100000);//100ms
 
-    Imu::IfUseMag(TRUE,Ethercat.packet_rx[1].can);
+    Imu::IfUseMag(FALSE, Ethercat.packet_rx[0].can);
+    Imu::IfUseMag(FALSE, Ethercat.packet_rx[1].can);
     Ethercat.EcatSyncMsg();
     // ImuIfUseMag(FALSE);
   }
@@ -58,19 +60,38 @@ namespace orthrus_real
   {
     if (flag == true)
     {
-      RCLCPP_INFO(this->get_logger(), "=================");
-      RCLCPP_INFO(this->get_logger(), "%f %f %f %f %f %f %f %f %f %f %f %f ", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_, leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_, leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_, leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
-      RCLCPP_INFO(this->get_logger(), "=================");
+      // RCLCPP_INFO(this->get_logger(), "=================");
+      // RCLCPP_INFO(this->get_logger(), "%f %f %f %f %f %f %f %f %f %f %f %f ", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_, leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_, leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_, leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
+      // RCLCPP_INFO(this->get_logger(), "=================");
 
-      RCLCPP_INFO(this->get_logger(), "id 0x%x",Ethercat.packet_rx[0].can.StdId);
-      RCLCPP_INFO(this->get_logger(), "id 0x%x",Ethercat.packet_rx[1].can.StdId);
-      RCLCPP_INFO(this->get_logger(), "=================");
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[3].imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf\n", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "=================");
+      // RCLCPP_INFO(this->get_logger(), "id 0x%x",Ethercat.packet_rx[0].can.StdId);
+      // RCLCPP_INFO(this->get_logger(), "id 0x%x",Ethercat.packet_rx[1].can.StdId);
+
+      //RCLCPP_INFO(this->get_logger(), "=================");
+      //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
+      //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
+      //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[3].imu.gyro_.z());
+      //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
+      //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
+      //RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", body_imu.unified_gyro_.w(), body_imu.unified_gyro_.x(), body_imu.unified_gyro_.y(), body_imu.unified_gyro_.z());
+      //RCLCPP_INFO(this->get_logger(), "=================");
+
+      // pitch 电机2
+      // roll 电机1
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf %lf %lf\n", body_imu.pitch, body_imu.roll, body_imu.yaw,leg[0].imu.pitch, leg[0].imu.roll, leg[0].imu.yaw);
+
+      // yaw
+      RCLCPP_INFO(this->get_logger(), "yaw %lf %lf %lf %lf %lf\n", body_imu.yaw,leg[0].imu.yaw,leg[1].imu.yaw,leg[2].imu.yaw,leg[3].imu.yaw);
+
+      // RCLCPP_INFO(this->get_logger(), "motor1: %lf motor2: %lf\n",leg[0].imu.pitch + body_imu.roll,leg[0].imu.roll + body_imu.pitch);
+      // RCLCPP_INFO(this->get_logger(), "=================\n");
+
+      //RCLCPP_INFO(this->get_logger(), "motor1: %lf %lf %lf %lfmotor2: %lf %lf %lf %lf\n", leg[0].imu.pitch - body_imu.roll, leg[1].imu.pitch + body_imu.roll, leg[2].imu.pitch - body_imu.roll, leg[3].imu.pitch + body_imu.roll
+      //, leg[0].imu.yaw - body_imu.pitch, leg[1].imu.yaw + body_imu.pitch, leg[2].imu.yaw - body_imu.pitch, leg[3].imu.yaw + body_imu.pitch);
+
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf \n", leg[1].imu.pitch, leg[1].imu.roll, leg[1].imu.yaw);
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf \n", leg[2].imu.pitch, leg[2].imu.roll, leg[2].imu.yaw);
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf \n", leg[3].imu.pitch, leg[3].imu.roll, leg[3].imu.yaw);
 
       // RCLCPP_INFO(this->get_logger(), "imu 0x%x\n",Ethercat.packet_rx[1].can[1].StdId);
       // RCLCPP_INFO(this->get_logger(), "imu 0x%x\n",Ethercat.packet_tx[0].can[1].StdId);
@@ -128,11 +149,20 @@ namespace orthrus_real
   /// @brief 统一imu姿态
   void OrthrusInterfacesNode::UnifiedSensorData()
   {
-    body_imu.unified_gyro_ = calibrate::RotatingCoordinates(body_imu.gyro_, M_PI * 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI, Eigen::Vector3d(1.0, 0.0, 1.0));
-    leg[0].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[0].imu.gyro_, -M_PI / 2, Eigen::Vector3d(1.0, 0.0, 0.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
-    leg[1].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[1].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
-    leg[2].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[2].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
-    leg[3].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[3].imu.gyro_, -M_PI * 2, Eigen::Vector3d(0.0, 0.0, 1.0), M_PI * 2, Eigen::Vector3d(1.0, 1.0, 1.0));
+    body_imu.unified_gyro_ = calibrate::RotatingCoordinates(body_imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[0].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[0].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[1].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[1].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[2].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[2].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[3].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[3].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+
+    body_imu.get_angle(body_imu.yaw);
+    leg[0].imu.get_angle(body_imu.yaw - M_PI/2);
+    leg[1].imu.get_angle(body_imu.yaw);
+    leg[2].imu.get_angle(body_imu.yaw + M_PI/2);
+    leg[3].imu.get_angle(body_imu.yaw);
+
+    // leg[0].imu.pitch + body_imu.roll;
+    // leg[0].imu.roll + body_imu.pitch;
   }
 
   /// @brief 用于程序退出前电机数据的处理
@@ -203,10 +233,10 @@ namespace orthrus_real
       tf_stamped.transform.translation.y = 0.0;
       tf_stamped.transform.translation.z = 0.0;
 
-      tf_stamped.transform.rotation.w = leg[1].imu.unified_gyro_.w();
-      tf_stamped.transform.rotation.x = leg[1].imu.unified_gyro_.x();
-      tf_stamped.transform.rotation.y = leg[1].imu.unified_gyro_.y();
-      tf_stamped.transform.rotation.z = leg[1].imu.unified_gyro_.z();
+      tf_stamped.transform.rotation.w = leg[0].imu.standard_gyro_.w();
+      tf_stamped.transform.rotation.x = leg[0].imu.standard_gyro_.x();
+      tf_stamped.transform.rotation.y = leg[0].imu.standard_gyro_.y();
+      tf_stamped.transform.rotation.z = leg[0].imu.standard_gyro_.z();
 
       if (leg[1].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
       {

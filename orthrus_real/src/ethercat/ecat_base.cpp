@@ -115,7 +115,7 @@ namespace orthrus_real
                 }
             }
         }
-        osal_usleep(500);
+        osal_usleep(750);
     }
 
     /// @brief Stop the ecat connection and perform a secure stop before that

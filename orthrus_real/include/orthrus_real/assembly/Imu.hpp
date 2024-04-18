@@ -15,18 +15,24 @@
 
 namespace orthrus_real
 {
-    
-
     class Imu
     {
     public:
         void Init(uint8_t can_id, uint8_t device_id);
         void Analyze(Ecat_Inputs_Pack *pack);
+        void get_angle(double standard_yaw);
         static void IfUseMag(bool flag, can_pack can);
-
+        
         Eigen::Quaterniond gyro_;
 
         Eigen::Quaterniond unified_gyro_;
+
+        Eigen::Quaterniond standard_gyro_;
+
+        double yaw;
+        double pitch;
+        double roll;
+
     private:
         union
         {

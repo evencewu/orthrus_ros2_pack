@@ -5,6 +5,23 @@
 
 namespace orthrus_real
 {
+    void Imu::get_angle(double standard_yaw)
+    {
+        // 从旋转矩阵中提取欧拉角（这里使用Z-Y-X顺序）
+        Eigen::Vector3d euler = unified_gyro_.toRotationMatrix().eulerAngles(2, 1, 0);
+
+        yaw = euler(0);
+        pitch = euler(1);
+        roll = euler(2);
+
+        // yaw = standard_yaw;
+        // yaw = M_PI/2;
+
+        Eigen::Vector3d eulerAngles(roll, pitch, standard_yaw);
+
+        standard_gyro_ = Eigen::Quaterniond(Eigen::AngleAxisd(eulerAngles.z(), Eigen::Vector3d::UnitZ()) * Eigen::AngleAxisd(eulerAngles.y(), Eigen::Vector3d::UnitY()) * Eigen::AngleAxisd(eulerAngles.x(), Eigen::Vector3d::UnitX()));
+    }
+
     void Imu::IfUseMag(bool flag, can_pack can)
     {
         if (flag)
@@ -26,7 +43,7 @@ namespace orthrus_real
             can.Data[3] = 0;
         }
     }
-    
+
     void Imu::Init(uint8_t can_id, uint8_t device_id)
     {
         can_id_ = can_id;

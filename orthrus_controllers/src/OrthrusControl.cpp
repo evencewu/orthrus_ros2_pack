@@ -14,9 +14,9 @@ namespace orthrus_control
        
         // ocs2
         
-        taskFile_ = this->get_parameter("taskFile").as_string();
-        urdfFile_ = this->get_parameter("urdfFile").as_string();
-        referenceFile_ = this->get_parameter("referenceFile").as_string();
+        //taskFile_ = this->get_parameter("taskFile").as_string();
+        //urdfFile_ = this->get_parameter("urdfFile").as_string();
+        //referenceFile_ = this->get_parameter("referenceFile").as_string();
         
         /*
         robot_interface_ptr_ = std::make_shared<ocs2::legged_robot::LeggedRobotInterface>(
