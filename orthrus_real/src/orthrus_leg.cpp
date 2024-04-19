@@ -11,10 +11,10 @@ namespace orthrus_real
         motor[2].Analyze(pack);
     }
 
-    void Leg::Init(uint8_t can_id, uint8_t imu_id, uint8_t leg_id)
+    void Leg::Init(uint8_t imu_id, uint8_t leg_id)
     {
-        imu.Init(can_id, imu_id);
-        angle.Init(can_id, imu_id);
+        imu.Init(imu_id);
+        angle.Init(imu_id);
         motor[0].Init(leg_id, 0);
         motor[1].Init(leg_id, 1);
         motor[2].Init(leg_id, 2);

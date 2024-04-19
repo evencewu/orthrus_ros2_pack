@@ -49,11 +49,11 @@ int main()
     char phy[] = "enp5s0";
     Ethercat.EcatStart(phy);
 
-    leg[0].Init(CAN2, IMU1, USART1);
-    leg[1].Init(CAN2, IMU2, USART2);
-    leg[2].Init(CAN2, IMU3, USART3);
-    leg[3].Init(CAN2, IMU4, USART6);
-    body_imu.Init(CAN2, IMU5);
+    leg[0].Init(IMU1, USART1);
+    leg[1].Init(IMU2, USART2);
+    leg[2].Init(IMU3, USART3);
+    leg[3].Init(IMU4, USART6);
+    body_imu.Init(IMU5);
     for (int i = 0; i < 100000; i++)
     {
         //ImuCalibrateStart(&Ethercat.packet_tx[0], CAN2);

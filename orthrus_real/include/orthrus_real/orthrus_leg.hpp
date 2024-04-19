@@ -19,7 +19,7 @@ namespace orthrus_real
     class Leg
     {
     public:
-        void Init(uint8_t can_id, uint8_t imu_id, uint8_t usart_id);
+        void Init(uint8_t imu_id, uint8_t usart_id);
         void Analyze(Ecat_Inputs_Pack *pack);
 
         Imu imu;

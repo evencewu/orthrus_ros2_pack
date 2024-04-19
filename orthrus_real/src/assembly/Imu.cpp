@@ -5,22 +5,37 @@
 
 namespace orthrus_real
 {
-    void Imu::get_angle(double standard_yaw)
+    void Imu::Correction(double standard_yaw)
     {
-        // 从旋转矩阵中提取欧拉角（这里使用Z-Y-X顺序）
-        Eigen::Vector3d euler = unified_gyro_.toRotationMatrix().eulerAngles(2, 1, 0);
+        unified_gyro_ = gyro_*correction_matrix_;
 
-        yaw = euler(0);
-        pitch = euler(1);
-        roll = euler(2);
+        GetEuler(unified_gyro_);
 
-        // yaw = standard_yaw;
-        // yaw = M_PI/2;
-
-        Eigen::Vector3d eulerAngles(roll, pitch, standard_yaw);
+        Eigen::Vector3d eulerAngles(euler_(ROLL), euler_(PITCH), standard_yaw);
 
         standard_gyro_ = Eigen::Quaterniond(Eigen::AngleAxisd(eulerAngles.z(), Eigen::Vector3d::UnitZ()) * Eigen::AngleAxisd(eulerAngles.y(), Eigen::Vector3d::UnitY()) * Eigen::AngleAxisd(eulerAngles.x(), Eigen::Vector3d::UnitX()));
     }
+
+    void Imu::GetEuler(Eigen::Quaterniond input_quaterniond)
+    {
+        euler_ = input_quaterniond.toRotationMatrix().eulerAngles(ROLL, PITCH, YAW);
+
+        //yaw = euler(0);
+        //pitch = euler(1);
+        //roll = euler(2);
+    }
+
+    void Imu::CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1,double angle2, Eigen::Vector3d axis2)
+    {
+        Eigen::AngleAxisd rotation1(angle1, axis1);
+        Eigen::Quaterniond q1(rotation1);
+
+        Eigen::AngleAxisd rotation2(angle2,axis2);
+        Eigen::Quaterniond q2(rotation2);
+
+        correction_matrix_ = q2 * q1;
+    }
+
 
     void Imu::IfUseMag(bool flag, can_pack can)
     {
@@ -44,9 +59,8 @@ namespace orthrus_real
         }
     }
 
-    void Imu::Init(uint8_t can_id, uint8_t device_id)
+    void Imu::Init(uint8_t device_id)
     {
-        can_id_ = can_id;
         device_id_ = device_id;
     }
 

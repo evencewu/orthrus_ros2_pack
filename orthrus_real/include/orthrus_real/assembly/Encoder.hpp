@@ -9,7 +9,7 @@ namespace orthrus_real
     class Encoder
     {
     public:
-        void Init(uint8_t can_id, uint8_t imu_id);
+        void Init(uint8_t imu_id);
         void Analyze(Ecat_Inputs_Pack *pack);
 
         float Pos; //角度

@@ -4,9 +4,8 @@
 
 namespace orthrus_real
 {
-    void Encoder::Init(uint8_t can_id, uint8_t device_id)
+    void Encoder::Init(uint8_t device_id)
     {
-        this->can_id = can_id;
         this->device_id = device_id;
     }
 

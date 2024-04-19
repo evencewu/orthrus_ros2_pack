@@ -13,25 +13,31 @@
 #define IMU4 9
 #define IMU5 12
 
+#define YAW 0
+#define PITCH 1
+#define ROLL 2
 namespace orthrus_real
 {
     class Imu
     {
     public:
-        void Init(uint8_t can_id, uint8_t device_id);
+        void Init(uint8_t device_id);
         void Analyze(Ecat_Inputs_Pack *pack);
-        void get_angle(double standard_yaw);
+
+        
+
         static void IfUseMag(bool flag, can_pack can);
         
-        Eigen::Quaterniond gyro_;
+        void CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1,double angle2, Eigen::Vector3d axis2);
+        void GetEuler(Eigen::Quaterniond input_quaterniond);
+        void Correction(double standard_yaw);
+        Eigen::Quaterniond correction_matrix_;
 
-        Eigen::Quaterniond unified_gyro_;
+        Eigen::Quaterniond gyro_; //Raw gyro data
+        Eigen::Quaterniond unified_gyro_; //Correction direction
+        Eigen::Quaterniond standard_gyro_; //Correction yaw
 
-        Eigen::Quaterniond standard_gyro_;
-
-        double yaw;
-        double pitch;
-        double roll;
+        Eigen::Vector3d euler_;
 
     private:
         union

@@ -28,17 +28,23 @@ namespace orthrus_real
 
     Ethercat.EcatStart(phy);
 
-    leg[0].Init(CAN2, IMU1, USART1);
-    leg[1].Init(CAN2, IMU2, USART2);
-    leg[2].Init(CAN2, IMU3, USART3);
-    leg[3].Init(CAN2, IMU4, USART6);
-    body_imu.Init(CAN2, IMU5);
+    leg[0].Init(IMU1, USART1);
+    leg[1].Init(IMU2, USART2);
+    leg[2].Init(IMU3, USART3);
+    leg[3].Init(IMU4, USART6);
+    body_imu.Init(IMU5);
 
-    // usleep(100000);//100ms
+    body_imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[0].imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[1].imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[2].imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[3].imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
 
     Imu::IfUseMag(FALSE, Ethercat.packet_rx[0].can);
     Imu::IfUseMag(FALSE, Ethercat.packet_rx[1].can);
     Ethercat.EcatSyncMsg();
+
+    
     // ImuIfUseMag(FALSE);
   }
 
@@ -81,7 +87,7 @@ namespace orthrus_real
       // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf %lf %lf\n", body_imu.pitch, body_imu.roll, body_imu.yaw,leg[0].imu.pitch, leg[0].imu.roll, leg[0].imu.yaw);
 
       // yaw
-      RCLCPP_INFO(this->get_logger(), "yaw %lf %lf %lf %lf %lf\n", body_imu.yaw,leg[0].imu.yaw,leg[1].imu.yaw,leg[2].imu.yaw,leg[3].imu.yaw);
+      RCLCPP_INFO(this->get_logger(), "yaw %lf %lf %lf %lf %lf\n", body_imu.euler_(YAW),leg[0].imu.euler_(YAW),leg[1].imu.euler_(YAW),leg[2].imu.euler_(YAW),leg[3].imu.euler_(YAW));
 
       // RCLCPP_INFO(this->get_logger(), "motor1: %lf motor2: %lf\n",leg[0].imu.pitch + body_imu.roll,leg[0].imu.roll + body_imu.pitch);
       // RCLCPP_INFO(this->get_logger(), "=================\n");
@@ -155,11 +161,11 @@ namespace orthrus_real
     leg[2].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[2].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
     leg[3].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[3].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
 
-    body_imu.get_angle(body_imu.yaw);
-    leg[0].imu.get_angle(body_imu.yaw - M_PI/2);
-    leg[1].imu.get_angle(body_imu.yaw);
-    leg[2].imu.get_angle(body_imu.yaw + M_PI/2);
-    leg[3].imu.get_angle(body_imu.yaw);
+    body_imu.Correction(body_imu.euler_(YAW));
+    leg[0].imu.Correction(body_imu.euler_(YAW) - M_PI/2);
+    leg[1].imu.Correction(body_imu.euler_(YAW) + M_PI/2);
+    leg[2].imu.Correction(body_imu.euler_(YAW) + M_PI/2);
+    leg[3].imu.Correction(body_imu.euler_(YAW) - M_PI/2);
 
     // leg[0].imu.pitch + body_imu.roll;
     // leg[0].imu.roll + body_imu.pitch;
