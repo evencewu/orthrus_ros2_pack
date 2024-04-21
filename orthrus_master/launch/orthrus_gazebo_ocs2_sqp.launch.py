@@ -58,10 +58,24 @@ def get_orthrus_control(package, executable, name):
                     {'gaitCommandFile': launch.substitutions.LaunchConfiguration('gaitCommandFile')},
                     ],
     )
+def get_orthrus_gazebo(package, executable, name):
+    return launch_ros.actions.Node(
+        package=package,  # 替换为你的包名
+        executable=executable,  # 替换为你的可执行文件名
+        name=name,
+        parameters=[{'use_sim_time': use_sim_time}],
+    )
+
+def get_orthrus_gazebo_sim(package, executable):
+    return launch.actions.IncludeLaunchDescription(
+        launch.launch_description_sources.PythonLaunchDescriptionSource([os.path.join(get_package_share_directory(package), 'launch/'),executable])
+    )
 
 def generate_launch_description():
 
     orthrus_control_node = get_orthrus_control('orthrus_controllers', 'orthrus_controllers','orthrus_controller_node')
+    orthrus_gazebo_node = get_orthrus_gazebo('orthrus_gazebo', 'orthrus_gazebo','orthrus_gazebo_node')
+    orthrus_gazebo_sim = get_orthrus_gazebo_sim('orthrus_gazebo', 'orthrus_sim.launch.py')
 
     ld = launch.LaunchDescription([
         ArgumentDescriptionName,
@@ -70,6 +84,8 @@ def generate_launch_description():
         ArgumentReferenceFile,
         ArgumentUrdfFile,
         ArgumentGaitCommandFile,
+        orthrus_gazebo_sim,
+        orthrus_gazebo_node,
         orthrus_control_node,
     ])
 

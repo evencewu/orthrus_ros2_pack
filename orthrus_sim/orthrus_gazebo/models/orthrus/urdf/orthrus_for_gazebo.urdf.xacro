@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<robot name="orthrus" xmlns:xacro="http://ros.org/wiki/xacro">
+<robot name="orthrus"
+  xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:include filename="orthrus_base.xacro"/>
 
@@ -17,7 +18,14 @@
   <xacro:leg2 prefix="RF"/>
   <xacro:leg2 prefix="LB"/>
   <xacro:leg2 prefix="RB"/>
-  
+
+  <gazebo reference="body">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>1</always_on>
+      <update_rate>1000</update_rate>
+    </sensor>
+  </gazebo>
+
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
@@ -38,7 +46,7 @@
     <xacro:ros2_hip_joint prefix="LB"/>
     <xacro:ros2_leg1_joint prefix="LB"/>
     <xacro:ros2_leg2_joint prefix="LB"/>
-    
+
     <sensor name="imu_sensor">
       <state_interface name="orientation.x"/>
       <state_interface name="orientation.y"/>
@@ -53,14 +61,6 @@
     </sensor>
 
   </ros2_control>
-
-  <gazebo reference="body">
-    <sensor name="imu_sensor" type="imu">
-      <always_on>true</always_on>
-      <update_rate>1000</update_rate>
-    </sensor>
-  </gazebo>
-
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
       <parameters>/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/config/orthrus.yaml</parameters>
