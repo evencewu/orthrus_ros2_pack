@@ -86,29 +86,3 @@ int main(int argc, char *argv[])
     return 0;
 }
 */
-#include "rclcpp/rclcpp.hpp"
-
-class MyClass : public rclcpp::Node {
-public:
-    MyClass() : Node("my_node"), count_(0) {
-        // 创建一个定时器，在1秒后触发，并绑定到成员函数
-        timer_ = this->create_wall_timer(std::chrono::seconds(1), std::bind(&MyClass::afterConstructor, this));
-    }
-
-private:
-    void afterConstructor() {
-        // 在此处执行你想要的特定函数
-        RCLCPP_INFO(this->get_logger(), "Function called after constructor");
-    }
-
-    rclcpp::TimerBase::SharedPtr timer_;
-    size_t count_;
-};
-
-int main(int argc, char *argv[]) {
-    rclcpp::init(argc, argv);
-    auto node = std::make_shared<MyClass>();
-    rclcpp::spin(node);
-    rclcpp::shutdown();
-    return 0;
-}
