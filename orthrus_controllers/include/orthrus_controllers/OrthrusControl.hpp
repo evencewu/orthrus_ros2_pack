@@ -18,11 +18,13 @@
 // ocs2
 #include <ocs2_sqp/SqpMpc.h>
 #include <ocs2_mpc/SystemObservation.h>
+#include <ocs2_mpc/MPC_MRT_Interface.h>
 #include <ocs2_ros_interfaces/mpc/MPC_ROS_Interface.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_ros_interfaces/synchronized_module/RosReferenceManager.h>
 #include <ocs2_ros_interfaces/command/TargetTrajectoriesRosPublisher.h>
+#include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
 #include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
 #include <ocs2_legged_robot/LeggedRobotInterface.h>
 
@@ -41,6 +43,9 @@ namespace orthrus_control
         void Init();
         void MainLoop();
 
+        void MpcInit();
+        //void Init();
+
         // ocs2
         // rclcpp::Node::SharedPtr node_ = std::make_shared<OrthrusControlNode>();
 
@@ -52,6 +57,14 @@ namespace orthrus_control
         std::string taskFile_;
         std::string urdfFile_;
         std::string referenceFile_;
+
+        std::shared_ptr<ocs2::legged_robot::LeggedRobotInterface> InterfacePtr_;
+        
+        /*MPC*/
+        std::shared_ptr<ocs2::MPC_BASE> mpc_;
+        std::shared_ptr<ocs2::CentroidalModelRbdConversions> rbdConversions_;
+
+        rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr mpcObservationPublisher_;
 
         std::shared_ptr<orthrus_control::OrthrusInterface> OrthrusInterfacePtr_;
 

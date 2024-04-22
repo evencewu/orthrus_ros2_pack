@@ -39,28 +39,46 @@ namespace orthrus_control
         OrthrusInterfacePtr_->Init();
 
         // Robot interface
-        ocs2::legged_robot::LeggedRobotInterface interface(taskFile_, urdfFile_, referenceFile_);
+        InterfacePtr_ = std::make_shared<ocs2::legged_robot::LeggedRobotInterface>(taskFile_, urdfFile_, referenceFile_);
 
-        /*
-        // Gait receiver
-        auto gaitReceiverPtr = std::make_shared<ocs2::legged_robot::GaitReceiver>(
-            node_ptr_, interface.getSwitchedModelReferenceManagerPtr()->getGaitSchedule(),
-            robotName);
-
-        auto rosReferenceManagerPtr = std::make_shared<ocs2::RosReferenceManager>(
-            robotName, interface.getReferenceManagerPtr());
-        rosReferenceManagerPtr->subscribe(node_ptr_);
+        MpcInit();
 
         // OrthrusVisualization(interface.getPinocchioInterface(), interface.getGeometryInterface(), pinocchioMapping);
 
-        ocs2::SqpMpc mpc(interface.mpcSettings(), interface.sqpSettings(),
-                         interface.getOptimalControlProblem(), interface.getInitializer());
-        mpc.getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
-        mpc.getSolverPtr()->addSynchronizedModule(gaitReceiverPtr);
+        // mpc_
+        //
+        // ocs2::SqpMpc mpc(interface.mpcSettings(), interface.sqpSettings(),
+        //                  interface.getOptimalControlProblem(), interface.getInitializer());
+        // mpc.getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
+        // mpc.getSolverPtr()->addSynchronizedModule(gaitReceiverPtr);
 
-        ocs2::MPC_ROS_Interface mpcNode(mpc, robotName);
-        mpcNode.launchNodes(node_ptr_);
-        */
+        // ocs2::MPC_ROS_Interface mpcNode(mpc, robotName);
+        // mpcNode.launchNodes(node_ptr_);
+    }
+
+    void OrthrusControlNode::MpcInit()
+    {
+        mpc_ = std::make_shared<ocs2::SqpMpc>(InterfacePtr_->mpcSettings(), InterfacePtr_->sqpSettings(),
+                                              InterfacePtr_->getOptimalControlProblem(), InterfacePtr_->getInitializer());
+        rbdConversions_ = std::make_shared<ocs2::CentroidalModelRbdConversions>(InterfacePtr_->getPinocchioInterface(),
+                                                                                InterfacePtr_->getCentroidalModelInfo());
+
+        // Gait receiver
+        auto gaitReceiverPtr = std::make_shared<ocs2::legged_robot::GaitReceiver>(
+            node_ptr_, InterfacePtr_->getSwitchedModelReferenceManagerPtr()->getGaitSchedule(),
+            robotName);
+
+        auto rosReferenceManagerPtr = std::make_shared<ocs2::RosReferenceManager>(
+            robotName, InterfacePtr_->getReferenceManagerPtr());
+        rosReferenceManagerPtr->subscribe(node_ptr_);
+
+        mpc_->getSolverPtr()->addSynchronizedModule(gaitReceiverPtr);
+        mpc_->getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
+
+        mpcObservationPublisher_ = node_ptr_ ->create_publisher<ocs2_msgs::msg::MpcObservation>(robotName + "_mpc_observation", 1);
+
+        //
+        // observationPublisher_ = nh.advertise<ocs2_msgs::msg::mpc_observation>(robotName + "_mpc_observation", 1);
     }
 }
 
