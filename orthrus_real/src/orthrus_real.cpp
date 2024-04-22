@@ -30,8 +30,8 @@ namespace orthrus_real
 
     leg[0].Init(IMU1, USART1);
     leg[1].Init(IMU2, USART2);
-    leg[2].Init(IMU3, USART3);
-    leg[3].Init(IMU4, USART6);
+    leg[2].Init(IMU4, USART3);
+    leg[3].Init(IMU3, USART6);
     body_imu.Init(IMU5);
 
     body_imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
@@ -55,7 +55,8 @@ namespace orthrus_real
     Ethercat.EcatSyncMsg();
     AnalyzeAll();
 
-    UnifiedSensorData();
+    LegPositionCalibrate();
+
     ImuTfPub();
 
     Log(LOG_FLAG);
@@ -65,13 +66,36 @@ namespace orthrus_real
   {
     if (flag == true)
     {
+      // RCLCPP_INFO(this->get_logger(), "=================");
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[0].imu.standard_gyro_.w(), leg[0].imu.standard_gyro_.x(), leg[0].imu.standard_gyro_.y(), leg[0].imu.standard_gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[1].imu.standard_gyro_.w(), leg[1].imu.standard_gyro_.x(), leg[1].imu.standard_gyro_.y(), leg[1].imu.standard_gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[2].imu.standard_gyro_.w(), leg[2].imu.standard_gyro_.x(), leg[2].imu.standard_gyro_.y(), leg[3].imu.standard_gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[3].imu.standard_gyro_.w(), leg[3].imu.standard_gyro_.x(), leg[3].imu.standard_gyro_.y(), leg[3].imu.standard_gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", body_imu.standard_gyro_.w(), body_imu.standard_gyro_.x(), body_imu.standard_gyro_.y(), body_imu.standard_gyro_.z());
+      // RCLCPP_INFO(this->get_logger(), "=================");
+
       RCLCPP_INFO(this->get_logger(), "=================");
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[0].imu.standard_gyro_.w(), leg[0].imu.standard_gyro_.x(), leg[0].imu.standard_gyro_.y(), leg[0].imu.standard_gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[1].imu.standard_gyro_.w(), leg[1].imu.standard_gyro_.x(), leg[1].imu.standard_gyro_.y(), leg[1].imu.standard_gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[2].imu.standard_gyro_.w(), leg[2].imu.standard_gyro_.x(), leg[2].imu.standard_gyro_.y(), leg[3].imu.standard_gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[3].imu.standard_gyro_.w(), leg[3].imu.standard_gyro_.x(), leg[3].imu.standard_gyro_.y(), leg[3].imu.standard_gyro_.z());
-      RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", body_imu.standard_gyro_.w(), body_imu.standard_gyro_.x(), body_imu.standard_gyro_.y(), body_imu.standard_gyro_.z());
+      RCLCPP_INFO(this->get_logger(), "\n motor1 %lf %lf %lf %lf \n motor2 %lf %lf %lf %lf ",
+                  body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL),
+                  body_imu.euler_(PITCH) - leg[1].imu.euler_(ROLL),
+                  body_imu.euler_(PITCH) - leg[2].imu.euler_(ROLL),
+                  body_imu.euler_(PITCH) - leg[3].imu.euler_(ROLL),
+                  body_imu.euler_(ROLL) - leg[0].imu.euler_(PITCH),
+                  body_imu.euler_(ROLL) - leg[1].imu.euler_(PITCH),
+                  body_imu.euler_(ROLL) - leg[2].imu.euler_(PITCH),
+                  body_imu.euler_(ROLL) - leg[3].imu.euler_(PITCH));
+      RCLCPP_INFO(this->get_logger(), "\n motor0 %lf %lf %lf %lf",leg[0].motor[0].Pos_,leg[1].motor[0].Pos_,leg[2].motor[0].Pos_,leg[3].motor[0].Pos_);
       RCLCPP_INFO(this->get_logger(), "=================");
+
+      
+
+      // RCLCPP_INFO(this->get_logger(), "=================");
+      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n %lf %lf %lf\n %lf %lf %lf\n %lf %lf %lf\n",
+      //             leg[0].imu.euler_(YAW), leg[0].imu.euler_(PITCH), leg[0].imu.euler_(ROLL),
+      //             leg[1].imu.euler_(YAW), leg[1].imu.euler_(PITCH), leg[1].imu.euler_(ROLL),
+      //             leg[2].imu.euler_(YAW), leg[2].imu.euler_(PITCH), leg[2].imu.euler_(ROLL),
+      //             leg[3].imu.euler_(YAW), leg[3].imu.euler_(PITCH), leg[3].imu.euler_(ROLL));
+      // RCLCPP_INFO(this->get_logger(), "=================");
     }
   }
 
@@ -123,6 +147,11 @@ namespace orthrus_real
     body_imu.Analyze(&Ethercat.packet_rx[1]);
   }
 
+  void OrthrusInterfacesNode::LegPositionCalibrate()
+  {
+    UnifiedSensorData();
+  }
+
   /// @brief 统一imu姿态
   void OrthrusInterfacesNode::UnifiedSensorData()
   {
@@ -135,11 +164,8 @@ namespace orthrus_real
     body_imu.Correction(body_imu.euler_(YAW));
     leg[0].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
     leg[1].imu.Correction(body_imu.euler_(YAW) + M_PI / 2);
-    leg[2].imu.Correction(body_imu.euler_(YAW) + M_PI / 2);
-    leg[3].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
-
-    // leg[0].imu.pitch + body_imu.roll;
-    // leg[0].imu.roll + body_imu.pitch;
+    leg[2].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
+    leg[3].imu.Correction(body_imu.euler_(YAW) + M_PI / 2);
   }
 
   /// @brief 用于程序退出前电机数据的处理

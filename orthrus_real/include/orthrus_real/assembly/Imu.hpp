@@ -30,6 +30,7 @@ namespace orthrus_real
         void CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1,double angle2, Eigen::Vector3d axis2);
         void GetEuler(Eigen::Quaterniond input_quaterniond);
         void Correction(double standard_yaw);
+        
         Eigen::Quaterniond correction_matrix_;
 
         Eigen::Quaterniond gyro_; //Raw gyro data

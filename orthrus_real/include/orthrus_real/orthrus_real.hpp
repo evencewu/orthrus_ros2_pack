@@ -60,7 +60,6 @@ namespace orthrus_real
 
     // imu set
     void UnifiedSensorData();
-    // Calibrating leg position
     void LegPositionCalibrate();
 
     /*实例化Ecat motor imu 结构体*/
