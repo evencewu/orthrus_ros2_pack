@@ -84,9 +84,10 @@ def generate_launch_description():
         ArgumentReferenceFile,
         ArgumentUrdfFile,
         ArgumentGaitCommandFile,
-        orthrus_gazebo_sim,
-        orthrus_gazebo_node,
+        ###
         orthrus_control_node,
+        ##orthrus_gazebo_node,
+        ##orthrus_gazebo_sim,
     ])
 
     return ld
