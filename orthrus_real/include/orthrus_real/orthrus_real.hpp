@@ -17,10 +17,11 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
+#include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
+#include <orthrus_interfaces/msg/orthrus_joint_state.hpp>
+
 #include "orthrus_real/ethercat/ecat_base.hpp"
 #include "orthrus_real/ethercat/TypeDef.hpp"
-#include "orthrus_real/calibrate/calibrate_imu.hpp"
-#include "orthrus_real/calibrate/calibrate_leg.hpp"
 #include "orthrus_real/orthrus_leg.hpp"
 #include "orthrus_real/assembly/Imu.hpp"
 
@@ -29,6 +30,7 @@
 #include <tf2_msgs/msg/tf_message.hpp>
 
 #define LOG_FLAG 1
+#define PUB_LEGIMU_FLAG 1
 
 namespace orthrus_real
 {

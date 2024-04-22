@@ -25,6 +25,17 @@ namespace orthrus_real
         //roll = euler(2);
     }
 
+    void Imu::RotatingCoordinates(double angle1, Eigen::Vector3d axis1,double angle2, Eigen::Vector3d axis2)
+    {
+        Eigen::AngleAxisd rotation1(angle1, axis1); // 绕y轴旋转90度
+        Eigen::Quaterniond q1(rotation1);
+
+        Eigen::AngleAxisd rotation2(angle2,axis2);
+        Eigen::Quaterniond q2(rotation2);
+
+        this->unified_gyro_ = this->gyro_ * q2 * q1;
+    }
+
     void Imu::CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1,double angle2, Eigen::Vector3d axis2)
     {
         Eigen::AngleAxisd rotation1(angle1, axis1);

@@ -24,9 +24,8 @@ namespace orthrus_real
         void Init(uint8_t device_id);
         void Analyze(Ecat_Inputs_Pack *pack);
 
-        
-
         static void IfUseMag(bool flag, can_pack can);
+        void RotatingCoordinates(double angle, Eigen::Vector3d axis,double install_angle, Eigen::Vector3d install_axis);
         
         void CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1,double angle2, Eigen::Vector3d axis2);
         void GetEuler(Eigen::Quaterniond input_quaterniond);

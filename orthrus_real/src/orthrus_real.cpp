@@ -34,17 +34,16 @@ namespace orthrus_real
     leg[3].Init(IMU4, USART6);
     body_imu.Init(IMU5);
 
-    body_imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
-    leg[0].imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
-    leg[1].imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
-    leg[2].imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
-    leg[3].imu.CorrectionMatrixSet(-M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    body_imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[0].imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[1].imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[2].imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[3].imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
 
     Imu::IfUseMag(FALSE, Ethercat.packet_rx[0].can);
     Imu::IfUseMag(FALSE, Ethercat.packet_rx[1].can);
     Ethercat.EcatSyncMsg();
 
-    
     // ImuIfUseMag(FALSE);
   }
 
@@ -66,13 +65,6 @@ namespace orthrus_real
   {
     if (flag == true)
     {
-      // RCLCPP_INFO(this->get_logger(), "=================");
-      // RCLCPP_INFO(this->get_logger(), "%f %f %f %f %f %f %f %f %f %f %f %f ", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_, leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_, leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_, leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
-      // RCLCPP_INFO(this->get_logger(), "=================");
-
-      // RCLCPP_INFO(this->get_logger(), "id 0x%x",Ethercat.packet_rx[0].can.StdId);
-      // RCLCPP_INFO(this->get_logger(), "id 0x%x",Ethercat.packet_rx[1].can.StdId);
-
       RCLCPP_INFO(this->get_logger(), "=================");
       RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[0].imu.standard_gyro_.w(), leg[0].imu.standard_gyro_.x(), leg[0].imu.standard_gyro_.y(), leg[0].imu.standard_gyro_.z());
       RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[1].imu.standard_gyro_.w(), leg[1].imu.standard_gyro_.x(), leg[1].imu.standard_gyro_.y(), leg[1].imu.standard_gyro_.z());
@@ -80,26 +72,6 @@ namespace orthrus_real
       RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", leg[3].imu.standard_gyro_.w(), leg[3].imu.standard_gyro_.x(), leg[3].imu.standard_gyro_.y(), leg[3].imu.standard_gyro_.z());
       RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", body_imu.standard_gyro_.w(), body_imu.standard_gyro_.x(), body_imu.standard_gyro_.y(), body_imu.standard_gyro_.z());
       RCLCPP_INFO(this->get_logger(), "=================");
-
-      // pitch 电机2
-      // roll 电机1
-      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf %lf %lf\n", body_imu.pitch, body_imu.roll, body_imu.yaw,leg[0].imu.pitch, leg[0].imu.roll, leg[0].imu.yaw);
-
-      // yaw
-      //RCLCPP_INFO(this->get_logger(), "yaw %lf %lf %lf %lf %lf\n", body_imu.euler_(YAW),leg[0].imu.euler_(YAW),leg[1].imu.euler_(YAW),leg[2].imu.euler_(YAW),leg[3].imu.euler_(YAW));
-
-      // RCLCPP_INFO(this->get_logger(), "motor1: %lf motor2: %lf\n",leg[0].imu.pitch + body_imu.roll,leg[0].imu.roll + body_imu.pitch);
-      // RCLCPP_INFO(this->get_logger(), "=================\n");
-
-      //RCLCPP_INFO(this->get_logger(), "motor1: %lf %lf %lf %lfmotor2: %lf %lf %lf %lf\n", leg[0].imu.pitch - body_imu.roll, leg[1].imu.pitch + body_imu.roll, leg[2].imu.pitch - body_imu.roll, leg[3].imu.pitch + body_imu.roll
-      //, leg[0].imu.yaw - body_imu.pitch, leg[1].imu.yaw + body_imu.pitch, leg[2].imu.yaw - body_imu.pitch, leg[3].imu.yaw + body_imu.pitch);
-
-      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf \n", leg[1].imu.pitch, leg[1].imu.roll, leg[1].imu.yaw);
-      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf \n", leg[2].imu.pitch, leg[2].imu.roll, leg[2].imu.yaw);
-      // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf \n", leg[3].imu.pitch, leg[3].imu.roll, leg[3].imu.yaw);
-
-      // RCLCPP_INFO(this->get_logger(), "imu 0x%x\n",Ethercat.packet_rx[1].can[1].StdId);
-      // RCLCPP_INFO(this->get_logger(), "imu 0x%x\n",Ethercat.packet_tx[0].can[1].StdId);
     }
   }
 
@@ -154,17 +126,17 @@ namespace orthrus_real
   /// @brief 统一imu姿态
   void OrthrusInterfacesNode::UnifiedSensorData()
   {
-    body_imu.unified_gyro_ = calibrate::RotatingCoordinates(body_imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
-    leg[0].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[0].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
-    leg[1].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[1].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
-    leg[2].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[2].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
-    leg[3].imu.unified_gyro_ = calibrate::RotatingCoordinates(leg[3].imu.gyro_, -M_PI/2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI/2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    body_imu.RotatingCoordinates(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[0].imu.RotatingCoordinates(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[1].imu.RotatingCoordinates(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[2].imu.RotatingCoordinates(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+    leg[3].imu.RotatingCoordinates(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
 
     body_imu.Correction(body_imu.euler_(YAW));
-    leg[0].imu.Correction(body_imu.euler_(YAW) + M_PI/2);
-    leg[1].imu.Correction(body_imu.euler_(YAW) - M_PI/2);
-    leg[2].imu.Correction(body_imu.euler_(YAW) - M_PI/2);
-    leg[3].imu.Correction(body_imu.euler_(YAW) - M_PI/2);
+    leg[0].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
+    leg[1].imu.Correction(body_imu.euler_(YAW) + M_PI / 2);
+    leg[2].imu.Correction(body_imu.euler_(YAW) + M_PI / 2);
+    leg[3].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
 
     // leg[0].imu.pitch + body_imu.roll;
     // leg[0].imu.roll + body_imu.pitch;
@@ -205,88 +177,90 @@ namespace orthrus_real
       orthrus_imu_msg_.orientation.z = body_imu.unified_gyro_.z();
       orthrus_imu_pub_->publish(orthrus_imu_msg_);
 
-      geometry_msgs::msg::TransformStamped tf_stamped;
-      // orthrus_viewer_horizontal_pub_
-
-      orthrus_calibrating_imu_msg_.transforms.clear();
-
-      tf_stamped.header.stamp = this->now();
-
-      tf_stamped.header.frame_id = "horizontal";
-      tf_stamped.child_frame_id = "imu_1";
-
-      tf_stamped.transform.translation.x = 0.0;
-      tf_stamped.transform.translation.y = 0.0;
-      tf_stamped.transform.translation.z = 0.0;
-
-      tf_stamped.transform.rotation.w = leg[0].imu.standard_gyro_.w();
-      tf_stamped.transform.rotation.x = leg[0].imu.standard_gyro_.x();
-      tf_stamped.transform.rotation.y = leg[0].imu.standard_gyro_.y();
-      tf_stamped.transform.rotation.z = leg[0].imu.standard_gyro_.z();
-
-      if (leg[0].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
+      if (PUB_LEGIMU_FLAG == 1)
       {
-        orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
+        geometry_msgs::msg::TransformStamped tf_stamped;
+
+        orthrus_calibrating_imu_msg_.transforms.clear();
+
+        tf_stamped.header.stamp = this->now();
+
+        tf_stamped.header.frame_id = "horizontal";
+        tf_stamped.child_frame_id = "imu_1";
+
+        tf_stamped.transform.translation.x = 0.0;
+        tf_stamped.transform.translation.y = 0.0;
+        tf_stamped.transform.translation.z = 0.0;
+
+        tf_stamped.transform.rotation.w = leg[0].imu.standard_gyro_.w();
+        tf_stamped.transform.rotation.x = leg[0].imu.standard_gyro_.x();
+        tf_stamped.transform.rotation.y = leg[0].imu.standard_gyro_.y();
+        tf_stamped.transform.rotation.z = leg[0].imu.standard_gyro_.z();
+
+        if (leg[0].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
+        {
+          orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
+        }
+
+        tf_stamped.header.stamp = this->now();
+
+        tf_stamped.header.frame_id = "horizontal";
+        tf_stamped.child_frame_id = "imu_2";
+
+        tf_stamped.transform.translation.x = 0.0;
+        tf_stamped.transform.translation.y = 0.0;
+        tf_stamped.transform.translation.z = 0.0;
+
+        tf_stamped.transform.rotation.w = leg[1].imu.standard_gyro_.w();
+        tf_stamped.transform.rotation.x = leg[1].imu.standard_gyro_.x();
+        tf_stamped.transform.rotation.y = leg[1].imu.standard_gyro_.y();
+        tf_stamped.transform.rotation.z = leg[1].imu.standard_gyro_.z();
+
+        if (leg[1].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
+        {
+          orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
+        }
+
+        tf_stamped.header.stamp = this->now();
+
+        tf_stamped.header.frame_id = "horizontal";
+        tf_stamped.child_frame_id = "imu_3";
+
+        tf_stamped.transform.translation.x = 0.0;
+        tf_stamped.transform.translation.y = 0.0;
+        tf_stamped.transform.translation.z = 0.0;
+
+        tf_stamped.transform.rotation.w = leg[2].imu.standard_gyro_.w();
+        tf_stamped.transform.rotation.x = leg[2].imu.standard_gyro_.x();
+        tf_stamped.transform.rotation.y = leg[2].imu.standard_gyro_.y();
+        tf_stamped.transform.rotation.z = leg[2].imu.standard_gyro_.z();
+
+        if (leg[2].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
+        {
+          orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
+        }
+
+        tf_stamped.header.stamp = this->now();
+
+        tf_stamped.header.frame_id = "horizontal";
+        tf_stamped.child_frame_id = "imu_4";
+
+        tf_stamped.transform.translation.x = 0.0;
+        tf_stamped.transform.translation.y = 0.0;
+        tf_stamped.transform.translation.z = 0.0;
+
+        tf_stamped.transform.rotation.w = leg[3].imu.standard_gyro_.w();
+        tf_stamped.transform.rotation.x = leg[3].imu.standard_gyro_.x();
+        tf_stamped.transform.rotation.y = leg[3].imu.standard_gyro_.y();
+        tf_stamped.transform.rotation.z = leg[3].imu.standard_gyro_.z();
+
+        if (leg[3].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
+        {
+          orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
+        }
+
+        orthrus_calibrating_imu_pub_->publish(orthrus_calibrating_imu_msg_);
       }
-
-      tf_stamped.header.stamp = this->now();
-
-      tf_stamped.header.frame_id = "horizontal";
-      tf_stamped.child_frame_id = "imu_2";
-
-      tf_stamped.transform.translation.x = 0.0;
-      tf_stamped.transform.translation.y = 0.0;
-      tf_stamped.transform.translation.z = 0.0;
-
-      tf_stamped.transform.rotation.w = leg[1].imu.standard_gyro_.w();
-      tf_stamped.transform.rotation.x = leg[1].imu.standard_gyro_.x();
-      tf_stamped.transform.rotation.y = leg[1].imu.standard_gyro_.y();
-      tf_stamped.transform.rotation.z = leg[1].imu.standard_gyro_.z();
-
-      if (leg[1].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
-      {
-        orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
-      }
-
-      tf_stamped.header.stamp = this->now();
-
-      tf_stamped.header.frame_id = "horizontal";
-      tf_stamped.child_frame_id = "imu_3";
-
-      tf_stamped.transform.translation.x = 0.0;
-      tf_stamped.transform.translation.y = 0.0;
-      tf_stamped.transform.translation.z = 0.0;
-
-      tf_stamped.transform.rotation.w = leg[2].imu.standard_gyro_.w();
-      tf_stamped.transform.rotation.x = leg[2].imu.standard_gyro_.x();
-      tf_stamped.transform.rotation.y = leg[2].imu.standard_gyro_.y();
-      tf_stamped.transform.rotation.z = leg[2].imu.standard_gyro_.z();
-
-      if (leg[2].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
-      {
-        orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
-      }
-
-      tf_stamped.header.stamp = this->now();
-
-      tf_stamped.header.frame_id = "horizontal";
-      tf_stamped.child_frame_id = "imu_4";
-
-      tf_stamped.transform.translation.x = 0.0;
-      tf_stamped.transform.translation.y = 0.0;
-      tf_stamped.transform.translation.z = 0.0;
-
-      tf_stamped.transform.rotation.w = leg[3].imu.standard_gyro_.w();
-      tf_stamped.transform.rotation.x = leg[3].imu.standard_gyro_.x();
-      tf_stamped.transform.rotation.y = leg[3].imu.standard_gyro_.y();
-      tf_stamped.transform.rotation.z = leg[3].imu.standard_gyro_.z();
-
-      if (leg[3].imu.unified_gyro_ != Eigen::Quaterniond(0.0, 0.0, 0.0, 0.0))
-      {
-        orthrus_calibrating_imu_msg_.transforms.push_back(tf_stamped);
-      }
-
-      orthrus_calibrating_imu_pub_->publish(orthrus_calibrating_imu_msg_);
 
       imu_send_flag_ = 0;
     }

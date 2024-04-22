@@ -22,7 +22,7 @@ ament_auto_find_build_dependencies()
 
 include_directories(${EIGEN3_INCLUDE_DIRS})
 
-file(GLOB_RECURSE MAIN_SOURCES "src/assembly/*.cpp" "src/calibrate/*.cpp" "src/ethercat/*.cpp")
+file(GLOB_RECURSE MAIN_SOURCES "src/assembly/*.cpp" "src/ethercat/*.cpp")
 
 ament_auto_add_executable(orthrus_real
   src/orthrus_real.cpp
