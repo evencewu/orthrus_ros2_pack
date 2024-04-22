@@ -13,8 +13,12 @@ namespace orthrus_control
 
     void OrthrusInterface::Init()
     {
+        RCLCPP_INFO(node_->get_logger(), "OrthrusInterface init");
         orthrus_joint_state_sub_ = node_->create_subscription<orthrus_interfaces::msg::OrthrusJointState>("/orthrus_interface/joint_state", 10, std::bind(&OrthrusInterface::OrthrusJointStateSubCallback, this, std::placeholders::_1));
         orthrus_viewer_joint_state_pub_ = node_->create_publisher<sensor_msgs::msg::JointState>("/orthrus_viewer/joint_state", 10);
+
+        orthrus_imu_sub_ = node_->create_subscription<sensor_msgs::msg::Imu>("/orthrus_interface/imu", 10, std::bind(&OrthrusInterface::OrthrusImuSubCallback, this, std::placeholders::_1));
+        orthrus_viewer_horizontal_pub_ = node_->create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
     }
 
     void OrthrusInterface::OrthrusJointStateSubCallback(const orthrus_interfaces::msg::OrthrusJointState::SharedPtr msg)
@@ -48,6 +52,7 @@ namespace orthrus_control
 
     void OrthrusInterface::OrthrusImuSubCallback(const sensor_msgs::msg::Imu::SharedPtr msg)
     {
+        
         geometry_msgs::msg::TransformStamped tf_stamped;
         // orthrus_viewer_horizontal_pub_
         tf_stamped.header.stamp = node_->now();

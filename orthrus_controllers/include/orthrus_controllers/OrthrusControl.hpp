@@ -37,6 +37,8 @@ namespace orthrus_control
     private:
         std::shared_ptr<rclcpp::Node> node_ptr_;
 
+        bool init_flag_ = false;
+        void Init();
         void MainLoop();
 
         // ocs2
@@ -54,5 +56,7 @@ namespace orthrus_control
         std::shared_ptr<orthrus_control::OrthrusInterface> OrthrusInterfacePtr_;
 
         rclcpp::TimerBase::SharedPtr timer_;
+
+
     };
 }

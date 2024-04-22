@@ -6,10 +6,31 @@ namespace orthrus_control
                                                                            .allow_undeclared_parameters(true)
                                                                            .automatically_declare_parameters_from_overrides(true))
     {
+        // robot_interface_ptr_ = std::make_shared<ocs2::legged_robot::LeggedRobotInterface>(
+        //     taskFile_, urdfFile_, referenceFile_);
 
-         
+        // orthrus_joint_control_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10);
+        timer_ = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&OrthrusControlNode::MainLoop, this));
+    }
 
-        node_ptr_ = shared_from_this;
+    void OrthrusControlNode::MainLoop()
+    {
+        if (!init_flag_)
+        {
+            Init();
+            init_flag_ = true;
+        }
+
+        // RCLCPP_INFO(node_ptr_->get_logger(), "loop");
+        //  UpdateRobotParma();
+        //  orthrus_joint_control_msg_ = PositonCtrl_.StandUp();
+        //  orthrus_joint_control_pub_->publish(orthrus_joint_control_msg_);
+    }
+
+    void OrthrusControlNode::Init()
+    {
+        node_ptr_ = shared_from_this();
+
         taskFile_ = this->get_parameter("taskFile").as_string();
         urdfFile_ = this->get_parameter("urdfFile").as_string();
         referenceFile_ = this->get_parameter("referenceFile").as_string();
@@ -17,19 +38,29 @@ namespace orthrus_control
         OrthrusInterfacePtr_ = std::make_shared<orthrus_control::OrthrusInterface>(node_ptr_);
         OrthrusInterfacePtr_->Init();
 
-        // robot_interface_ptr_ = std::make_shared<ocs2::legged_robot::LeggedRobotInterface>(
-        //     taskFile_, urdfFile_, referenceFile_);
+        // Robot interface
+        ocs2::legged_robot::LeggedRobotInterface interface(taskFile_, urdfFile_, referenceFile_);
 
-        // orthrus_joint_control_pub_ = this->create_publisher<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10);
-        timer_ = this->create_wall_timer(std::chrono::milliseconds(1), std::bind(&OrthrusControlNode::MainLoop, this));
-        timer_ = this->create_wall_timer(std::chrono::seconds(1), std::bind(&MyClass::afterConstructor, this));
-    }
+        /*
+        // Gait receiver
+        auto gaitReceiverPtr = std::make_shared<ocs2::legged_robot::GaitReceiver>(
+            node_ptr_, interface.getSwitchedModelReferenceManagerPtr()->getGaitSchedule(),
+            robotName);
 
-    void OrthrusControlNode::MainLoop()
-    {
-        // UpdateRobotParma();
-        // orthrus_joint_control_msg_ = PositonCtrl_.StandUp();
-        // orthrus_joint_control_pub_->publish(orthrus_joint_control_msg_);
+        auto rosReferenceManagerPtr = std::make_shared<ocs2::RosReferenceManager>(
+            robotName, interface.getReferenceManagerPtr());
+        rosReferenceManagerPtr->subscribe(node_ptr_);
+
+        // OrthrusVisualization(interface.getPinocchioInterface(), interface.getGeometryInterface(), pinocchioMapping);
+
+        ocs2::SqpMpc mpc(interface.mpcSettings(), interface.sqpSettings(),
+                         interface.getOptimalControlProblem(), interface.getInitializer());
+        mpc.getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
+        mpc.getSolverPtr()->addSynchronizedModule(gaitReceiverPtr);
+
+        ocs2::MPC_ROS_Interface mpcNode(mpc, robotName);
+        mpcNode.launchNodes(node_ptr_);
+        */
     }
 }
 
