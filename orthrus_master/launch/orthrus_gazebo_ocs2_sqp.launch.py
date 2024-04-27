@@ -24,13 +24,13 @@ ArgumentMultiplot = launch.actions.DeclareLaunchArgument(
 ArgumentTaskFile = launch.actions.DeclareLaunchArgument(
     name='taskFile',
     default_value=get_package_share_directory(
-        'ocs2_legged_robot') + '/config/mpc/task.info'
+        'orthrus_controllers') + '/config/mpc/task.info'
 )
 
 ArgumentReferenceFile = launch.actions.DeclareLaunchArgument(
     name='referenceFile',
     default_value=get_package_share_directory(
-        'ocs2_legged_robot') + '/config/command/reference.info'
+        'orthrus_controllers') + '/config/command/reference.info'
 )
 
 ArgumentUrdfFile = launch.actions.DeclareLaunchArgument(
@@ -42,7 +42,7 @@ ArgumentUrdfFile = launch.actions.DeclareLaunchArgument(
 ArgumentGaitCommandFile = launch.actions.DeclareLaunchArgument(
     name='gaitCommandFile',
     default_value=get_package_share_directory(
-        'ocs2_legged_robot') + '/config/command/gait.info'
+        'orthrus_controllers') + '/config/command/gait.info'
 )
 
 def get_orthrus_control(package, executable, name):
