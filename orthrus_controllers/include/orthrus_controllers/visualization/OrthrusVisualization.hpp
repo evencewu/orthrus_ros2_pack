@@ -6,7 +6,7 @@
 #include <ocs2_mpc/SystemObservation.h>
 #include <utility>
 
-namespace orthrus_ctrl
+namespace orthrus_control
 {
     class OrthrusVisualization : public ocs2::GeometryInterfaceVisualization
     {

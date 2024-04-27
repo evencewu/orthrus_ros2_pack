@@ -1,10 +1,14 @@
 #pragma once
 
+#include "rclcpp/rclcpp.hpp"
+
 #include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
 #include <orthrus_interfaces/msg/orthrus_joint_state.hpp>
+
 // #include <orthrus_controllers/visualization/OrthrusVisualization.hpp>
 
 #include "orthrus_controllers/interface/OrthrusInterface.hpp"
+#include "orthrus_controllers/interface/OrthrusHwInterface.hpp"
 
 // ros2
 #include <sensor_msgs/msg/joint_state.hpp>
@@ -16,6 +20,10 @@
 #include <mutex>
 
 // ocs2
+#include <ocs2_core/misc/Benchmark.h>
+#include <ocs2_core/thread_support/ExecuteAndSleep.h>
+#include <ocs2_core/thread_support/SetThreadPriority.h>
+
 #include <ocs2_sqp/SqpMpc.h>
 #include <ocs2_mpc/SystemObservation.h>
 #include <ocs2_mpc/MPC_MRT_Interface.h>
@@ -25,8 +33,14 @@
 #include <ocs2_ros_interfaces/synchronized_module/RosReferenceManager.h>
 #include <ocs2_ros_interfaces/command/TargetTrajectoriesRosPublisher.h>
 #include <ocs2_centroidal_model/CentroidalModelRbdConversions.h>
-#include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
 #include <ocs2_legged_robot/LeggedRobotInterface.h>
+
+#include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
+#include <ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h>
+
+#include "orthrus_controllers/visualization/OrthrusVisualization.hpp"
+
+
 
 namespace orthrus_control
 {
@@ -44,7 +58,8 @@ namespace orthrus_control
         void MainLoop();
 
         void MpcInit();
-        //void Init();
+        void MrtInit();
+        // void Init();
 
         // ocs2
         // rclcpp::Node::SharedPtr node_ = std::make_shared<OrthrusControlNode>();
@@ -58,18 +73,31 @@ namespace orthrus_control
         std::string urdfFile_;
         std::string referenceFile_;
 
-        std::shared_ptr<ocs2::legged_robot::LeggedRobotInterface> InterfacePtr_;
-        
+        // Interface
+        std::shared_ptr<OrthrusInterface> InterfacePtr_;
+        std::shared_ptr<OrthrusHwInterface> OrthrusInterfacePtr_;
+        std::shared_ptr<ocs2::PinocchioEndEffectorKinematics> eeKinematicsPtr_;
+
         /*MPC*/
         std::shared_ptr<ocs2::MPC_BASE> mpc_;
+        std::shared_ptr<ocs2::MPC_MRT_Interface> mpcMrtInterface_;
+
+        //Visualization
+        std::shared_ptr<ocs2::legged_robot::LeggedRobotVisualizer> robotVisualizer_;
+        std::shared_ptr<OrthrusVisualization> selfCollisionVisualization_;
+
         std::shared_ptr<ocs2::CentroidalModelRbdConversions> rbdConversions_;
 
         rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr mpcObservationPublisher_;
 
-        std::shared_ptr<orthrus_control::OrthrusInterface> OrthrusInterfacePtr_;
+        
+
+        std::thread mpcThread_;
+        std::atomic_bool controllerRunning_{}, mpcRunning_{};
 
         rclcpp::TimerBase::SharedPtr timer_;
+        rclcpp::TimerBase::SharedPtr init_timer_;
 
-
+        ocs2::benchmark::RepeatedTimer mpcTimer_;
     };
 }
