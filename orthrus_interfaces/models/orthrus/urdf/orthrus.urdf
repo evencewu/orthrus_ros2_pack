@@ -32,7 +32,7 @@
       <inertia ixx="4.9950395" ixy="0" ixz="0" iyy="2.4616377" iyz="0" izz="6.4183150"/>
     </inertial>
   </link>
-  <link name="HAA_RF">
+  <link name="RF_HAA">
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
@@ -51,15 +51,15 @@
       <inertia ixx="0.0904981" ixy="0" ixz="-0.0000480" iyy=" 0.0917319" iyz="0" izz="0.0857923"/>
     </inertial>
   </link>
-  <joint name="HAA_RF_joint" type="revolute">
+  <joint name="RF_HAA" type="revolute">
     <axis xyz="0 0 1"/>
     <parent link="body"/>
-    <child link="HAA_RF"/>
+    <child link="RF_HAA"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="3.141592653589793"/>
     <origin rpy="-1.5707963267948966 3.141592653589793 3.141592653589793" xyz="0.05 0.20 0"/>
   </joint>
-  <link name="HAA_LF">
+  <link name="LF_HAA">
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
@@ -78,15 +78,15 @@
       <inertia ixx="0.0904981" ixy="0" ixz="-0.0000480" iyy=" 0.0917319" iyz="0" izz="0.0857923"/>
     </inertial>
   </link>
-  <joint name="HAA_LF_joint" type="revolute">
+  <joint name="LF_HAA" type="revolute">
     <axis xyz="0 0 1"/>
     <parent link="body"/>
-    <child link="HAA_LF"/>
+    <child link="LF_HAA"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="3.141592653589793"/>
     <origin rpy="1.5707963267948966 3.141592653589793 0" xyz="-0.05 0.20 0"/>
   </joint>
-  <link name="HAA_RH">
+  <link name="RH_HAA">
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
@@ -105,15 +105,15 @@
       <inertia ixx="0.0904981" ixy="0" ixz="-0.0000480" iyy=" 0.0917319" iyz="0" izz="0.0857923"/>
     </inertial>
   </link>
-  <joint name="HAA_RH_joint" type="revolute">
+  <joint name="RH_HAA" type="revolute">
     <axis xyz="0 0 1"/>
     <parent link="body"/>
-    <child link="HAA_RH"/>
+    <child link="RH_HAA"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="3.141592653589793"/>
     <origin rpy="1.5707963267948966 3.141592653589793 3.141592653589793" xyz="0.05 -0.20 0"/>
   </joint>
-  <link name="HAA_LH">
+  <link name="LH_HAA">
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
@@ -132,15 +132,15 @@
       <inertia ixx="0.0904981" ixy="0" ixz="-0.0000480" iyy=" 0.0917319" iyz="0" izz="0.0857923"/>
     </inertial>
   </link>
-  <joint name="HAA_LH_joint" type="revolute">
+  <joint name="LH_HAA" type="revolute">
     <axis xyz="0 0 1"/>
     <parent link="body"/>
-    <child link="HAA_LH"/>
+    <child link="LH_HAA"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="3.141592653589793"/>
     <origin rpy="-1.5707963267948966 3.141592653589793 0" xyz="-0.05 -0.20 0"/>
   </joint>
-  <link name="HFE_RF">
+  <link name="RF_HFE">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
@@ -159,15 +159,15 @@
       <inertia ixx="0.4329464" ixy="-0.0830239" ixz=" -0.0000001" iyy="0.1503071" iyz="0.0000001" izz="0.4817994"/>
     </inertial>
   </link>
-  <joint name="HFE_RF_joint" type="revolute">
+  <joint name="RF_HFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="HAA_RF"/>
-    <child link="HFE_RF"/>
+    <parent link="RF_HAA"/>
+    <child link="RF_HFE"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="3.141592653589793"/>
     <origin rpy="-1.5707963267948966 0 0" xyz="0.05 0 0"/>
   </joint>
-  <link name="HFE_LF">
+  <link name="LF_HFE">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
@@ -186,15 +186,15 @@
       <inertia ixx="0.4329464" ixy="-0.0830239" ixz=" -0.0000001" iyy="0.1503071" iyz="0.0000001" izz="0.4817994"/>
     </inertial>
   </link>
-  <joint name="HFE_LF_joint" type="revolute">
+  <joint name="LF_HFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="HAA_LF"/>
-    <child link="HFE_LF"/>
+    <parent link="LF_HAA"/>
+    <child link="LF_HFE"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="3.141592653589793"/>
     <origin rpy="-1.5707963267948966 0 0" xyz="0.05 0 0"/>
   </joint>
-  <link name="HFE_RH">
+  <link name="RH_HFE">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
@@ -213,15 +213,15 @@
       <inertia ixx="0.4329464" ixy="-0.0830239" ixz=" -0.0000001" iyy="0.1503071" iyz="0.0000001" izz="0.4817994"/>
     </inertial>
   </link>
-  <joint name="HFE_RH_joint" type="revolute">
+  <joint name="RH_HFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="HAA_RH"/>
-    <child link="HFE_RH"/>
+    <parent link="RH_HAA"/>
+    <child link="RH_HFE"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="3.141592653589793"/>
     <origin rpy="1.5707963267948966 0 0" xyz="0.05 0 0"/>
   </joint>
-  <link name="HFE_LH">
+  <link name="LH_HFE">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
@@ -240,15 +240,15 @@
       <inertia ixx="0.4329464" ixy="-0.0830239" ixz=" -0.0000001" iyy="0.1503071" iyz="0.0000001" izz="0.4817994"/>
     </inertial>
   </link>
-  <joint name="HFE_LH_joint" type="revolute">
+  <joint name="LH_HFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="HAA_LH"/>
-    <child link="HFE_LH"/>
+    <parent link="LH_HAA"/>
+    <child link="LH_HFE"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="3.141592653589793"/>
     <origin rpy="1.5707963267948966 0 0" xyz="0.05 0 0"/>
   </joint>
-  <link name="KFE_LF">
+  <link name="LF_KFE">
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
@@ -267,15 +267,15 @@
       <inertia ixx="0.4201680" ixy="0" ixz="0" iyy="0.4196489" iyz="0" izz="0.0031965"/>
     </inertial>
   </link>
-  <joint name="KFE_LF_joint" type="revolute">
+  <joint name="LF_KFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="HFE_LF"/>
-    <child link="KFE_LF"/>
+    <parent link="LF_HFE"/>
+    <child link="LF_KFE"/>
     <dynamics damping="0.4" friction="0.3"/>
     <origin rpy="2.0943951023931953 0 0" xyz="0.035 -0.18 0"/>
     <limit effort="35.0" lower="-0.2617993877991494" upper="2.0943951023931953" velocity="3.141592653589793"/>
   </joint>
-  <link name="KFE_RF">
+  <link name="RF_KFE">
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
@@ -294,15 +294,15 @@
       <inertia ixx="0.4201680" ixy="0" ixz="0" iyy="0.4196489" iyz="0" izz="0.0031965"/>
     </inertial>
   </link>
-  <joint name="KFE_RF_joint" type="revolute">
+  <joint name="RF_KFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="HFE_RF"/>
-    <child link="KFE_RF"/>
+    <parent link="RF_HFE"/>
+    <child link="RF_KFE"/>
     <dynamics damping="0.4" friction="0.3"/>
     <origin rpy="1.0471975511965976 0 0" xyz="0.035 -0.18 0"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="0.2617993877991494" velocity="3.141592653589793"/>
   </joint>
-  <link name="KFE_LH">
+  <link name="LH_KFE">
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
@@ -321,15 +321,15 @@
       <inertia ixx="0.4201680" ixy="0" ixz="0" iyy="0.4196489" iyz="0" izz="0.0031965"/>
     </inertial>
   </link>
-  <joint name="KFE_LH_joint" type="revolute">
+  <joint name="LH_KFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="HFE_LH"/>
-    <child link="KFE_LH"/>
+    <parent link="LH_HFE"/>
+    <child link="LH_KFE"/>
     <dynamics damping="0.4" friction="0.3"/>
     <origin rpy="2.0943951023931953 0 0" xyz="0.035 -0.18 0"/>
     <limit effort="35.0" lower="-0.2617993877991494" upper="2.0943951023931953" velocity="3.141592653589793"/>
   </joint>
-  <link name="KFE_RH">
+  <link name="RH_KFE">
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
@@ -348,10 +348,10 @@
       <inertia ixx="0.4201680" ixy="0" ixz="0" iyy="0.4196489" iyz="0" izz="0.0031965"/>
     </inertial>
   </link>
-  <joint name="KFE_RH_joint" type="revolute">
+  <joint name="RH_KFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="HFE_RH"/>
-    <child link="KFE_RH"/>
+    <parent link="RH_HFE"/>
+    <child link="RH_KFE"/>
     <dynamics damping="0.4" friction="0.3"/>
     <origin rpy="1.0471975511965976 0 0" xyz="0.035 -0.18 0"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="0.2617993877991494" velocity="3.141592653589793"/>
