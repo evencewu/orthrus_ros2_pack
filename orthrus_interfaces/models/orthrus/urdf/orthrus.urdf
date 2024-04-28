@@ -17,14 +17,14 @@
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="-0.10 0.1385 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/body.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/body.STL"/>
       </geometry>
       <material name="blue"/>
     </visual>
     <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="-0.10 0.1385 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/body.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/body.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -36,14 +36,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -63,14 +63,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -90,14 +90,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -117,14 +117,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -144,14 +144,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -171,14 +171,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -198,14 +198,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -225,14 +225,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -252,14 +252,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -279,14 +279,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -306,14 +306,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -333,14 +333,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:///home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
       </geometry>
     </collision>
     <inertial>

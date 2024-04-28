@@ -12,9 +12,9 @@ namespace orthrus_control
     {
     public:
         OrthrusVisualization(ocs2::PinocchioInterface pinocchioInterface, ocs2::PinocchioGeometryInterface geometryInterface,
-                             const ocs2::CentroidalModelPinocchioMapping &mapping, ocs2::scalar_t maxUpdateFrequency = 50.0)
+                             const ocs2::CentroidalModelPinocchioMapping &mapping,rclcpp::Node::SharedPtr& node, ocs2::scalar_t maxUpdateFrequency = 50.0)
             : mappingPtr_(mapping.clone()),
-              GeometryInterfaceVisualization(std::move(pinocchioInterface), std::move(geometryInterface), "odom"),
+              GeometryInterfaceVisualization(std::move(pinocchioInterface), std::move(geometryInterface), node, "odom"),
               lastTime_(std::numeric_limits<ocs2::scalar_t>::lowest()),
               minPublishTimeDifference_(1.0 / maxUpdateFrequency) {}
 

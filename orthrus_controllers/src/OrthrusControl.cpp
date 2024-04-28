@@ -44,21 +44,19 @@ namespace orthrus_control
             // Robot interface
             InterfacePtr_ = std::make_shared<OrthrusInterface>(taskFile_, urdfFile_, referenceFile_);
             InterfacePtr_->setupOptimalControlProblem(taskFile_, urdfFile_, referenceFile_, verbose);
-            
+
             MpcInit();
             MrtInit();
 
             // Visualization
 
-            //ocs2::CentroidalModelPinocchioMapping pinocchioMapping(InterfacePtr_->getCentroidalModelInfo());
-            //eeKinematicsPtr_ = std::make_shared<ocs2::PinocchioEndEffectorKinematics>(InterfacePtr_->getPinocchioInterface(), pinocchioMapping,
-            //                                                                    InterfacePtr_->modelSettings().contactNames3DoF);
-            //robotVisualizer_ = std::make_shared<ocs2::legged_robot::LeggedRobotVisualizer>(InterfacePtr_->getPinocchioInterface(),
-            //                                                           InterfacePtr_->getCentroidalModelInfo(), *eeKinematicsPtr_, node_ptr_);
-            
-            //selfCollisionVisualization_.reset(new OrthrusVisualization(InterfacePtr_->getPinocchioInterface(),pinocchioMapping, node_ptr_));
+            ocs2::CentroidalModelPinocchioMapping pinocchioMapping(InterfacePtr_->getCentroidalModelInfo());
+            eeKinematicsPtr_ = std::make_shared<ocs2::PinocchioEndEffectorKinematics>(InterfacePtr_->getPinocchioInterface(), pinocchioMapping,
+                                                                                      InterfacePtr_->modelSettings().contactNames3DoF);
+            robotVisualizer_ = std::make_shared<ocs2::legged_robot::LeggedRobotVisualizer>(InterfacePtr_->getPinocchioInterface(),
+                                                                                           InterfacePtr_->getCentroidalModelInfo(), *eeKinematicsPtr_, node_ptr_);
 
-            // OrthrusVisualization(interface.getPinocchioInterface(), interface.getGeometryInterface(), pinocchioMapping);
+            selfCollisionVisualization_.reset(new OrthrusVisualization(InterfacePtr_->getPinocchioInterface(), InterfacePtr_->getGeometryInterface(), pinocchioMapping, node_ptr_));
 
             // mpc_
             //

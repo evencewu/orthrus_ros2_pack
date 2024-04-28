@@ -2,6 +2,8 @@
 <robot name="orthrus"
   xmlns:xacro="http://ros.org/wiki/xacro">
 
+  <xacro:property name="meshes_folder" value="file:///$(find orthrus_gazebo)/models/orthrus/meshes" />
+
   <xacro:include filename="orthrus_base.xacro"/>
 
   <xacro:HAA prefix="RF"/>

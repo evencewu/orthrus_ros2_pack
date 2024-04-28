@@ -1,7 +1,5 @@
 <robot name="orthrus_base" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:property name="meshes_folder" value="file://$(find orthrus_gazebo)/models/orthrus/meshes" />
-
   <material name="blue">
     <color rgba="0 0 0.8 1"/>
   </material>
