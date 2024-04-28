@@ -14,18 +14,18 @@ controller_manager:
 orthrus_gazebo_joint_effort_controller:
   ros__parameters:
     joints:
-      - hip_RF_joint
-      - leg1_RF_joint
-      - leg2_RF_joint
-      - hip_LF_joint
-      - leg1_LF_joint
-      - leg2_LF_joint
-      - hip_RB_joint
-      - leg1_RB_joint
-      - leg2_RB_joint
-      - hip_LB_joint
-      - leg1_LB_joint
-      - leg2_LB_joint
+      - HAA_LF_joint
+      - HFE_LF_joint
+      - KFE_LF_joint
+      - HAA_LH_joint
+      - HFE_LH_joint
+      - KFE_LH_joint
+      - HAA_RF_joint
+      - HFE_RF_joint
+      - KFE_RF_joint
+      - HAA_RH_joint
+      - HFE_RH_joint
+      - KFE_RH_joint
 
 orthrus_gazebo_imu:
   ros__parameters:

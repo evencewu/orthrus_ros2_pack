@@ -4,20 +4,20 @@
 
   <xacro:include filename="orthrus_base.xacro"/>
 
-  <xacro:hip prefix="RF"/>
-  <xacro:hip prefix="LF"/>
-  <xacro:hip prefix="RB"/>
-  <xacro:hip prefix="LB"/>
+  <xacro:HAA prefix="RF"/>
+  <xacro:HAA prefix="LF"/>
+  <xacro:HAA prefix="RH"/>
+  <xacro:HAA prefix="LH"/>
 
-  <xacro:leg1 prefix="RF"/>
-  <xacro:leg1 prefix="LF"/>
-  <xacro:leg1 prefix="RB"/>
-  <xacro:leg1 prefix="LB"/>
+  <xacro:HFE prefix="RF"/>
+  <xacro:HFE prefix="LF"/>
+  <xacro:HFE prefix="RH"/>
+  <xacro:HFE prefix="LH"/>
 
-  <xacro:leg2 prefix="LF"/>
-  <xacro:leg2 prefix="RF"/>
-  <xacro:leg2 prefix="LB"/>
-  <xacro:leg2 prefix="RB"/>
+  <xacro:KFE prefix="LF"/>
+  <xacro:KFE prefix="RF"/>
+  <xacro:KFE prefix="LH"/>
+  <xacro:KFE prefix="RH"/>
 
   <gazebo reference="body">
     <sensor name="imu_sensor" type="imu">
@@ -31,21 +31,21 @@
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
     </hardware>
 
-    <xacro:ros2_hip_joint prefix="RF"/>
-    <xacro:ros2_leg1_joint prefix="RF"/>
-    <xacro:ros2_leg2_joint prefix="RF"/>
+    <xacro:ros2_HAA_joint prefix="RF"/>
+    <xacro:ros2_HFE_joint prefix="RF"/>
+    <xacro:ros2_KFE_joint prefix="RF"/>
 
-    <xacro:ros2_hip_joint prefix="LF"/>
-    <xacro:ros2_leg1_joint prefix="LF"/>
-    <xacro:ros2_leg2_joint prefix="LF"/>
+    <xacro:ros2_HAA_joint prefix="LF"/>
+    <xacro:ros2_HFE_joint prefix="LF"/>
+    <xacro:ros2_KFE_joint prefix="LF"/>
 
-    <xacro:ros2_hip_joint prefix="RB"/>
-    <xacro:ros2_leg1_joint prefix="RB"/>
-    <xacro:ros2_leg2_joint prefix="RB"/>
+    <xacro:ros2_HAA_joint prefix="RH"/>
+    <xacro:ros2_HFE_joint prefix="RH"/>
+    <xacro:ros2_KFE_joint prefix="RH"/>
 
-    <xacro:ros2_hip_joint prefix="LB"/>
-    <xacro:ros2_leg1_joint prefix="LB"/>
-    <xacro:ros2_leg2_joint prefix="LB"/>
+    <xacro:ros2_HAA_joint prefix="LH"/>
+    <xacro:ros2_HFE_joint prefix="LH"/>
+    <xacro:ros2_KFE_joint prefix="LH"/>
 
     <sensor name="imu_sensor">
       <state_interface name="orientation.x"/>

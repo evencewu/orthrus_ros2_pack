@@ -20,7 +20,7 @@ def generate_launch_description():
                     get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
              )
 
-    pkg_dir = get_package_share_directory('orthrus_gazebo')
+    pkg_dir = get_package_share_directory('orthrus_interfaces')
     simulation_description_path = os.path.join(pkg_dir)
 
     robot_description_content = Command(

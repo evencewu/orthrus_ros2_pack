@@ -47,5 +47,4 @@ ament_auto_package(
   INSTALL_TO_SHARE
   launch
   config
-  models
 )

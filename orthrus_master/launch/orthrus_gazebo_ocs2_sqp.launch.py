@@ -36,7 +36,9 @@ ArgumentReferenceFile = launch.actions.DeclareLaunchArgument(
 ArgumentUrdfFile = launch.actions.DeclareLaunchArgument(
     name='urdfFile',
     default_value=get_package_share_directory(
-        'ocs2_robotic_assets') + '/resources/anymal_c/urdf/anymal.urdf'
+        'orthrus_interfaces') + '/models/orthrus/urdf/orthrus.urdf'
+    #default_value=get_package_share_directory(
+    #    'ocs2_robotic_assets') + '/resources/anymal_c/urdf/anymal.urdf'
 )
 
 ArgumentGaitCommandFile = launch.actions.DeclareLaunchArgument(

@@ -46,7 +46,7 @@ namespace orthrus_control
             InterfacePtr_->setupOptimalControlProblem(taskFile_, urdfFile_, referenceFile_, verbose);
             
             MpcInit();
-            //MrtInit();
+            MrtInit();
 
             // Visualization
 
