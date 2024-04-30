@@ -58,17 +58,37 @@ namespace orthrus_control
 
             selfCollisionVisualization_.reset(new OrthrusVisualization(InterfacePtr_->getPinocchioInterface(), InterfacePtr_->getGeometryInterface(), pinocchioMapping, node_ptr_));
 
-            // mpc_
-            //
-            // ocs2::SqpMpc mpc(interface.mpcSettings(), interface.sqpSettings(),
-            //                  interface.getOptimalControlProblem(), interface.getInitializer());
-            // mpc.getSolverPtr()->setReferenceManager(rosReferenceManagerPtr);
-            // mpc.getSolverPtr()->addSynchronizedModule(gaitReceiverPtr);
+            // State Estimation
+            currentObservation_.time = 0;
 
-            // ocs2::MPC_ROS_Interface mpcNode(mpc, robotName);
-            // mpcNode.launchNodes(node_ptr_);
+            Starting();
+
             init_flag_ = true;
         }
+    }
+
+    void OrthrusControlNode::Starting()
+    {
+        currentObservation_.state.setZero(InterfacePtr_->getCentroidalModelInfo().stateDim);
+        updateStateEstimation(this->get_clock()->now(), rclcpp::Duration(0,2000000));//0.005 sec
+        currentObservation_.input.setZero(InterfacePtr_->getCentroidalModelInfo().inputDim);
+        currentObservation_.mode = ModeNumber::STANCE;
+
+        ocs2::TargetTrajectories target_trajectories({currentObservation_.time}, {currentObservation_.state}, {currentObservation_.input});
+
+        mpcMrtInterface_->setCurrentObservation(currentObservation_);
+        mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
+
+        RCLCPP_INFO(this->get_logger(), "Waiting for the initial policy ...");
+        rclcpp::Rate leggedRate(InterfacePtr_->mpcSettings().mrtDesiredFrequency_);
+        while (!mpcMrtInterface_->initialPolicyReceived() && rclcpp::ok())
+        {
+            mpcMrtInterface_->advanceMpc();
+            leggedRate.sleep();
+        }
+        RCLCPP_INFO(this->get_logger(), "Initial policy has been received.");
+
+        mpcRunning_ = true;
     }
 
     void OrthrusControlNode::MpcInit()
@@ -126,6 +146,16 @@ namespace orthrus_control
             } });
 
         ocs2::setThreadPriority(InterfacePtr_->sqpSettings().threadPriority, mpcThread_);
+    }
+
+    void OrthrusControlNode::updateStateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period)
+    {
+        //measuredRbdState_ = stateEstimate_->update(time, period);
+
+        currentObservation_.time += period.seconds();
+        currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
+        currentObservation_.mode = 0;
+        //currentObservation_.mode = stateEstimate_->getMode();
     }
 }
 

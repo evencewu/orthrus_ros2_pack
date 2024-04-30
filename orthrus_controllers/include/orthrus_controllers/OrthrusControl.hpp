@@ -55,7 +55,9 @@ namespace orthrus_control
 
         bool init_flag_ = false;
         void Init();
+        void Starting();
         void MainLoop();
+        void updateStateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period);
 
         void MpcInit();
         void MrtInit();
@@ -73,6 +75,11 @@ namespace orthrus_control
         std::string urdfFile_;
         std::string referenceFile_;
 
+        // State Estimation
+        ocs2::SystemObservation currentObservation_;
+        ocs2::vector_t measuredRbdState_;
+        std::shared_ptr<CentroidalModelRbdConversions> rbdConversions_;
+
         // Interface
         std::shared_ptr<OrthrusInterface> InterfacePtr_;
         std::shared_ptr<OrthrusHwInterface> OrthrusInterfacePtr_;
@@ -86,11 +93,7 @@ namespace orthrus_control
         std::shared_ptr<ocs2::legged_robot::LeggedRobotVisualizer> robotVisualizer_;
         std::shared_ptr<OrthrusVisualization> selfCollisionVisualization_;
 
-        std::shared_ptr<ocs2::CentroidalModelRbdConversions> rbdConversions_;
-
         rclcpp::Publisher<ocs2_msgs::msg::MpcObservation>::SharedPtr mpcObservationPublisher_;
-
-        
 
         std::thread mpcThread_;
         std::atomic_bool controllerRunning_{}, mpcRunning_{};
