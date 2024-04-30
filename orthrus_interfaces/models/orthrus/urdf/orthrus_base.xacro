@@ -33,7 +33,7 @@
   </link>
 
   <xacro:macro name="HAA" params="prefix">
-    <link name="${prefix}_HAA">
+    <link name="${prefix}_HAA_link">
       <visual>
         <origin xyz="-0.02 -0.05 -0.05" rpy="0 0 0" />
         <geometry>
@@ -56,7 +56,7 @@
     <joint name="${prefix}_HAA" type="revolute">
       <axis xyz="0 0 1"/>
       <parent link="base"/>
-      <child link="${prefix}_HAA"/>
+      <child link="${prefix}_HAA_link"/>
       <dynamics damping="0.4" friction="0.3"/>
       <limit effort="35.0" lower="-${pi/2}" upper="${pi/2}" velocity="${pi}"/>
       <xacro:if value="${prefix == 'LF'}">
@@ -75,7 +75,7 @@
   </xacro:macro>
 
   <xacro:macro name="HFE" params="prefix">
-    <link name="${prefix}_HFE">
+    <link name="${prefix}_HFE_link">
       <visual>
         <origin xyz="0 -0.2 -0.05" rpy="0 0 0" />
         <geometry>
@@ -97,8 +97,8 @@
 
     <joint name="${prefix}_HFE" type="revolute">
       <axis xyz="1 0 0"/>
-      <parent link="${prefix}_HAA"/>
-      <child link="${prefix}_HFE"/>
+      <parent link="${prefix}_HAA_link"/>
+      <child link="${prefix}_HFE_link"/>
       <dynamics damping="0.4" friction="0.3"/>
       <limit effort="35.0" lower="-${pi*2/3}" upper="${pi*2/3}" velocity="${pi}"/>
       <xacro:if value="${prefix == 'LF'}">
@@ -117,7 +117,7 @@
   </xacro:macro>
 
   <xacro:macro name="KFE" params="prefix">
-    <link name="${prefix}_KFE">
+    <link name="${prefix}_KFE_link">
       <visual>
         <origin xyz="-0.025 -0.025 -0.225" rpy="0 0 0" />
         <geometry>
@@ -139,8 +139,8 @@
 
     <joint name="${prefix}_KFE" type="revolute">
       <axis xyz="1 0 0"/>
-      <parent link="${prefix}_HFE"/>
-      <child link="${prefix}_KFE"/>
+      <parent link="${prefix}_HFE_link"/>
+      <child link="${prefix}_KFE_link"/>
       <dynamics damping="0.4" friction="0.3"/>
 
       <xacro:if value="${prefix == 'LF'}">
@@ -164,7 +164,7 @@
   </xacro:macro>
 
   <xacro:macro name="ros2_HAA_joint" params="prefix">
-    <joint name="HAA_${prefix}_joint">
+    <joint name="${prefix}_HAA">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -176,7 +176,7 @@
   </xacro:macro>
 
   <xacro:macro name="ros2_HFE_joint" params="prefix">
-    <joint name="HFE_${prefix}_joint">
+    <joint name="${prefix}_HFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -188,7 +188,7 @@
   </xacro:macro>
 
   <xacro:macro name="ros2_KFE_joint" params="prefix">
-    <joint name="KFE_${prefix}_joint">
+    <joint name="${prefix}_KFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>

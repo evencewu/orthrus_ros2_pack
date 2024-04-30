@@ -2,7 +2,7 @@
 <robot name="orthrus"
   xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <xacro:property name="meshes_folder" value="file:///$(find orthrus_gazebo)/models/orthrus/meshes" />
+  <xacro:property name="meshes_folder" value="file:///$(find orthrus_interfaces)/models/orthrus/meshes" />
 
   <xacro:include filename="orthrus_base.xacro"/>
 
@@ -21,7 +21,7 @@
   <xacro:KFE prefix="LH"/>
   <xacro:KFE prefix="RH"/>
 
-  <gazebo reference="body">
+  <gazebo reference="base">
     <sensor name="imu_sensor" type="imu">
       <always_on>1</always_on>
       <update_rate>1000</update_rate>

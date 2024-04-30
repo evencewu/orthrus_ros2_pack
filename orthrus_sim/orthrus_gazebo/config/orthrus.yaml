@@ -14,22 +14,22 @@ controller_manager:
 orthrus_gazebo_joint_effort_controller:
   ros__parameters:
     joints:
-      - HAA_LF_joint
-      - HFE_LF_joint
-      - KFE_LF_joint
-      - HAA_LH_joint
-      - HFE_LH_joint
-      - KFE_LH_joint
-      - HAA_RF_joint
-      - HFE_RF_joint
-      - KFE_RF_joint
-      - HAA_RH_joint
-      - HFE_RH_joint
-      - KFE_RH_joint
+      - LF_HAA 
+      - LF_HFE 
+      - LF_KFE 
+      - LH_HAA 
+      - LH_HFE 
+      - LH_KFE 
+      - RF_HAA 
+      - RF_HFE 
+      - RF_KFE 
+      - RH_HAA 
+      - RH_HFE 
+      - RH_KFE 
 
 orthrus_gazebo_imu:
   ros__parameters:
-    frame_id: body
+    frame_id: base
     sensor_name: imu_sensor
     
 
