@@ -17,14 +17,14 @@
     <visual>
       <origin rpy="1.5707963267948966 0 0" xyz="-0.10 0.1385 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/body.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/body.STL"/>
       </geometry>
       <material name="blue"/>
     </visual>
     <collision>
       <origin rpy="1.5707963267948966 0 0" xyz="-0.10 0.1385 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/body.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/body.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -32,18 +32,18 @@
       <inertia ixx="4.9950395" ixy="0" ixz="0" iyy="2.4616377" iyz="0" izz="6.4183150"/>
     </inertial>
   </link>
-  <link name="RF_HAA">
+  <link name="RF_HAA_link">
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/hip.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/hip.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -54,23 +54,23 @@
   <joint name="RF_HAA" type="revolute">
     <axis xyz="0 0 1"/>
     <parent link="base"/>
-    <child link="RF_HAA"/>
+    <child link="RF_HAA_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="3.141592653589793"/>
     <origin rpy="-1.5707963267948966 3.141592653589793 3.141592653589793" xyz="0.05 0.20 0"/>
   </joint>
-  <link name="LF_HAA">
+  <link name="LF_HAA_link">
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/hip.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/hip.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -81,23 +81,23 @@
   <joint name="LF_HAA" type="revolute">
     <axis xyz="0 0 1"/>
     <parent link="base"/>
-    <child link="LF_HAA"/>
+    <child link="LF_HAA_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="3.141592653589793"/>
     <origin rpy="1.5707963267948966 3.141592653589793 0" xyz="-0.05 0.20 0"/>
   </joint>
-  <link name="RH_HAA">
+  <link name="RH_HAA_link">
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/hip.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/hip.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -108,23 +108,23 @@
   <joint name="RH_HAA" type="revolute">
     <axis xyz="0 0 1"/>
     <parent link="base"/>
-    <child link="RH_HAA"/>
+    <child link="RH_HAA_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="3.141592653589793"/>
     <origin rpy="1.5707963267948966 3.141592653589793 3.141592653589793" xyz="0.05 -0.20 0"/>
   </joint>
-  <link name="LH_HAA">
+  <link name="LH_HAA_link">
     <visual>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/hip.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.02 -0.05 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/hip.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/hip.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -135,23 +135,23 @@
   <joint name="LH_HAA" type="revolute">
     <axis xyz="0 0 1"/>
     <parent link="base"/>
-    <child link="LH_HAA"/>
+    <child link="LH_HAA_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="3.141592653589793"/>
     <origin rpy="-1.5707963267948966 3.141592653589793 0" xyz="-0.05 -0.20 0"/>
   </joint>
-  <link name="RF_HFE">
+  <link name="RF_HFE_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg1.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg1.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -161,24 +161,24 @@
   </link>
   <joint name="RF_HFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="RF_HAA"/>
-    <child link="RF_HFE"/>
+    <parent link="RF_HAA_link"/>
+    <child link="RF_HFE_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="3.141592653589793"/>
     <origin rpy="-1.5707963267948966 0 0" xyz="0.05 0 0"/>
   </joint>
-  <link name="LF_HFE">
+  <link name="LF_HFE_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg1.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg1.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -188,24 +188,24 @@
   </link>
   <joint name="LF_HFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="LF_HAA"/>
-    <child link="LF_HFE"/>
+    <parent link="LF_HAA_link"/>
+    <child link="LF_HFE_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="3.141592653589793"/>
     <origin rpy="-1.5707963267948966 0 0" xyz="0.05 0 0"/>
   </joint>
-  <link name="RH_HFE">
+  <link name="RH_HFE_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg1.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg1.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -215,24 +215,24 @@
   </link>
   <joint name="RH_HFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="RH_HAA"/>
-    <child link="RH_HFE"/>
+    <parent link="RH_HAA_link"/>
+    <child link="RH_HFE_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="3.141592653589793"/>
     <origin rpy="1.5707963267948966 0 0" xyz="0.05 0 0"/>
   </joint>
-  <link name="LH_HFE">
+  <link name="LH_HFE_link">
     <visual>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg1.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 -0.2 -0.05"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg1.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg1.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -242,24 +242,24 @@
   </link>
   <joint name="LH_HFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="LH_HAA"/>
-    <child link="LH_HFE"/>
+    <parent link="LH_HAA_link"/>
+    <child link="LH_HFE_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="2.0943951023931953" velocity="3.141592653589793"/>
     <origin rpy="1.5707963267948966 0 0" xyz="0.05 0 0"/>
   </joint>
-  <link name="LF_KFE">
+  <link name="LF_KFE_link">
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg2.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg2.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -269,24 +269,24 @@
   </link>
   <joint name="LF_KFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="LF_HFE"/>
-    <child link="LF_KFE"/>
+    <parent link="LF_HFE_link"/>
+    <child link="LF_KFE_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <origin rpy="2.0943951023931953 0 0" xyz="0.035 -0.18 0"/>
     <limit effort="35.0" lower="-0.2617993877991494" upper="2.0943951023931953" velocity="3.141592653589793"/>
   </joint>
-  <link name="RF_KFE">
+  <link name="RF_KFE_link">
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg2.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg2.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -296,24 +296,24 @@
   </link>
   <joint name="RF_KFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="RF_HFE"/>
-    <child link="RF_KFE"/>
+    <parent link="RF_HFE_link"/>
+    <child link="RF_KFE_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <origin rpy="1.0471975511965976 0 0" xyz="0.035 -0.18 0"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="0.2617993877991494" velocity="3.141592653589793"/>
   </joint>
-  <link name="LH_KFE">
+  <link name="LH_KFE_link">
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg2.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg2.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -323,24 +323,24 @@
   </link>
   <joint name="LH_KFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="LH_HFE"/>
-    <child link="LH_KFE"/>
+    <parent link="LH_HFE_link"/>
+    <child link="LH_KFE_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <origin rpy="2.0943951023931953 0 0" xyz="0.035 -0.18 0"/>
     <limit effort="35.0" lower="-0.2617993877991494" upper="2.0943951023931953" velocity="3.141592653589793"/>
   </joint>
-  <link name="RH_KFE">
+  <link name="RH_KFE_link">
     <visual>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg2.STL"/>
       </geometry>
       <material name="black"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="-0.025 -0.025 -0.225"/>
       <geometry>
-        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_gazebo/share/orthrus_gazebo/models/orthrus/meshes/leg2.STL"/>
+        <mesh filename="file:////home/evence/code_file/ros2_ws/orthrus/install/orthrus_interfaces/share/orthrus_interfaces/models/orthrus/meshes/leg2.STL"/>
       </geometry>
     </collision>
     <inertial>
@@ -350,8 +350,8 @@
   </link>
   <joint name="RH_KFE" type="revolute">
     <axis xyz="1 0 0"/>
-    <parent link="RH_HFE"/>
-    <child link="RH_KFE"/>
+    <parent link="RH_HFE_link"/>
+    <child link="RH_KFE_link"/>
     <dynamics damping="0.4" friction="0.3"/>
     <origin rpy="1.0471975511965976 0 0" xyz="0.035 -0.18 0"/>
     <limit effort="35.0" lower="-2.0943951023931953" upper="0.2617993877991494" velocity="3.141592653589793"/>
@@ -366,7 +366,7 @@
     <hardware>
       <plugin>gazebo_ros2_control/GazeboSystem</plugin>
     </hardware>
-    <joint name="HAA_RF_joint">
+    <joint name="RF_HAA">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -375,7 +375,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="HFE_RF_joint">
+    <joint name="RF_HFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -384,7 +384,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="KFE_RF_joint">
+    <joint name="RF_KFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -393,7 +393,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="HAA_LF_joint">
+    <joint name="LF_HAA">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -402,7 +402,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="HFE_LF_joint">
+    <joint name="LF_HFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -411,7 +411,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="KFE_LF_joint">
+    <joint name="LF_KFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -420,7 +420,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="HAA_RH_joint">
+    <joint name="RH_HAA">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -429,7 +429,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="HFE_RH_joint">
+    <joint name="RH_HFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -438,7 +438,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="KFE_RH_joint">
+    <joint name="RH_KFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -447,7 +447,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="HAA_LH_joint">
+    <joint name="LH_HAA">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -456,7 +456,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="HFE_LH_joint">
+    <joint name="LH_HFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
@@ -465,7 +465,7 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="KFE_LH_joint">
+    <joint name="LH_KFE">
       <command_interface name="effort">
         <param name="min">-35</param>
         <param name="max">35</param>
