@@ -17,4 +17,14 @@ namespace orthrus_control
             effort[i] = msg->motor[i].torq;
         }
     }
+
+    double HybridJointInterfaces::getPosition(int joint_num)
+    {
+        return position[joint_num];
+    }
+
+    double HybridJointInterfaces::getVelocity(int joint_num)
+    {
+        return velocity[joint_num];
+    }
 }

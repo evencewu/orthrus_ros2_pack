@@ -18,6 +18,10 @@ namespace orthrus_control
         HybridJointInterfaces(const rclcpp::Node::SharedPtr &node);
         void Init();
 
+        double getPosition(int joint_num);
+        double getVelocity(int joint_num);
+
+        const int joint_num_ = 12;
     private:
         std::vector<double> position = std::vector<double>(12);
         std::vector<double> velocity = std::vector<double>(12);

@@ -5,9 +5,12 @@
 #include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
 #include <orthrus_interfaces/msg/orthrus_joint_state.hpp>
 
+
 #include "orthrus_controllers/interface/OrthrusInterface.hpp"
-#include "orthrus_controllers/visualization/OrthrusVisualization.hpp"
 #include "orthrus_controllers/hardware/HybridJointInterfaces.hpp"
+#include "orthrus_controllers/hardware/ImuInterfaces.hpp"
+#include "orthrus_controllers/visualization/OrthrusVisualization.hpp"
+#include "orthrus_controllers/estimate/StateEstimateBase.hpp"
 
 // ros2
 #include <sensor_msgs/msg/joint_state.hpp>
@@ -36,10 +39,6 @@
 
 #include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
 #include <ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h>
-
-
-
-
 
 namespace orthrus_control
 {
@@ -77,6 +76,7 @@ namespace orthrus_control
         // State Estimation
         ocs2::SystemObservation currentObservation_;
         ocs2::vector_t measuredRbdState_;
+        std::shared_ptr<StateEstimateBase> stateEstimate_;
         std::shared_ptr<CentroidalModelRbdConversions> rbdConversions_;
 
         // Interface
@@ -85,6 +85,7 @@ namespace orthrus_control
 
         //hw
         std::shared_ptr<HybridJointInterfaces> HybridJointInterfacesPtr_;
+        std::shared_ptr<ImuInterfaces> ImuInterfacesPtr_;
 
         /*MPC*/
         std::shared_ptr<ocs2::MPC_BASE> mpc_;

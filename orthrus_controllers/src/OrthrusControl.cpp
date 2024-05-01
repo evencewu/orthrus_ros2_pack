@@ -57,9 +57,11 @@ namespace orthrus_control
             selfCollisionVisualization_.reset(new OrthrusVisualization(InterfacePtr_->getPinocchioInterface(), InterfacePtr_->getGeometryInterface(), pinocchioMapping, node_ptr_));
 
             // State Estimation
+            stateEstimate_ = std::make_shared<StateEstimateBase>(InterfacePtr_->getPinocchioInterface(),
+                                                                 InterfacePtr_->getCentroidalModelInfo(), *eeKinematicsPtr_, node_ptr_);
             currentObservation_.time = 0;
 
-            //Starting();
+            // Starting();
 
             init_flag_ = true;
         }
@@ -149,6 +151,16 @@ namespace orthrus_control
     void OrthrusControlNode::updateStateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period)
     {
         // measuredRbdState_ = stateEstimate_->update(time, period);
+        ocs2::vector_t jointPos(HybridJointInterfacesPtr_->joint_num_), jointVel(HybridJointInterfacesPtr_->joint_num_);
+        for (size_t i = 0; i <HybridJointInterfacesPtr_->joint_num_; ++i)
+        {
+            jointPos(i) = HybridJointInterfacesPtr_->getPosition(i);
+            jointVel(i) = HybridJointInterfacesPtr_->getVelocity(i);
+        }
+
+        stateEstimate_->UpdateJointStates(jointPos, jointVel);
+        //stateEstimate_->updateAngular(const vector3_t &zyx, const vector_t &angularVel);
+        //stateEstimate_->updateLinear(const vector_t &pos, const vector_t &linearVel);
 
         currentObservation_.time += period.seconds();
         currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);

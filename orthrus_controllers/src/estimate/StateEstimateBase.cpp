@@ -17,4 +17,18 @@ namespace orthrus_control
         rbdState_.segment(6, info_.actuatedDofNum) = jointPos;
         rbdState_.segment(6 + info_.generalizedCoordinatesNum, info_.actuatedDofNum) = jointVel;
     }
+
+    /*角度 角速度*/
+    void StateEstimateBase::updateAngular(const ocs2::legged_robot::vector3_t &zyx, const ocs2::vector_t &angularVel)
+    {
+        rbdState_.segment<3>(0) = zyx;
+        rbdState_.segment<3>(info_.generalizedCoordinatesNum) = angularVel;
+    }
+
+    /*位置 线速度*/
+    void StateEstimateBase::updateLinear(const ocs2::vector_t &pos, const ocs2::vector_t &linearVel)
+    {
+        rbdState_.segment<3>(3) = pos;
+        rbdState_.segment<3>(info_.generalizedCoordinatesNum + 3) = linearVel;
+    }
 }

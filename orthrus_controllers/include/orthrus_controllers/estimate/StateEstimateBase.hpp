@@ -20,10 +20,11 @@ namespace orthrus_control
     {
     public:
         StateEstimateBase(ocs2::PinocchioInterface pinocchioInterface, ocs2::CentroidalModelInfo info, const ocs2::PinocchioEndEffectorKinematics &eeKinematics, const rclcpp::Node::SharedPtr &node);
-        ~StateEstimateBase();
 
         void UpdateImu();
         void UpdateJointStates(const ocs2::vector_t &jointPos, const ocs2::vector_t &jointVel);
+        void updateAngular(const ocs2::legged_robot::vector3_t &zyx, const ocs2::vector_t &angularVel);
+        void updateLinear(const ocs2::vector_t &pos, const ocs2::vector_t &linearVel);
         void UpdateContact();
 
         ocs2::vector_t Update();
