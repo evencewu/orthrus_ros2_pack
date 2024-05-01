@@ -39,6 +39,7 @@ namespace orthrus_control
             loadData::loadCppDataType(taskFile_, "legged_robot_interface.verbose", verbose);
 
             HybridJointInterfacesPtr_ = std::make_shared<HybridJointInterfaces>(node_ptr_);
+            ImuInterfacesPtr_ = std::make_shared<ImuInterfaces>(node_ptr_);
 
             // Robot interface
             InterfacePtr_ = std::make_shared<OrthrusInterface>(taskFile_, urdfFile_, referenceFile_);
@@ -140,7 +141,7 @@ namespace orthrus_control
                 catch (const std::exception& e) 
                 {
                     controllerRunning_ = false;
-                    //ROS_ERROR_STREAM("[Ocs2 MPC thread] Error : " << e.what());
+                    RCLCPP_ERROR(this->get_logger(), "[Ocs2 MPC thread] Error : " << e.what());
                     //stopRequest(ros::Time());
                 }
             } });
@@ -152,11 +153,13 @@ namespace orthrus_control
     {
         // measuredRbdState_ = stateEstimate_->update(time, period);
         ocs2::vector_t jointPos(HybridJointInterfacesPtr_->joint_num_), jointVel(HybridJointInterfacesPtr_->joint_num_);
+
         for (size_t i = 0; i <HybridJointInterfacesPtr_->joint_num_; ++i)
         {
             jointPos(i) = HybridJointInterfacesPtr_->getPosition(i);
             jointVel(i) = HybridJointInterfacesPtr_->getVelocity(i);
         }
+        //ImuInterfacesPtr_
 
         stateEstimate_->UpdateJointStates(jointPos, jointVel);
         //stateEstimate_->updateAngular(const vector3_t &zyx, const vector_t &angularVel);
