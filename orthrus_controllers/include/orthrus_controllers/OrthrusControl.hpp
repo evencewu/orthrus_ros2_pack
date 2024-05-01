@@ -5,10 +5,9 @@
 #include <orthrus_interfaces/msg/orthrus_joint_control.hpp>
 #include <orthrus_interfaces/msg/orthrus_joint_state.hpp>
 
-// #include <orthrus_controllers/visualization/OrthrusVisualization.hpp>
-
 #include "orthrus_controllers/interface/OrthrusInterface.hpp"
-#include "orthrus_controllers/interface/OrthrusHwInterface.hpp"
+#include "orthrus_controllers/visualization/OrthrusVisualization.hpp"
+#include "orthrus_controllers/hardware/HybridJointInterfaces.hpp"
 
 // ros2
 #include <sensor_msgs/msg/joint_state.hpp>
@@ -38,7 +37,7 @@
 #include <ocs2_legged_robot_ros/gait/GaitReceiver.h>
 #include <ocs2_legged_robot_ros/visualization/LeggedRobotVisualizer.h>
 
-#include "orthrus_controllers/visualization/OrthrusVisualization.hpp"
+
 
 
 
@@ -82,8 +81,10 @@ namespace orthrus_control
 
         // Interface
         std::shared_ptr<OrthrusInterface> InterfacePtr_;
-        std::shared_ptr<OrthrusHwInterface> OrthrusInterfacePtr_;
         std::shared_ptr<ocs2::PinocchioEndEffectorKinematics> eeKinematicsPtr_;
+
+        //hw
+        std::shared_ptr<HybridJointInterfaces> HybridJointInterfacesPtr_;
 
         /*MPC*/
         std::shared_ptr<ocs2::MPC_BASE> mpc_;

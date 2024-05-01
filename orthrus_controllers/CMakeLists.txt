@@ -22,11 +22,11 @@ find_package(pinocchio REQUIRED)
 find_package(Boost REQUIRED COMPONENTS log)
 ament_auto_find_build_dependencies()
 
+file(GLOB_RECURSE MAIN_SOURCES "src/estimate/*.cpp" "src/interface/*.cpp" "src/hardware/*.cpp" "src/nmpc/*.cpp" "src/visualization/*.cpp")
+
 ament_auto_add_executable(orthrus_controllers
   src/OrthrusControl.cpp
-  src/interface/OrthrusInterface.cpp
-  src/interface/OrthrusHwInterface.cpp
-  src/nmpc/OrthrusNmpc.cpp
+  ${MAIN_SOURCES}
 )
 
 target_link_libraries(orthrus_controllers Eigen3::Eigen)

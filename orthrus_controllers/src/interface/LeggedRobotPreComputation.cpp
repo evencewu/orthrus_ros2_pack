@@ -35,7 +35,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <ocs2_core/misc/Numerics.h>
 
-#include <orthrus_controllers/interface/LeggedRobotPreComputation.h>
+#include <orthrus_controllers/interface/LeggedRobotPreComputation.hpp>
 
 namespace ocs2 {
 namespace legged_robot {

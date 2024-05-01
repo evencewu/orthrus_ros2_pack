@@ -65,6 +65,7 @@ def get_orthrus_control(package, executable, name):
                     {'gaitCommandFile': launch.substitutions.LaunchConfiguration('gaitCommandFile')},
                     ],
     )
+
 def get_orthrus_gazebo(package, executable, name):
     return launch_ros.actions.Node(
         package=package,  # 替换为你的包名
@@ -92,9 +93,10 @@ def generate_launch_description():
         ArgumentUrdfFile,
         ArgumentGaitCommandFile,
         ###
+        #orthrus_gazebo_node,
+        #orthrus_gazebo_sim,
+
         orthrus_control_node,
-        ##orthrus_gazebo_node,
-        ##orthrus_gazebo_sim,
     ])
 
     return ld

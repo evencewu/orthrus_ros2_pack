@@ -11,14 +11,14 @@
 #include <ocs2_core/penalties/Penalties.h>
 #include <ocs2_ddp/DDP_Settings.h>
 #include <ocs2_ipm/IpmSettings.h>
-#include <ocs2_legged_robot/common/ModelSettings.h>
+#include <ocs2_sqp/SqpSettings.h>
 #include <ocs2_mpc/MPC_Settings.h>
 #include <ocs2_oc/rollout/TimeTriggeredRollout.h>
 #include <ocs2_pinocchio_interface/PinocchioInterface.h>
 #include <ocs2_robotic_tools/common/RobotInterface.h>
 #include <ocs2_robotic_tools/end_effector/EndEffectorKinematics.h>
 #include <ocs2_self_collision/PinocchioGeometryInterface.h>
-#include <ocs2_sqp/SqpSettings.h>
+#include <ocs2_legged_robot/common/ModelSettings.h>
 
 #include "ocs2_legged_robot/reference_manager/SwitchedModelReferenceManager.h"
 

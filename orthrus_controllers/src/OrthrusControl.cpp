@@ -38,8 +38,7 @@ namespace orthrus_control
             bool verbose = false;
             loadData::loadCppDataType(taskFile_, "legged_robot_interface.verbose", verbose);
 
-            OrthrusInterfacePtr_ = std::make_shared<OrthrusHwInterface>(node_ptr_);
-            OrthrusInterfacePtr_->Init();
+            HybridJointInterfacesPtr_ = std::make_shared<HybridJointInterfaces>(node_ptr_);
 
             // Robot interface
             InterfacePtr_ = std::make_shared<OrthrusInterface>(taskFile_, urdfFile_, referenceFile_);
@@ -49,7 +48,6 @@ namespace orthrus_control
             MrtInit();
 
             // Visualization
-
             ocs2::CentroidalModelPinocchioMapping pinocchioMapping(InterfacePtr_->getCentroidalModelInfo());
             eeKinematicsPtr_ = std::make_shared<ocs2::PinocchioEndEffectorKinematics>(InterfacePtr_->getPinocchioInterface(), pinocchioMapping,
                                                                                       InterfacePtr_->modelSettings().contactNames3DoF);
@@ -61,7 +59,7 @@ namespace orthrus_control
             // State Estimation
             currentObservation_.time = 0;
 
-            Starting();
+            //Starting();
 
             init_flag_ = true;
         }
@@ -70,7 +68,7 @@ namespace orthrus_control
     void OrthrusControlNode::Starting()
     {
         currentObservation_.state.setZero(InterfacePtr_->getCentroidalModelInfo().stateDim);
-        updateStateEstimation(this->get_clock()->now(), rclcpp::Duration(0,2000000));//0.005 sec
+        updateStateEstimation(this->get_clock()->now(), rclcpp::Duration(0, 2000000)); // 0.005 sec
         currentObservation_.input.setZero(InterfacePtr_->getCentroidalModelInfo().inputDim);
         currentObservation_.mode = ModeNumber::STANCE;
 
@@ -150,12 +148,12 @@ namespace orthrus_control
 
     void OrthrusControlNode::updateStateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period)
     {
-        //measuredRbdState_ = stateEstimate_->update(time, period);
+        // measuredRbdState_ = stateEstimate_->update(time, period);
 
         currentObservation_.time += period.seconds();
         currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
         currentObservation_.mode = 0;
-        //currentObservation_.mode = stateEstimate_->getMode();
+        // currentObservation_.mode = stateEstimate_->getMode();
     }
 }
 
