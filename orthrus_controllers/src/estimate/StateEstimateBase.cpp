@@ -12,6 +12,12 @@ namespace orthrus_control
         orthrus_joint_control_pub_ = node_->create_publisher<orthrus_interfaces::msg::OrthrusJointControl>("/orthrus_interface/joint_control", 10);
     }
 
+    ocs2::vector_t StateEstimateBase::Update(const rclcpp::Time &time, const rclcpp::Duration &period)
+    {
+        return rbdState_;
+    }
+    
+
     void StateEstimateBase::UpdateJointStates(const ocs2::vector_t &jointPos, const ocs2::vector_t &jointVel)
     {
         rbdState_.segment(6, info_.actuatedDofNum) = jointPos;

@@ -25,8 +25,8 @@ ament_auto_find_build_dependencies()
 file(GLOB_RECURSE MAIN_SOURCES "src/estimate/*.cpp" "src/interface/*.cpp" "src/hardware/*.cpp" "src/nmpc/*.cpp" "src/visualization/*.cpp")
 
 ament_auto_add_executable(orthrus_controllers
+  ${MAIN_SOURCES}  
   src/OrthrusControl.cpp
-  ${MAIN_SOURCES}
 )
 
 target_link_libraries(orthrus_controllers Eigen3::Eigen)

@@ -27,7 +27,7 @@ namespace orthrus_control
         void updateLinear(const ocs2::vector_t &pos, const ocs2::vector_t &linearVel);
         void UpdateContact();
 
-        ocs2::vector_t Update();
+        ocs2::vector_t Update(const rclcpp::Time &time, const rclcpp::Duration &period);
 
     private:
         rclcpp::Node::SharedPtr node_;

@@ -62,7 +62,7 @@ namespace orthrus_control
                                                                  InterfacePtr_->getCentroidalModelInfo(), *eeKinematicsPtr_, node_ptr_);
             currentObservation_.time = 0;
 
-            // Starting();
+            Starting();
 
             init_flag_ = true;
         }
@@ -80,18 +80,41 @@ namespace orthrus_control
         mpcMrtInterface_->setCurrentObservation(currentObservation_);
         mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
 
-        RCLCPP_INFO(this->get_logger(), "Waiting for the initial policy ...");
-        rclcpp::Rate leggedRate(InterfacePtr_->mpcSettings().mrtDesiredFrequency_);
-        while (!mpcMrtInterface_->initialPolicyReceived() && rclcpp::ok())
-        {
-            mpcMrtInterface_->advanceMpc();
-            leggedRate.sleep();
-        }
-        RCLCPP_INFO(this->get_logger(), "Initial policy has been received.");
+        //RCLCPP_INFO(this->get_logger(), "Waiting for the initial policy ...");
+        //rclcpp::Rate leggedRate(InterfacePtr_->mpcSettings().mrtDesiredFrequency_);
+        //while (!mpcMrtInterface_->initialPolicyReceived() && rclcpp::ok())
+        //{
+        //    mpcMrtInterface_->advanceMpc();
+        //    leggedRate.sleep();
+        //}
+        //RCLCPP_INFO(this->get_logger(), "Initial policy has been received.");
 
         mpcRunning_ = true;
     }
 
+    void OrthrusControlNode::updateStateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period)
+    {
+        // measuredRbdState_ = stateEstimate_->update(time, period);
+        ocs2::vector_t jointPos(HybridJointInterfacesPtr_->joint_num_), jointVel(HybridJointInterfacesPtr_->joint_num_);
+
+        for (size_t i = 0; i < HybridJointInterfacesPtr_->joint_num_; ++i)
+        {
+            jointPos(i) = HybridJointInterfacesPtr_->getPosition(i);
+            jointVel(i) = HybridJointInterfacesPtr_->getVelocity(i);
+        }
+        // ImuInterfacesPtr_
+
+        stateEstimate_->UpdateJointStates(jointPos, jointVel);
+        // stateEstimate_->updateAngular(const vector3_t &zyx, const vector_t &angularVel);
+        // stateEstimate_->updateLinear(const vector_t &pos, const vector_t &linearVel);
+
+        measuredRbdState_ = stateEstimate_->Update(time, period);
+
+        currentObservation_.time += period.seconds();
+        currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
+        currentObservation_.mode = 0;
+        // currentObservation_.mode = stateEstimate_->getMode();
+    }
     void OrthrusControlNode::MpcInit()
     {
         mpc_ = std::make_shared<ocs2::SqpMpc>(InterfacePtr_->mpcSettings(), InterfacePtr_->sqpSettings(),
@@ -141,34 +164,12 @@ namespace orthrus_control
                 catch (const std::exception& e) 
                 {
                     controllerRunning_ = false;
-                    RCLCPP_ERROR(this->get_logger(), "[Ocs2 MPC thread] Error : " << e.what());
+                    RCLCPP_ERROR(this->get_logger(), "[Ocs2 MPC thread] Error :  %s", e.what());
                     //stopRequest(ros::Time());
                 }
             } });
 
         ocs2::setThreadPriority(InterfacePtr_->sqpSettings().threadPriority, mpcThread_);
-    }
-
-    void OrthrusControlNode::updateStateEstimation(const rclcpp::Time &time, const rclcpp::Duration &period)
-    {
-        // measuredRbdState_ = stateEstimate_->update(time, period);
-        ocs2::vector_t jointPos(HybridJointInterfacesPtr_->joint_num_), jointVel(HybridJointInterfacesPtr_->joint_num_);
-
-        for (size_t i = 0; i <HybridJointInterfacesPtr_->joint_num_; ++i)
-        {
-            jointPos(i) = HybridJointInterfacesPtr_->getPosition(i);
-            jointVel(i) = HybridJointInterfacesPtr_->getVelocity(i);
-        }
-        //ImuInterfacesPtr_
-
-        stateEstimate_->UpdateJointStates(jointPos, jointVel);
-        //stateEstimate_->updateAngular(const vector3_t &zyx, const vector_t &angularVel);
-        //stateEstimate_->updateLinear(const vector_t &pos, const vector_t &linearVel);
-
-        currentObservation_.time += period.seconds();
-        currentObservation_.state = rbdConversions_->computeCentroidalStateFromRbdModel(measuredRbdState_);
-        currentObservation_.mode = 0;
-        // currentObservation_.mode = stateEstimate_->getMode();
     }
 }
 
