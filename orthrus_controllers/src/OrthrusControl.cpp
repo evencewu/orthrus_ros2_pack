@@ -98,6 +98,7 @@ namespace orthrus_control
         ocs2::vector_t jointPos(HybridJointInterfacesPtr_->joint_num_), jointVel(HybridJointInterfacesPtr_->joint_num_);
         Eigen::Quaternion<scalar_t> quat;
         ocs2::legged_robot::vector3_t angularVel,linearAccel;
+        switched_model::matrix3_t orientationCovariance, angularVelCovariance, linearAccelCovariance;
 
         for (int i = 0; i < HybridJointInterfacesPtr_->joint_num_; ++i)
         {

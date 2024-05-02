@@ -23,11 +23,17 @@ namespace orthrus_control
         rbdState_.segment(6 + info_.generalizedCoordinatesNum, info_.actuatedDofNum) = jointVel;
     }
 
-    void StateEstimateBase::UpdateImu(const Eigen::Quaternion<scalar_t> &quat, const vector3_t &angularVelLocal,
-                                      const vector3_t &linearAccelLocal, const matrix3_t &orientationCovariance,
-                                      const matrix3_t &angularVelCovariance, const matrix3_t &linearAccelCovariance)
+    void StateEstimateBase::UpdateImu(const Eigen::Quaternion<ocs2::scalar_t> &quat, const ocs2::legged_robot::vector3_t &angularVelLocal,
+                                      const ocs2::legged_robot::vector3_t &linearAccelLocal, const switched_model::matrix3_t &orientationCovariance,
+                                      const switched_model::matrix3_t &angularVelCovariance, const switched_model::matrix3_t &linearAccelCovariance)
     {
+        Eigen::Matrix3d R = quat.toRotationMatrix();
+        Eigen::Vector3d zyx = R.eulerAngles(2, 1, 0); // 顺序为ZYX（yaw,
 
+        Eigen::Vector3d pos = Eigen::Vector3d(0,0,0);
+
+        UpdateAngular(zyx,angularVelLocal);
+        UpdateLinear(pos,linearAccelLocal);
     }
 
     /*角度 角速度*/

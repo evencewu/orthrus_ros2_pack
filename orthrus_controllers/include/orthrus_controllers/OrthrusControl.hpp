@@ -26,6 +26,8 @@
 #include <ocs2_core/thread_support/ExecuteAndSleep.h>
 #include <ocs2_core/thread_support/SetThreadPriority.h>
 
+#include <ocs2_switched_model_interface/core/SwitchedModel.h>
+
 #include <ocs2_sqp/SqpMpc.h>
 #include <ocs2_mpc/SystemObservation.h>
 #include <ocs2_mpc/MPC_MRT_Interface.h>

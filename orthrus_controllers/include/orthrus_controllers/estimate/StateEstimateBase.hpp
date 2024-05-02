@@ -10,6 +10,7 @@
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <tf2_msgs/msg/tf_message.hpp>
 
+#include <ocs2_switched_model_interface/core/SwitchedModel.h>
 #include <ocs2_legged_robot/common/Types.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematics.h>
 #include <ocs2_centroidal_model/CentroidalModelInfo.h>
@@ -22,9 +23,9 @@ namespace orthrus_control
         StateEstimateBase(ocs2::PinocchioInterface pinocchioInterface, ocs2::CentroidalModelInfo info, const ocs2::PinocchioEndEffectorKinematics &eeKinematics, const rclcpp::Node::SharedPtr &node);
 
         void UpdateJointStates(const ocs2::vector_t &jointPos, const ocs2::vector_t &jointVel);
-        void UpdateImu(const Eigen::Quaternion<scalar_t> &quat, const vector3_t &angularVelLocal,
-                                      const vector3_t &linearAccelLocal, const matrix3_t &orientationCovariance,
-                                      const matrix3_t &angularVelCovariance, const matrix3_t &linearAccelCovariance);
+        void UpdateImu(const Eigen::Quaternion<ocs2::scalar_t> &quat, const ocs2::legged_robot::vector3_t &angularVelLocal,
+                                      const ocs2::legged_robot::vector3_t &linearAccelLocal, const switched_model::matrix3_t &orientationCovariance,
+                                      const switched_model::matrix3_t &angularVelCovariance, const switched_model::matrix3_t &linearAccelCovariance);
 
 
         void UpdateAngular(const ocs2::legged_robot::vector3_t &zyx, const ocs2::vector_t &angularVel);
