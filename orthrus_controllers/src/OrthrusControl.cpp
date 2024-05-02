@@ -80,14 +80,14 @@ namespace orthrus_control
         mpcMrtInterface_->setCurrentObservation(currentObservation_);
         mpcMrtInterface_->getReferenceManager().setTargetTrajectories(target_trajectories);
 
-        //RCLCPP_INFO(this->get_logger(), "Waiting for the initial policy ...");
-        //rclcpp::Rate leggedRate(InterfacePtr_->mpcSettings().mrtDesiredFrequency_);
-        //while (!mpcMrtInterface_->initialPolicyReceived() && rclcpp::ok())
-        //{
-        //    mpcMrtInterface_->advanceMpc();
-        //    leggedRate.sleep();
-        //}
-        //RCLCPP_INFO(this->get_logger(), "Initial policy has been received.");
+        RCLCPP_INFO(this->get_logger(), "Waiting for the initial policy ...");
+        rclcpp::Rate leggedRate(InterfacePtr_->mpcSettings().mrtDesiredFrequency_);
+        while (!mpcMrtInterface_->initialPolicyReceived() && rclcpp::ok())
+        {
+            mpcMrtInterface_->advanceMpc();
+            leggedRate.sleep();
+        }
+        RCLCPP_INFO(this->get_logger(), "Initial policy has been received.");
 
         mpcRunning_ = true;
     }
@@ -96,17 +96,30 @@ namespace orthrus_control
     {
         // measuredRbdState_ = stateEstimate_->update(time, period);
         ocs2::vector_t jointPos(HybridJointInterfacesPtr_->joint_num_), jointVel(HybridJointInterfacesPtr_->joint_num_);
+        Eigen::Quaternion<scalar_t> quat;
+        ocs2::legged_robot::vector3_t angularVel,linearAccel;
 
-        for (size_t i = 0; i < HybridJointInterfacesPtr_->joint_num_; ++i)
+        for (int i = 0; i < HybridJointInterfacesPtr_->joint_num_; ++i)
         {
             jointPos(i) = HybridJointInterfacesPtr_->getPosition(i);
             jointVel(i) = HybridJointInterfacesPtr_->getVelocity(i);
         }
-        // ImuInterfacesPtr_
+
+        for (int i = 0; i < 4; ++i)
+        {
+            quat.coeffs()(i) = ImuInterfacesPtr_->getOrientation()[i];
+        }
+        for (int i = 0; i < 3; ++i)
+        {
+            angularVel(i) = ImuInterfacesPtr_->getAngularVelocity()[i];
+            linearAccel(i) = ImuInterfacesPtr_->getLinearAcceleration()[i];
+        }
+
+        // ImuInterfacesPtr_->getImu()
+        //  ImuInterfacesPtr_
 
         stateEstimate_->UpdateJointStates(jointPos, jointVel);
-        // stateEstimate_->updateAngular(const vector3_t &zyx, const vector_t &angularVel);
-        // stateEstimate_->updateLinear(const vector_t &pos, const vector_t &linearVel);
+        stateEstimate_->UpdateImu(quat, angularVel, linearAccel, orientationCovariance, angularVelCovariance, linearAccelCovariance);
 
         measuredRbdState_ = stateEstimate_->Update(time, period);
 
