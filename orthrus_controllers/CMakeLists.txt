@@ -29,6 +29,11 @@ ament_auto_add_executable(orthrus_controllers
   src/OrthrusControl.cpp
 )
 
+ament_auto_add_executable(orthrus_controller
+  ${MAIN_SOURCES}  
+  src/OrthrusController.cpp
+)
+
 target_link_libraries(orthrus_controllers Eigen3::Eigen)
 #target_link_libraries(orthrus_ctrl Eigen3::Eigen Boost::log) 
 

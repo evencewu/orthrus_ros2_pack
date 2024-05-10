@@ -12,6 +12,10 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
 
+  <!--ros2_control-->
+  <depend>rclcpp_lifecycle</depend>
+  <depend>hardware_interface</depend>
+
   <depend>sensor_msgs</depend>
   <depend>orthrus_interfaces</depend>
   <depend>pinocchio</depend>
