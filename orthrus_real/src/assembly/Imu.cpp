@@ -19,10 +19,6 @@ namespace orthrus_real
     void Imu::GetEuler(Eigen::Quaterniond input_quaterniond)
     {
         euler_ = input_quaterniond.toRotationMatrix().eulerAngles(ROLL, PITCH, YAW);
-
-        //yaw = euler(0);
-        //pitch = euler(1);
-        //roll = euler(2);
     }
 
     void Imu::RotatingCoordinates(double angle1, Eigen::Vector3d axis1,double angle2, Eigen::Vector3d axis2)

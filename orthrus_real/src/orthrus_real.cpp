@@ -10,8 +10,7 @@ namespace orthrus_real
 
     orthrus_calibrating_imu_pub_ = this->create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
 
-    timer_ = this->create_wall_timer(
-        std::chrono::microseconds(100), std::bind(&OrthrusInterfacesNode::MainLoop, this));
+    timer_ = this->create_wall_timer(std::chrono::microseconds(100), std::bind(&OrthrusInterfacesNode::MainLoop, this));
   }
 
   OrthrusInterfacesNode::~OrthrusInterfacesNode()
@@ -84,10 +83,8 @@ namespace orthrus_real
                   body_imu.euler_(ROLL) - leg[1].imu.euler_(PITCH),
                   body_imu.euler_(ROLL) - leg[2].imu.euler_(PITCH),
                   body_imu.euler_(ROLL) - leg[3].imu.euler_(PITCH));
-      RCLCPP_INFO(this->get_logger(), "\n motor0 %lf %lf %lf %lf",leg[0].motor[0].Pos_,leg[1].motor[0].Pos_,leg[2].motor[0].Pos_,leg[3].motor[0].Pos_);
+      RCLCPP_INFO(this->get_logger(), "\n motor0 %lf %lf %lf %lf", leg[0].motor[0].Pos_, leg[1].motor[0].Pos_, leg[2].motor[0].Pos_, leg[3].motor[0].Pos_);
       RCLCPP_INFO(this->get_logger(), "=================");
-
-      
 
       // RCLCPP_INFO(this->get_logger(), "=================");
       // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf\n %lf %lf %lf\n %lf %lf %lf\n %lf %lf %lf\n",
