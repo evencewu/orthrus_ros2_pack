@@ -22,7 +22,7 @@ find_package(pinocchio REQUIRED)
 find_package(Boost REQUIRED COMPONENTS log)
 ament_auto_find_build_dependencies()
 
-file(GLOB_RECURSE MAIN_SOURCES "src/estimate/*.cpp" "src/interface/*.cpp" "src/hardware/*.cpp" "src/nmpc/*.cpp" "src/visualization/*.cpp")
+file(GLOB_RECURSE MAIN_SOURCES   "src/hardware/*.cpp" "src/visualization/*.cpp")
 
 ament_auto_add_executable(orthrus_controllers
   ${MAIN_SOURCES}  
