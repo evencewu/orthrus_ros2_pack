@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(orthrus_controllers)
+project(orthrus_control)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -17,20 +17,16 @@ endif ()
 
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
-find_package(Eigen3 REQUIRED)
-find_package(pinocchio REQUIRED)
-find_package(Boost REQUIRED COMPONENTS log)
 ament_auto_find_build_dependencies()
 
-file(GLOB_RECURSE MAIN_SOURCES   "src/hardware/*.cpp" "src/visualization/*.cpp")
+ament_auto_add_executable(orthrus_control
+  src/OrthrusGazeboInterface.cpp
+)
 
-#ament_auto_add_executable(orthrus_controllers
-#  ${MAIN_SOURCES}  
-#  src/OrthrusControl.cpp
-#)
+target_compile_definitions(orthrus_control PRIVATE "ORTHRUS_CONTROL_BUILDING_DLL")
+pluginlib_export_plugin_description_file(hardware_interface orthrus_control.xml)
 
-#target_link_libraries(orthrus_controllers Eigen3::Eigen)
-#target_link_libraries(orthrus_ctrl Eigen3::Eigen Boost::log) 
+
 
 #############
 ## Testing ##
@@ -49,5 +45,6 @@ endif()
 
 ament_auto_package(
   INSTALL_TO_SHARE
+  launch
   config
 )

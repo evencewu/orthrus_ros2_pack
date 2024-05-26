@@ -1,0 +1,9 @@
+<library path="orthrus_control">
+  <class name="orthrus_control/OrthrusSystemHardware"
+         type="orthrus_control::OrthrusSystemHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+    DiffTestSystemHardware using a system hardware interface-type.
+    </description>
+  </class>
+</library>

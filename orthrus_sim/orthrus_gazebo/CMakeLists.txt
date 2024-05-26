@@ -23,11 +23,6 @@ ament_auto_add_executable(orthrus_gazebo
   src/orthrus_gazebo_interface.cpp
 )
 
-#ament_auto_add_executable(example_gripper
-#  examples/example_gripper.cpp
-#)
-
-
 #############
 ## Testing ##
 #############
