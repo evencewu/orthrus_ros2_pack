@@ -13,7 +13,6 @@ namespace orthrus_control
         // RCLCPP_INFO(rclcpp::get_logger("orthrus_controller"), "Successfully deactivated!");
         return hardware_interface::CallbackReturn::SUCCESS;
     }
-
 }
 
 #include "pluginlib/class_list_macros.hpp"

@@ -1,0 +1,55 @@
+orthrus_controller:
+  leg_joint_names:
+    {
+      type: string_array,
+      default_value:
+        [
+          LF_HAA,
+          LF_HFE,
+          LF_KFE,
+          LH_HAA,
+          LH_HFE,
+          LH_KFE,
+          RF_HAA,
+          RF_HFE,
+          RF_KFE,
+          RH_HAA,
+          RH_HFE,
+          RH_KFE,
+        ],
+      description: "Joint name of legged robot",
+    }
+  wheels_per_side:
+    {
+      type: int,
+      default_value: 0,
+      description: "Number of wheels on each side of the robot.",
+    }
+  wheels_separation:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Shortest distance between the left and right wheels. If this parameter is wrong, the robot will not behave correctly in curves.",
+    }
+  wheel_radius:
+    {
+      type: double,
+      default_value: 0.0,
+      description: "Radius of a wheel, used for transformation of linear velocity into wheel rotations. If this parameter is wrong the robot will move faster or slower then expected.",
+    }
+  linear:
+    x:
+      velocity_clamp:
+        {
+          type: double,
+          default_value: .NAN,
+          description: "Velocity clamp. Symmetrical in both positive and negative direction.",
+        }
+  angular:
+    z:
+      velocity_clamp:
+        {
+          type: double,
+          default_value: .NAN,
+          description: "Velocity clamp. Symmetrical in both positive and negative direction.",
+        }
