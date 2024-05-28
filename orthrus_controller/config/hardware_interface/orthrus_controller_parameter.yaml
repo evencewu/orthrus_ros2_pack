@@ -19,11 +19,11 @@ orthrus_controller:
         ],
       description: "Joint name of legged robot",
     }
-  wheels_per_side:
+  leg_joint_num:
     {
       type: int,
-      default_value: 0,
-      description: "Number of wheels on each side of the robot.",
+      default_value: 12,
+      description: "Number of leg joint of the robot.",
     }
   wheels_separation:
     {

@@ -173,10 +173,10 @@ namespace orthrus_controller
   controller_interface::CallbackReturn OrthrusController::on_activate(
       const rclcpp_lifecycle::State &)
   {
-    //const auto left_result =
-    //    configure_joint(
-    //        params_.leg_joint_names,
-    //        joint_handles_);
+    const auto left_result =
+        configure_joint(
+            params_.leg_joint_names,
+            joint_handles_);
 
     RCLCPP_INFO(get_node()->get_logger(), "Subscriber and publisher are now active.");
 
@@ -230,125 +230,19 @@ namespace orthrus_controller
   controller_interface::return_type OrthrusController::update(
       const rclcpp::Time &time, const rclcpp::Duration &period)
   {
-
     auto logger = get_node()->get_logger();
 
-    //const double joint_feedback = joint_handles_[0].feedback.get().get_value();
-    //if (std::isnan(joint_feedback))
-    //{
-    //  RCLCPP_ERROR(
-    //      logger, "Either the joint is invalid for index");
-    //  return controller_interface::return_type::ERROR;
-    //}
-
-    /*
-    // if controller unload
-    if (get_state().id() == State::PRIMARY_STATE_INACTIVE)
+    for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
     {
-      if (!is_halted)
+      double joint_feedback = joint_handles_[joint_number].feedback.get().get_value();
+      if (std::isnan(joint_feedback))
       {
-        halt();
-        is_halted = true;
-      }
-      return controller_interface::return_type::OK;
-    }
-
-    // update param
-    this->params_ = param_listener_->get_params();
-
-    // update cmd
-    std::shared_ptr<Twist> last_command_msg;
-    received_velocity_msg_ptr_.get(last_command_msg);
-
-    if (last_command_msg == nullptr)
-    {
-      RCLCPP_WARN(logger, "Velocity message received was a nullptr.");
-      return controller_interface::return_type::ERROR;
-    }
-
-    // command may be limited
-    Twist command = *last_command_msg;
-    // Unit m/s
-    linear_command = std::clamp(
-        command.linear.x, -params_.linear.x.velocity_clamp,
-        params_.linear.x.velocity_clamp);
-    // Unit rad/s
-    angular_command = std::clamp(
-        command.angular.z, -params_.angular.z.velocity_clamp,
-        params_.angular.z.velocity_clamp);
-
-    // 获取转速反馈,如果每边有多个车轮，计算平均值
-    double left_feedback_mean = 0.0;
-    double right_feedback_mean = 0.0;
-    for (size_t index = 0; index < static_cast<size_t>(params_.wheels_per_side); ++index)
-    {
-      const double left_feedback = registered_left_wheel_handles_[index].feedback.get().get_value();
-      const double right_feedback =
-          registered_right_wheel_handles_[index].feedback.get().get_value();
-
-      if (std::isnan(left_feedback) || std::isnan(right_feedback))
-      {
-        RCLCPP_ERROR(
-            logger, "Either the left or right wheel %s is invalid for index [%zu]", "velocity",
-            index);
+        RCLCPP_ERROR(logger, "Either the joint is invalid for index");
         return controller_interface::return_type::ERROR;
       }
-
-      left_feedback_mean += left_feedback;
-      right_feedback_mean += right_feedback;
-    }
-    left_feedback_mean /= params_.wheels_per_side;
-    right_feedback_mean /= params_.wheels_per_side;
-    // 里程计积分更新
-    odometry_.update(
-        left_feedback_mean * params_.wheel_radius,
-        right_feedback_mean * params_.wheel_radius, time);
-
-    // 欧拉角转四元数
-    tf2::Quaternion orientation;
-    orientation.setRPY(0.0, 0.0, odometry_.getHeading());
-
-    if (realtime_odometry_publisher_->trylock())
-    {
-      auto &odometry_message = realtime_odometry_publisher_->msg_;
-      odometry_message.header.stamp = time;
-      odometry_message.pose.pose.position.x = odometry_.getX();
-      odometry_message.pose.pose.position.y = odometry_.getY();
-      odometry_message.pose.pose.orientation.x = orientation.x();
-      odometry_message.pose.pose.orientation.y = orientation.y();
-      odometry_message.pose.pose.orientation.z = orientation.z();
-      odometry_message.pose.pose.orientation.w = orientation.w();
-      odometry_message.twist.twist.linear.x = odometry_.getLinear();
-      odometry_message.twist.twist.angular.z = odometry_.getAngular();
-      realtime_odometry_publisher_->unlockAndPublish();
+      //RCLCPP_INFO(logger, "joint_feedback[%d]: %lf", joint_number, joint_feedback);
     }
 
-    if (realtime_odometry_transform_publisher_->trylock())
-    {
-      auto &transform = realtime_odometry_transform_publisher_->msg_.transforms.front();
-      transform.header.stamp = time;
-      transform.transform.translation.x = odometry_.getX();
-      transform.transform.translation.y = odometry_.getY();
-      transform.transform.rotation.x = orientation.x();
-      transform.transform.rotation.y = orientation.y();
-      transform.transform.rotation.z = orientation.z();
-      transform.transform.rotation.w = orientation.w();
-      realtime_odometry_transform_publisher_->unlockAndPublish();
-    }
-
-    // Compute wheels velocities:  Unit m/s
-    const double velocity_right =
-        (linear_command + angular_command * params_.wheels_separation / 2.0);
-    const double velocity_left =
-        (linear_command - angular_command * params_.wheels_separation / 2.0);
-
-    // Set wheels velocities:
-    for (size_t index = 0; index < static_cast<size_t>(params_.wheels_per_side); ++index)
-    {
-      registered_left_wheel_handles_[index].velocity.get().set_value(velocity_left / params_.wheel_radius);
-      registered_right_wheel_handles_[index].velocity.get().set_value(velocity_right / params_.wheel_radius);
-    }
-    */
     return controller_interface::return_type::OK;
   }
 
