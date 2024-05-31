@@ -15,6 +15,12 @@ from launch.actions import TimerAction
 
 use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
+urdf = os.path.join(
+    get_package_share_directory('orthrus_interfaces'),
+    "models", "orthrus", "urdf", "orthrus_for_gazebo.urdf.xacro")
+with open(urdf, 'r') as infp:
+    robot_desc = infp.read()
+
 def get_orthrus_ctrl(package, executable, name):
     return Node(
         package=package,  # 替换为你的包名
@@ -22,13 +28,15 @@ def get_orthrus_ctrl(package, executable, name):
         name=name,
         parameters=[{'use_sim_time': use_sim_time}],
     )
-    
-def get_orthrus_gazebo(package, executable, name):
+
+def get_orthrus_state_publisher(package, executable, name):
     return Node(
-        package=package,  # 替换为你的包名
-        executable=executable,  # 替换为你的可执行文件名
-        name=name,
-        parameters=[{'use_sim_time': use_sim_time}],
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',
+        output='screen',
+        parameters=[{'use_sim_time': use_sim_time, 'robot_description': robot_desc}],
+        arguments=[urdf]
     )
 
 def get_orthrus_gazebo_sim(package, executable):

@@ -22,6 +22,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   nav_msgs
   tf2
   tf2_msgs
+  pinocchio
 )
 
 # find dependencies
@@ -48,6 +49,7 @@ generate_parameter_library(orthrus_controller_parameters
 # generate lib
 add_library(orthrus_controller SHARED
   src/OrthrusController.cpp
+  src/visualization/OrthrusVisualization.cpp
 )
 
 target_compile_features(orthrus_controller PUBLIC cxx_std_17)

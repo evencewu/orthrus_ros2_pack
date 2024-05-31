@@ -61,6 +61,8 @@ namespace orthrus_controller
       return controller_interface::CallbackReturn::ERROR;
     }
 
+    visualization_ = std::make_shared<OrthrusVisualization>(get_node(), params_.leg_joint_names);
+
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
@@ -89,7 +91,6 @@ namespace orthrus_controller
   controller_interface::CallbackReturn OrthrusController::on_configure(
       const rclcpp_lifecycle::State &)
   {
-
     auto logger = get_node()->get_logger();
     RCLCPP_INFO(logger, "Configuring controller...");
 
@@ -104,6 +105,8 @@ namespace orthrus_controller
     {
       return controller_interface::CallbackReturn::ERROR;
     }
+
+    // auto node = rclcpp::Node::SharedPtr(get_node());
 
     /*
     const Twist empty_twist;
@@ -173,10 +176,7 @@ namespace orthrus_controller
   controller_interface::CallbackReturn OrthrusController::on_activate(
       const rclcpp_lifecycle::State &)
   {
-    const auto left_result =
-        configure_joint(
-            params_.leg_joint_names,
-            joint_handles_);
+    const auto left_result = configure_joint(params_.leg_joint_names, joint_handles_);
 
     RCLCPP_INFO(get_node()->get_logger(), "Subscriber and publisher are now active.");
 
@@ -204,6 +204,7 @@ namespace orthrus_controller
     {
       return controller_interface::CallbackReturn::ERROR;
     }
+
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
@@ -232,16 +233,21 @@ namespace orthrus_controller
   {
     auto logger = get_node()->get_logger();
 
+
     for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
     {
-      double joint_feedback = joint_handles_[joint_number].feedback.get().get_value();
-      if (std::isnan(joint_feedback))
+      double joint_position = joint_handles_[joint_number].state_position.get().get_value();
+      double joint_velocity = joint_handles_[joint_number].state_velocity.get().get_value();
+      double joint_effort = joint_handles_[joint_number].state_effort.get().get_value();
+      if (std::isnan(joint_position) || std::isnan(joint_velocity) || std::isnan(joint_effort))
       {
         RCLCPP_ERROR(logger, "Either the joint is invalid for index");
         return controller_interface::return_type::ERROR;
       }
-      //RCLCPP_INFO(logger, "joint_feedback[%d]: %lf", joint_number, joint_feedback);
+      RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf %lf", joint_number, joint_position, joint_velocity, joint_effort);
     }
+
+    visualization_->update(get_node());
 
     return controller_interface::return_type::OK;
   }
@@ -263,7 +269,7 @@ namespace orthrus_controller
     registered_handles.reserve(joint_names.size());
     for (const auto &joint_name : joint_names)
     {
-      const auto state_handle = std::find_if(
+      const auto position_handle = std::find_if(
           state_interfaces_.cbegin(), state_interfaces_.cend(),
           [&joint_name](const auto &interface)
           {
@@ -271,7 +277,35 @@ namespace orthrus_controller
                    interface.get_interface_name() == hardware_interface::HW_IF_POSITION;
           });
 
-      if (state_handle == state_interfaces_.cend())
+      if (position_handle == state_interfaces_.cend())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor state handle for %s", joint_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
+
+      const auto velocity_handle = std::find_if(
+          state_interfaces_.cbegin(), state_interfaces_.cend(),
+          [&joint_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == joint_name &&
+                   interface.get_interface_name() == hardware_interface::HW_IF_VELOCITY;
+          });
+
+      if (velocity_handle == state_interfaces_.cend())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor state handle for %s", joint_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
+
+      const auto effort_handle = std::find_if(
+          state_interfaces_.cbegin(), state_interfaces_.cend(),
+          [&joint_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == joint_name &&
+                   interface.get_interface_name() == hardware_interface::HW_IF_EFFORT;
+          });
+
+      if (effort_handle == state_interfaces_.cend())
       {
         RCLCPP_ERROR(logger, "Unable to obtain motor state handle for %s", joint_name.c_str());
         return controller_interface::CallbackReturn::ERROR;
@@ -292,8 +326,7 @@ namespace orthrus_controller
       }
 
       registered_handles.emplace_back(
-          JointHandle{std::ref(*state_handle), std::ref(
-                                                   *command_handle)});
+          JointHandle{std::ref(*position_handle), std::ref(*velocity_handle), std::ref(*effort_handle), std::ref(*command_handle)});
     }
 
     return controller_interface::CallbackReturn::SUCCESS;
