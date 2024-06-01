@@ -233,7 +233,6 @@ namespace orthrus_controller
   {
     auto logger = get_node()->get_logger();
 
-
     for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
     {
       double joint_position = joint_handles_[joint_number].state_position.get().get_value();
@@ -244,7 +243,7 @@ namespace orthrus_controller
         RCLCPP_ERROR(logger, "Either the joint is invalid for index");
         return controller_interface::return_type::ERROR;
       }
-      RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf %lf", joint_number, joint_position, joint_velocity, joint_effort);
+      //RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf %lf", joint_number, joint_position, joint_velocity, joint_effort);
     }
 
     visualization_->update(get_node());

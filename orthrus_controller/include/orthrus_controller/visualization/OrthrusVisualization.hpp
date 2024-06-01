@@ -57,6 +57,8 @@ namespace orthrus_controller
         }
 
     private:
+        std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
+
         std::vector<std::string> joint_name_;
 
         rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher_;
