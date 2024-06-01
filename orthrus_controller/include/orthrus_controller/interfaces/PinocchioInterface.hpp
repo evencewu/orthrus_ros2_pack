@@ -2,6 +2,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_lifecycle/state.hpp"
+#include "controller_interface/controller_interface.hpp"
 
 #include <iostream>
 
