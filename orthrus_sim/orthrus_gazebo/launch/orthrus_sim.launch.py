@@ -59,6 +59,14 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        DeclareLaunchArgument('server', default_value='true',
+                              description='Set to "false" not to run gzserver.'),
+
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([os.path.join(get_package_share_directory('gazebo_ros'), 'launch/'), '/gzserver.launch.py']),
+            condition=IfCondition(LaunchConfiguration('server'))
+        ),
+
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn_entity,
@@ -66,8 +74,8 @@ def generate_launch_description():
             )
         ),
         
-        gzserver,
-        
         node_robot_state_publisher,
         spawn_entity,
+        
+
     ])
