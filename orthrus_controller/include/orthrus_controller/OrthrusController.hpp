@@ -89,10 +89,8 @@ namespace orthrus_controller
         const std::vector<std::string> &joint_names,
         std::vector<JointHandle> &registered_handles);
 
-    // 可视化
-
-    std::shared_ptr<OrthrusVisualization> visualization_;
-
+    std::shared_ptr<OrthrusVisualization> visualization_;// 可视化
+    std::shared_ptr<PinocchioInterface> pinocchio_interface_;// Pinocchio接口
     // 里程计
     // Odometry odometry_;
     // 发布里程计数据

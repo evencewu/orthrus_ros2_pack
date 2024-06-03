@@ -61,7 +61,12 @@ namespace orthrus_controller
       return controller_interface::CallbackReturn::ERROR;
     }
 
+    RCLCPP_INFO(get_node()->get_logger(), "Loading visualization");
     visualization_ = std::make_shared<OrthrusVisualization>(get_node(), params_.leg_joint_names);
+    RCLCPP_INFO(get_node()->get_logger(), "Loading pinocchio_interface");
+    pinocchio_interface_ = std::make_shared<PinocchioInterface>(get_node());
+
+    RCLCPP_INFO(get_node()->get_logger(), "Init pinocchio_interface");
 
     return controller_interface::CallbackReturn::SUCCESS;
   }
@@ -105,6 +110,23 @@ namespace orthrus_controller
     {
       return controller_interface::CallbackReturn::ERROR;
     }
+
+    //std::string urdf_filename = std::string("/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus/urdf/orthrus.urdf");
+    //pinocchio::Model model;
+    //pinocchio::urdf::buildModel(urdf_filename, model);
+    
+    //pinocchio_interface_->Init();
+
+    // log
+
+    // Print out the placement of each joint of the kinematic tree
+    // for (pinocchio::JointIndex joint_id = 0; joint_id < (pinocchio::JointIndex)pinocchio_interface_->model_.njoints; ++joint_id)
+    //{
+    //  std::stringstream ss;
+    //  ss << std::setw(24) << std::left << pinocchio_interface_->model_.names[joint_id] << ": " << std::fixed
+    //     << std::setprecision(2) << pinocchio_interface_->data_.oMi[joint_id].translation().transpose() << std::endl;
+    //  RCLCPP_INFO(get_node()->get_logger(), "tau (transposed) = %s", ss.str().c_str());
+    //}
 
     // auto node = rclcpp::Node::SharedPtr(get_node());
 
@@ -243,10 +265,9 @@ namespace orthrus_controller
         RCLCPP_ERROR(logger, "Either the joint is invalid for index");
         return controller_interface::return_type::ERROR;
       }
-      //RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf %lf", joint_number, joint_position, joint_velocity, joint_effort);
+      // RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf %lf", joint_number, joint_position, joint_velocity, joint_effort);
     }
-
-    visualization_->update(get_node());
+    visualization_->update(get_node()->now());
 
     return controller_interface::return_type::OK;
   }

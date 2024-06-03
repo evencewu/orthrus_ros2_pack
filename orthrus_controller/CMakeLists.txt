@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
 project(orthrus_controller)
 
+
+set(CMAKE_VERBOSE_MAKEFILE ON)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -24,6 +27,8 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   tf2_msgs
   pinocchio
 )
+message(${PKG_PIN_CONFIG_INCLUDE_DIRS})
+
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -33,18 +38,36 @@ find_package(ament_cmake REQUIRED)
 find_package(backward_ros REQUIRED)
 find_package(controller_manager REQUIRED)
 
+message(${PKG_PIN_CONFIG_INCLUDE_DIRS})
+
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+find_package (Eigen3 3.3 REQUIRED)
+
 include_directories(
-include/orthrus_controller
+  include/orthrus_controller
+  ${PKG_PIN_CONFIG_INCLUDE_DIRS}
 )
+
+message(${PKG_PIN_CONFIG_INCLUDE_DIRS})
 
 # generate parameter listener hpp file
 generate_parameter_library(orthrus_controller_parameters 
   config/hardware_interface/orthrus_controller_parameter.yaml
 )
+
+add_executable(test1 test/test1.cpp)
+
+target_include_directories(test1 PUBLIC
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include/diff_test_controller>
+)
+
+target_link_libraries(test1 PUBLIC Eigen3::Eigen)
+
+ament_target_dependencies(test1 PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 
 # generate lib
 add_library(orthrus_controller SHARED
@@ -82,6 +105,10 @@ endif()
 install(
   DIRECTORY include/
   DESTINATION include/orthrus_controller
+)
+
+install(TARGETS test1
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(TARGETS orthrus_controller orthrus_controller_parameters
