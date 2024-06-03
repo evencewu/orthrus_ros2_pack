@@ -17,7 +17,7 @@ use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
 urdf = os.path.join(
     get_package_share_directory('orthrus_interfaces'),
-    "models", "orthrus", "urdf", "orthrus_for_gazebo.urdf.xacro")
+    "models", "orthrus", "urdf", "orthrus.urdf.xacro")
 with open(urdf, 'r') as infp:
     robot_desc = infp.read()
 

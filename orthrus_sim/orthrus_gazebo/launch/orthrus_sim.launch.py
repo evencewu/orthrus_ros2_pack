@@ -4,21 +4,22 @@ from ament_index_python.packages import get_package_share_directory
 
 
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, IncludeLaunchDescription, RegisterEventHandler
+from launch.actions import ExecuteProcess, IncludeLaunchDescription, RegisterEventHandler, DeclareLaunchArgument
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
-
 from launch_ros.actions import Node
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration
 
 import xacro
 
 
 def generate_launch_description():
-    gazebo = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('gazebo_ros'), 'launch'), '/gazebo.launch.py']),
-             )
+            
+    gzserver = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(get_package_share_directory('gazebo_ros'), 'launch/'), 'gzserver.launch.py']),
+    ),
 
     pkg_dir = get_package_share_directory('orthrus_interfaces')
     simulation_description_path = os.path.join(pkg_dir)
@@ -52,56 +53,21 @@ def generate_launch_description():
         output='screen'
     )
 
-    active_joint_state_broadcaster = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','orthrus_joint_state'],
-        output='screen'
-    )
-
-    
-    active_effort_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','orthrus_joint_effort'],
-        output='screen'
-    )
-
-    active_imu_sensor_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','orthrus_imu'],
-        output='screen'
-    )
-
     active_orthrus_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','orthrus_controller'],
         output='screen'
     )
 
     return LaunchDescription([
-        #RegisterEventHandler(
-        #    event_handler=OnProcessExit(
-        #        target_action=spawn_entity,
-        #        on_exit=[active_joint_state_broadcaster],
-        #    )
-        #),
-
-        #RegisterEventHandler(
-        #    event_handler=OnProcessExit(
-        #        target_action=active_joint_state_broadcaster,
-        #        on_exit=[active_effort_controller],
-        #    )
-        #),
-        #RegisterEventHandler(
-        #    event_handler=OnProcessExit(
-        #        target_action=active_effort_controller,
-        #        on_exit=[active_imu_sensor_controller],
-        #    )
-        #),
-
         RegisterEventHandler(
             event_handler=OnProcessExit(
                 target_action=spawn_entity,
                 on_exit=[active_orthrus_controller],
             )
         ),
-
-        gazebo,
+        
+        gzserver,
+        
         node_robot_state_publisher,
         spawn_entity,
     ])

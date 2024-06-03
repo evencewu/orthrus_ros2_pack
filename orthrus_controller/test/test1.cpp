@@ -27,9 +27,6 @@ int main(int argc, char ** argv)
   
   pinocchio::urdf::buildModel(urdf_filename, model);
 
-}
-
-  /*
   GeometryModel collision_model;
   pinocchio::urdf::buildGeom(model, urdf_filename, COLLISION, collision_model, mesh_dir);
   GeometryModel visual_model;
@@ -69,4 +66,9 @@ int main(int argc, char ** argv)
   for (GeomIndex geom_id = 0; geom_id < (GeomIndex)visual_model.ngeoms; ++geom_id)
     std::cout << geom_id << ": " << std::fixed << std::setprecision(2)
               << visual_data.oMg[geom_id].translation().transpose() << std::endl;
+              
+}
+
+  /*
+
   */
