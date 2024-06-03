@@ -9,7 +9,7 @@
  
 // PINOCCHIO_MODEL_DIR is defined by the CMake but you can define your own directory here.
 #ifndef PINOCCHIO_MODEL_DIR
-  #define PINOCCHIO_MODEL_DIR "/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus"
+  #define PINOCCHIO_MODEL_DIR "/home/orthrus/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus"
 #endif
  
 int main(int argc, char ** argv)

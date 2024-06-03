@@ -27,8 +27,6 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   tf2_msgs
   pinocchio
 )
-message(${PKG_PIN_CONFIG_INCLUDE_DIRS})
-
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -38,8 +36,6 @@ find_package(ament_cmake REQUIRED)
 find_package(backward_ros REQUIRED)
 find_package(controller_manager REQUIRED)
 
-message(${PKG_PIN_CONFIG_INCLUDE_DIRS})
-
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
@@ -48,10 +44,7 @@ find_package (Eigen3 3.3 REQUIRED)
 
 include_directories(
   include/orthrus_controller
-  ${PKG_PIN_CONFIG_INCLUDE_DIRS}
 )
-
-message(${PKG_PIN_CONFIG_INCLUDE_DIRS})
 
 # generate parameter listener hpp file
 generate_parameter_library(orthrus_controller_parameters 
