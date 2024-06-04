@@ -66,8 +66,6 @@ namespace orthrus_controller
     RCLCPP_INFO(get_node()->get_logger(), "Loading pinocchio_interface");
     pinocchio_interface_ = std::make_shared<PinocchioInterface>(get_node());
 
-    RCLCPP_INFO(get_node()->get_logger(), "Init pinocchio_interface");
-
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
@@ -111,22 +109,45 @@ namespace orthrus_controller
       return controller_interface::CallbackReturn::ERROR;
     }
 
-    //std::string urdf_filename = std::string("/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus/urdf/orthrus.urdf");
-    //pinocchio::Model model;
-    //pinocchio::urdf::buildModel(urdf_filename, model);
-    
-    //pinocchio_interface_->Init();
+    RCLCPP_INFO(logger, "Init pinocchio_interface");
+    pinocchio_interface_->Init();
 
     // log
 
     // Print out the placement of each joint of the kinematic tree
-    // for (pinocchio::JointIndex joint_id = 0; joint_id < (pinocchio::JointIndex)pinocchio_interface_->model_.njoints; ++joint_id)
-    //{
-    //  std::stringstream ss;
-    //  ss << std::setw(24) << std::left << pinocchio_interface_->model_.names[joint_id] << ": " << std::fixed
-    //     << std::setprecision(2) << pinocchio_interface_->data_.oMi[joint_id].translation().transpose() << std::endl;
-    //  RCLCPP_INFO(get_node()->get_logger(), "tau (transposed) = %s", ss.str().c_str());
-    //}
+    std::stringstream ss;
+
+    for (pinocchio::JointIndex joint_id = 0; joint_id < (pinocchio::JointIndex)pinocchio_interface_->model_.njoints; ++joint_id)
+    {
+      ss << std::setw(24) << std::left << pinocchio_interface_->model_.names[joint_id] << ": " << std::fixed
+         << std::setprecision(2) << pinocchio_interface_->data_.oMi[joint_id].translation().transpose() << std::endl;
+    }
+
+    for (int joint_id = 1; joint_id < 12; joint_id++)
+    {
+      ss << pinocchio_interface_->model_.names[joint_id] << " "<< pinocchio_interface_->joint_[joint_id] << std::endl;
+    }
+
+    /*
+    // Print out the placement of each collision geometry object
+    std::cout << "\nCollision object placements:" << std::endl;
+    for (pinocchio::GeomIndex geom_id = 0; geom_id < (pinocchio::GeomIndex)pinocchio_interface_->collision_model_.ngeoms; ++geom_id)
+    {
+      std::stringstream ss;
+      ss << geom_id << ": " << std::fixed << std::setprecision(2)
+                << pinocchio_interface_->collision_data_.oMg[geom_id].translation().transpose() << std::endl;
+    }
+
+    // Print out the placement of each visual geometry object
+    std::cout << "\nVisual object placements:" << std::endl;
+    for (pinocchio::GeomIndex geom_id = 0; geom_id < (pinocchio::GeomIndex)pinocchio_interface_->visual_model_.ngeoms; ++geom_id)
+    {
+      ss << geom_id << ": " << std::fixed << std::setprecision(2)
+                << pinocchio_interface_->visual_data_.oMg[geom_id].translation().transpose() << std::endl;
+    }
+    */
+
+    RCLCPP_INFO(get_node()->get_logger(), "Init: \n = %s", ss.str().c_str());
 
     // auto node = rclcpp::Node::SharedPtr(get_node());
 
@@ -200,8 +221,6 @@ namespace orthrus_controller
   {
     const auto left_result = configure_joint(params_.leg_joint_names, joint_handles_);
 
-    RCLCPP_INFO(get_node()->get_logger(), "Subscriber and publisher are now active.");
-
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
@@ -257,17 +276,25 @@ namespace orthrus_controller
 
     for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
     {
-      double joint_position = joint_handles_[joint_number].state_position.get().get_value();
-      double joint_velocity = joint_handles_[joint_number].state_velocity.get().get_value();
-      double joint_effort = joint_handles_[joint_number].state_effort.get().get_value();
-      if (std::isnan(joint_position) || std::isnan(joint_velocity) || std::isnan(joint_effort))
+      double position = joint_handles_[joint_number].state_position.get().get_value();
+      double velocity = joint_handles_[joint_number].state_velocity.get().get_value();
+      double effort = joint_handles_[joint_number].state_effort.get().get_value();
+      pinocchio_interface_->joint_position_[joint_number] = position;
+      pinocchio_interface_->joint_velocity_[joint_number] = velocity;
+      pinocchio_interface_->joint_effort_[joint_number] = effort;
+
+      if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
       {
         RCLCPP_ERROR(logger, "Either the joint is invalid for index");
         return controller_interface::return_type::ERROR;
       }
       // RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf %lf", joint_number, joint_position, joint_velocity, joint_effort);
     }
+
     visualization_->update(get_node()->now());
+
+    pinocchio_interface_->Update();
+    RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interface_->Logger().str().c_str());
 
     return controller_interface::return_type::OK;
   }

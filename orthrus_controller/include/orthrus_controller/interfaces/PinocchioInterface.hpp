@@ -25,6 +25,9 @@ namespace orthrus_controller
         }
 
         void Init();
+        void Update();
+
+        std::stringstream Logger();
 
         pinocchio::Model model_;
 
@@ -32,13 +35,17 @@ namespace orthrus_controller
         pinocchio::GeometryData collision_data_;
         pinocchio::GeometryData visual_data_;
 
-    private:
-        std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
-
         pinocchio::GeometryModel collision_model_;
         pinocchio::GeometryModel visual_model_;
 
-        Eigen::VectorXd q_;
+        Eigen::VectorXd joint_;
+
+        std::vector<double> joint_position_;
+        std::vector<double> joint_velocity_;
+        std::vector<double> joint_effort_;
+
+    private:
+        std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
         std::string model_path_ = "/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus";
         std::string mesh_dir_ = model_path_ + "/meshes";

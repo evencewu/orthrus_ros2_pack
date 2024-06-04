@@ -2,6 +2,11 @@
 
 namespace orthrus_controller
 {
+    void OrthrusVisualization::Init(std::vector<double> joint_position,std::vector<double> joint_velocity,std::vector<double> joint_effort)
+    {
+        joint_position_ = 
+    }
+
     void OrthrusVisualization::update(rclcpp::Time time)
     {
         joint_state_msg_.header.stamp = time;
