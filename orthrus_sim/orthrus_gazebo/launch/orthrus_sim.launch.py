@@ -53,6 +53,12 @@ def generate_launch_description():
         output='screen'
     )
 
+    controller_manager  =Node(
+        package="controller_manager",
+        executable="ros2_control_node",
+        parameters=[robot_description_content,[os.path.join(get_package_share_directory('orthrus_gazebo'), 'config/'), 'orthrus.yaml']]
+    )
+    
     active_orthrus_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','orthrus_controller'],
         output='screen'
@@ -67,13 +73,14 @@ def generate_launch_description():
             condition=IfCondition(LaunchConfiguration('server'))
         ),
 
-        RegisterEventHandler(
-            event_handler=OnProcessExit(
-                target_action=spawn_entity,
-                on_exit=[active_orthrus_controller],
-            )
-        ),
+        #RegisterEventHandler(
+        #    event_handler=OnProcessExit(
+        #        target_action=spawn_entity,
+        #        on_exit=[active_orthrus_controller],
+        #    )
+        #),
         
         node_robot_state_publisher,
         spawn_entity,
+        controller_manager,
     ])
