@@ -2,9 +2,11 @@
 
 namespace orthrus_controller
 {
-    void OrthrusVisualization::Init(std::vector<double> joint_position,std::vector<double> joint_velocity,std::vector<double> joint_effort)
+    void OrthrusVisualization::Init(const std::vector<double>& joint_position,const std::vector<double>& joint_velocity, const std::vector<double>& joint_effort)
     {
-        joint_position_ = 
+        joint_position_ = std::make_shared<std::vector<double>>(joint_position);
+        joint_velocity_ = std::make_shared<std::vector<double>>(joint_velocity);
+        joint_effort_ = std::make_shared<std::vector<double>>(joint_effort);
     }
 
     void OrthrusVisualization::update(rclcpp::Time time)
