@@ -9,11 +9,12 @@
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
+#include "orthrus_controller/interfaces/OrthrusParma.hpp"
 #include "orthrus_controller/interfaces/PinocchioInterface.hpp"
 
 namespace orthrus_controller
 {
-    class OrthrusVisualization
+    class OrthrusVisualization : public std::enable_shared_from_this<OrthrusVisualization>
     {
     public:
         template <typename NodeType>
@@ -25,13 +26,10 @@ namespace orthrus_controller
             odom_publisher_ = node->template create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
         }
 
-        void Init(const std::vector<double>& joint_position,const std::vector<double>& joint_velocity, const std::vector<double>& joint_effort);
+        void Init(std::shared_ptr<JointParma> joint_parma_ptr);
         void update(rclcpp::Time time);
-
     private:
-        std::shared_ptr<std::vector<double>> joint_position_;
-        std::shared_ptr<std::vector<double>> joint_velocity_;
-        std::shared_ptr<std::vector<double>> joint_effort_;
+        std::shared_ptr<JointParma> joint_parma_;
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 

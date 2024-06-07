@@ -2,11 +2,10 @@
 
 namespace orthrus_controller
 {
-    void OrthrusVisualization::Init(const std::vector<double>& joint_position,const std::vector<double>& joint_velocity, const std::vector<double>& joint_effort)
+    void OrthrusVisualization::Init(std::shared_ptr<JointParma> joint_parma_ptr)
     {
-        joint_position_ = std::make_shared<std::vector<double>>(joint_position);
-        joint_velocity_ = std::make_shared<std::vector<double>>(joint_velocity);
-        joint_effort_ = std::make_shared<std::vector<double>>(joint_effort);
+        //JointParma joint_parma_;
+        joint_parma_ = joint_parma_ptr;
     }
 
     void OrthrusVisualization::update(rclcpp::Time time)
@@ -15,7 +14,7 @@ namespace orthrus_controller
         joint_state_msg_.header.frame_id = "body";
 
         // Direct initialization with zeros
-        joint_state_msg_.position = std::vector<double>(12, 0.0);
+        joint_state_msg_.position = joint_parma_->position;
         joint_state_msg_.velocity = std::vector<double>(12, 0.0);
         joint_state_msg_.effort = std::vector<double>(12, 0.0);
 

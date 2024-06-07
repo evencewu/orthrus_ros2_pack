@@ -111,8 +111,8 @@ namespace orthrus_controller
 
     RCLCPP_INFO(logger, "Init pinocchio_interface");
     pinocchio_interface_->Init();
-
-    visualization_->Init(pinocchio_interface_->joint_position_, pinocchio_interface_->joint_velocity_, pinocchio_interface_->joint_effort_);
+    
+    visualization_->Init(std::make_shared<JointParma>(joint_parma_));
 
     // log
 
@@ -295,8 +295,8 @@ namespace orthrus_controller
 
     visualization_->update(get_node()->now());
 
-    //pinocchio_interface_->Update();
-    //RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interface_->Logger().str().c_str());
+    pinocchio_interface_->Update();
+    RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interface_->Logger().str().c_str());
 
     return controller_interface::return_type::OK;
   }
