@@ -29,7 +29,7 @@ namespace orthrus_controller
             node_ = node;
         }
 
-        void Init();
+        void Init(std::shared_ptr<JointParma> joint_parma_ptr);
         void Update();
 
         std::stringstream Logger();
@@ -44,18 +44,9 @@ namespace orthrus_controller
         pinocchio::GeometryModel visual_model_;
 
         Eigen::VectorXd joint_;
-
-        std::shared_ptr<std::vector<double>> getJointPtr()
-        {
-            // 使用std::shared_ptr管理memberVariable
-            return std::shared_ptr<std::vector<double>>(shared_from_this(), &joint_position_);
-        }
-
-        std::vector<double> joint_position_;
-        std::vector<double> joint_velocity_;
-        std::vector<double> joint_effort_;
-
     private:
+        std::shared_ptr<JointParma> joint_parma_;
+
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
         std::string model_path_ = "/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus";

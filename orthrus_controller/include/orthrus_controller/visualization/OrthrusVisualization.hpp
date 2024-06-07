@@ -28,8 +28,9 @@ namespace orthrus_controller
 
         void Init(std::shared_ptr<JointParma> joint_parma_ptr);
         void update(rclcpp::Time time);
-    private:
+
         std::shared_ptr<JointParma> joint_parma_;
+    private:
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 

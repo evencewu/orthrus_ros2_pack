@@ -15,8 +15,8 @@ namespace orthrus_controller
 
         // Direct initialization with zeros
         joint_state_msg_.position = joint_parma_->position;
-        joint_state_msg_.velocity = std::vector<double>(12, 0.0);
-        joint_state_msg_.effort = std::vector<double>(12, 0.0);
+        joint_state_msg_.velocity = joint_parma_->velocity;
+        joint_state_msg_.effort = joint_parma_->effort;
 
         joint_state_msg_.name = joint_name_;
         joint_state_publisher_->publish(joint_state_msg_);

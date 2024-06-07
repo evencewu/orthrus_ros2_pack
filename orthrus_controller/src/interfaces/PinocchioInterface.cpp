@@ -2,11 +2,10 @@
 
 namespace orthrus_controller
 {
-    void PinocchioInterface::Init()
+    void PinocchioInterface::Init(std::shared_ptr<JointParma> joint_parma_ptr)
     {
-        joint_position_.resize(12);
-        joint_velocity_.resize(12);
-        joint_effort_.resize(12);
+
+        joint_parma_ = joint_parma_ptr;
 
         pinocchio::urdf::buildModel(urdf_filename_, model_);
 
@@ -52,7 +51,8 @@ namespace orthrus_controller
 
     void PinocchioInterface::Update()
     {
-        joint_ = Eigen::VectorXd::Map(joint_position_.data(), joint_position_.size());
+        
+        joint_ = Eigen::VectorXd::Map(joint_parma_->position.data(), joint_parma_->position.size());
         // 执行正向运动学
         pinocchio::forwardKinematics(model_, data_, joint_);
 

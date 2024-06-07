@@ -109,10 +109,12 @@ namespace orthrus_controller
       return controller_interface::CallbackReturn::ERROR;
     }
 
+    joint_parma_  = std::make_shared<JointParma>();
+
     RCLCPP_INFO(logger, "Init pinocchio_interface");
-    pinocchio_interface_->Init();
-    
-    visualization_->Init(std::make_shared<JointParma>(joint_parma_));
+    pinocchio_interface_->Init(joint_parma_);
+    RCLCPP_INFO(logger, "Init visualization");
+    visualization_->Init(joint_parma_);
 
     // log
 
@@ -281,16 +283,18 @@ namespace orthrus_controller
       double position = joint_handles_[joint_number].state_position.get().get_value();
       double velocity = joint_handles_[joint_number].state_velocity.get().get_value();
       double effort = joint_handles_[joint_number].state_effort.get().get_value();
-      pinocchio_interface_->joint_position_[joint_number] = position;
-      pinocchio_interface_->joint_velocity_[joint_number] = velocity;
-      pinocchio_interface_->joint_effort_[joint_number] = effort;
+      joint_parma_->position[joint_number] = position;
+      joint_parma_->velocity[joint_number] = velocity;
+      joint_parma_->effort[joint_number] = effort;
 
       if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
       {
         RCLCPP_ERROR(logger, "Either the joint is invalid for index");
         return controller_interface::return_type::ERROR;
       }
-      // RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf %lf", joint_number, joint_position, joint_velocity, joint_effort);
+      //RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf", joint_number,
+      //            joint_parma_->position[joint_number],
+      //            visualization_->joint_parma_->position[joint_number]);
     }
 
     visualization_->update(get_node()->now());

@@ -76,7 +76,7 @@ namespace orthrus_controller
 
   protected:
     
-    JointParma joint_parma_;
+    std::shared_ptr<JointParma> joint_parma_;
 
     struct JointHandle
     {
