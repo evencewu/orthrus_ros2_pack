@@ -29,24 +29,6 @@ namespace orthrus_controller
         // Update Geometry models
         pinocchio::updateGeometryPlacements(model_, data_, collision_model_, collision_data_);
         pinocchio::updateGeometryPlacements(model_, data_, visual_model_, visual_data_);
-
-        // Print out the placement of each joint of the kinematic tree
-        // std::cout << "\nJoint placements:" << std::endl;
-        // for (JointIndex joint_id = 0; joint_id < (JointIndex)model.njoints; ++joint_id)
-        //    std::cout << std::setw(24) << std::left << model.names[joint_id] << ": " << std::fixed
-        //              << std::setprecision(2) << data.oMi[joint_id].translation().transpose() << std::endl;
-
-        // Print out the placement of each collision geometry object
-        // std::cout << "\nCollision object placements:" << std::endl;
-        // for (GeomIndex geom_id = 0; geom_id < (GeomIndex)collision_model.ngeoms; ++geom_id)
-        //    std::cout << geom_id << ": " << std::fixed << std::setprecision(2)
-        //              << collision_data.oMg[geom_id].translation().transpose() << std::endl;
-
-        // Print out the placement of each visual geometry object
-        // std::cout << "\nVisual object placements:" << std::endl;
-        // for (GeomIndex geom_id = 0; geom_id < (GeomIndex)visual_model.ngeoms; ++geom_id)
-        //    std::cout << geom_id << ": " << std::fixed << std::setprecision(2)
-        //            << visual_data.oMg[geom_id].translation().transpose() << std::endl;
     }
 
     void PinocchioInterface::Update()
