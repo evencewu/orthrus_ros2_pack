@@ -11,15 +11,6 @@
 #include "tf2/LinearMath/Quaternion.h"
 #include "orthrus_controller/OrthrusController.hpp"
 
-namespace
-{
-  constexpr auto DEFAULT_TRANSFORM_TOPIC = "/tf";
-  constexpr auto DEFAULT_COMMAND_TOPIC = "~/cmd_vel";
-  constexpr auto DEFAULT_ODOMETRY_TOPIC = "/odom";
-  constexpr auto odom_frame_id = "odom";
-  constexpr auto base_frame_id = "base_link";
-} // namespace
-
 namespace orthrus_controller
 {
   using namespace std::chrono_literals;
@@ -72,6 +63,18 @@ namespace orthrus_controller
       conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_POSITION);
       conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_VELOCITY);
     }
+
+    conf_names.push_back("imu_sensor/angular_velocity.x");
+    conf_names.push_back("imu_sensor/angular_velocity.y");
+    conf_names.push_back("imu_sensor/angular_velocity.z");
+    conf_names.push_back("imu_sensor/linear_acceleration.x");
+    conf_names.push_back("imu_sensor/linear_acceleration.y");
+    conf_names.push_back("imu_sensor/linear_acceleration.z");
+    conf_names.push_back("imu_sensor/orientation.w");
+    conf_names.push_back("imu_sensor/orientation.x");
+    conf_names.push_back("imu_sensor/orientation.y");
+    conf_names.push_back("imu_sensor/orientation.z");
+
     return {interface_configuration_type::INDIVIDUAL, conf_names};
   }
 
@@ -93,7 +96,7 @@ namespace orthrus_controller
       return controller_interface::CallbackReturn::ERROR;
     }
 
-    joint_parma_  = std::make_shared<JointParma>();
+    joint_parma_ = std::make_shared<JointParma>();
 
     RCLCPP_INFO(logger, "Init pinocchio_interface");
     pinocchio_interface_->Init(joint_parma_);
@@ -207,8 +210,8 @@ namespace orthrus_controller
   controller_interface::CallbackReturn OrthrusController::on_activate(
       const rclcpp_lifecycle::State &)
   {
-    const auto left_result = configure_joint(params_.leg_joint_names, joint_handles_);
-
+    configure_joint(params_.leg_joint_names, joint_handles_);
+    configure_imu(params_.imu_data_types, params_.imu_names, imu_handles_);
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
@@ -276,15 +279,19 @@ namespace orthrus_controller
         RCLCPP_ERROR(logger, "Either the joint is invalid for index");
         return controller_interface::return_type::ERROR;
       }
-      //RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf", joint_number,
-      //            joint_parma_->position[joint_number],
-      //            visualization_->joint_parma_->position[joint_number]);
+
+      // RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf", joint_number,
+      //             joint_parma_->position[joint_number],
+      //             visualization_->joint_parma_->position[joint_number]);
     }
 
     visualization_->update(get_node()->now());
 
     pinocchio_interface_->Update();
-    RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interface_->Logger().str().c_str());
+
+    RCLCPP_INFO(logger, "imu: %lf", imu_handles_[0].orientation[0].get().get_value());
+
+    // RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interface_->Logger().str().c_str());
 
     return controller_interface::return_type::OK;
   }
@@ -293,7 +300,6 @@ namespace orthrus_controller
       const std::vector<std::string> &joint_names,
       std::vector<JointHandle> &registered_handles)
   {
-
     auto logger = get_node()->get_logger();
 
     if (joint_names.empty())
@@ -364,6 +370,66 @@ namespace orthrus_controller
 
       registered_handles.emplace_back(
           JointHandle{std::ref(*position_handle), std::ref(*velocity_handle), std::ref(*effort_handle), std::ref(*command_handle)});
+    }
+
+    return controller_interface::CallbackReturn::SUCCESS;
+  }
+
+  controller_interface::CallbackReturn OrthrusController::configure_imu(
+      const std::vector < std::string > &imu_data_types,
+      const std::vector<std::string> &imu_names,
+      std::vector<ImuHandle> &registered_handles)
+  {
+    auto logger = get_node()->get_logger();
+
+    if (imu_names.empty())
+    {
+      RCLCPP_ERROR(logger, "No motor names specified");
+      return controller_interface::CallbackReturn::ERROR;
+    }
+
+    // register handles
+    registered_handles.reserve(imu_names.size());
+
+    for (const auto &imu_name : imu_names)
+    {
+      std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> angular_velocity;
+      std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> linear_acceleration;
+      std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
+
+      for (const auto &imu_data_type : imu_data_types)
+      {
+        const auto imu_handle = std::find_if(
+            state_interfaces_.cbegin(), state_interfaces_.cend(),
+            [&imu_name, &imu_data_type](const auto &interface)
+            {
+              return interface.get_prefix_name() == imu_name &&
+                     interface.get_interface_name() == imu_data_type;
+            });
+
+        if (imu_handle == state_interfaces_.cend())
+        {
+          RCLCPP_ERROR(logger, "Unable to obtain motor state handle for %s", imu_name.c_str());
+          return controller_interface::CallbackReturn::ERROR;
+        }
+
+        if (imu_data_type == "angular_velocity.x" || imu_data_type == "angular_velocity.y" || imu_data_type == "angular_velocity.z")
+        {
+          // RCLCPP_INFO(get_node()->get_logger(), "imu %lf", *imu_handle.get().get_value());
+          angular_velocity.emplace_back(std::ref(*imu_handle));
+        }
+
+        if (imu_data_type == "linear_acceleration.x" || imu_data_type == "linear_acceleration.y" || imu_data_type == "linear_acceleration.z")
+        {
+          linear_acceleration.emplace_back(std::ref(*imu_handle));
+        }
+
+        if (imu_data_type == "orientation.w" || imu_data_type == "orientation.x" || imu_data_type == "orientation.y" || imu_data_type == "orientation.z")
+        {
+          orientation.emplace_back(std::ref(*imu_handle));
+        }
+      }
+      registered_handles.emplace_back(ImuHandle{angular_velocity, linear_acceleration, orientation});
     }
 
     return controller_interface::CallbackReturn::SUCCESS;
