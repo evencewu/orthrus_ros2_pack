@@ -7,25 +7,33 @@
 #include <string>
 #include <vector>
 
+#include <Eigen/Dense>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
+
 namespace orthrus_controller
 {
-    struct JointParma
+    struct JointState
     {
         std::vector<double> position;
         std::vector<double> velocity;
         std::vector<double> effort;
 
-        JointParma() : position(12, 0.0), velocity(12, 0.0), effort(12, 0.0){}
+        JointState() : position(12, 0.0), velocity(12, 0.0), effort(12, 0.0) {}
     };
 
-    struct Odom
+    struct ImuState
     {
-
+        Eigen::Vector3d angular_velocity;
+        Eigen::Vector3d linear_acceleration;
+        Eigen::Quaterniond orientation;
     };
 
-    struct Imu
+    struct OdomState
     {
-
+        Eigen::Vector3d position;
+        ImuState imu;
+        ImuState imu_last;
     };
 
     struct Touch

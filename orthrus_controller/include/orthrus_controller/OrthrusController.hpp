@@ -104,12 +104,16 @@ namespace orthrus_controller
             std::vector<ImuHandle> &registered_handles);
 
         // parma
-        std::shared_ptr<JointParma> joint_parma_;
+        std::shared_ptr<OdomState> odom_state_;
+        std::shared_ptr<JointState> joint_state_;
 
         std::shared_ptr<OrthrusVisualization> visualization_;     // 可视化
         std::shared_ptr<PinocchioInterface> pinocchio_interface_; // Pinocchio接口
+
+        //LeggedOdomState
+
         // 里程计
-        // Odometry odometry_;
+        // OdomStateetry odometry_;
         // 发布里程计数据
         std::shared_ptr<rclcpp::Publisher<nav_msgs::msg::Odometry>> odometry_publisher_ = nullptr;
         std::shared_ptr<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>

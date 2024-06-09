@@ -6,19 +6,20 @@
 
   <xacro:include filename="orthrus_base.xacro"/>
 
-  <xacro:HAA prefix="RF"/>
   <xacro:HAA prefix="LF"/>
-  <xacro:HAA prefix="RH"/>
-  <xacro:HAA prefix="LH"/>
-
-  <xacro:HFE prefix="RF"/>
   <xacro:HFE prefix="LF"/>
-  <xacro:HFE prefix="RH"/>
-  <xacro:HFE prefix="LH"/>
-
   <xacro:KFE prefix="LF"/>
-  <xacro:KFE prefix="RF"/>
+
+  <xacro:HAA prefix="LH"/>
+  <xacro:HFE prefix="LH"/>
   <xacro:KFE prefix="LH"/>
+
+  <xacro:HAA prefix="RF"/>
+  <xacro:HFE prefix="RF"/>
+  <xacro:KFE prefix="RF"/>
+
+  <xacro:HAA prefix="RH"/>
+  <xacro:HFE prefix="RH"/>
   <xacro:KFE prefix="RH"/>
 
   <gazebo reference="base">

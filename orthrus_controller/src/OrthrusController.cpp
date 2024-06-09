@@ -96,12 +96,13 @@ namespace orthrus_controller
       return controller_interface::CallbackReturn::ERROR;
     }
 
-    joint_parma_ = std::make_shared<JointParma>();
+    joint_state_ = std::make_shared<JointState>();
+    odom_state_ = std::make_shared<OdomState>();
 
     RCLCPP_INFO(logger, "Init pinocchio_interface");
-    pinocchio_interface_->Init(joint_parma_);
+    pinocchio_interface_->Init(joint_state_);
     RCLCPP_INFO(logger, "Init visualization");
-    visualization_->Init(joint_parma_);
+    visualization_->Init(joint_state_,odom_state_);
 
     // log
 
@@ -265,31 +266,47 @@ namespace orthrus_controller
   {
     auto logger = get_node()->get_logger();
 
+    //Update joint data
     for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
     {
       double position = joint_handles_[joint_number].state_position.get().get_value();
       double velocity = joint_handles_[joint_number].state_velocity.get().get_value();
       double effort = joint_handles_[joint_number].state_effort.get().get_value();
-      joint_parma_->position[joint_number] = position;
-      joint_parma_->velocity[joint_number] = velocity;
-      joint_parma_->effort[joint_number] = effort;
+      joint_state_->position[joint_number] = position;
+      joint_state_->velocity[joint_number] = velocity;
+      joint_state_->effort[joint_number] = effort;
 
       if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
       {
         RCLCPP_ERROR(logger, "Either the joint is invalid for index");
         return controller_interface::return_type::ERROR;
       }
-
-      // RCLCPP_INFO(logger, "joint_feedback[%d]: %lf %lf", joint_number,
-      //             joint_parma_->position[joint_number],
-      //             visualization_->joint_parma_->position[joint_number]);
     }
 
+    //Update imu/odom data
+    for (int i = 0; i < 3; i++)
+    {
+      odom_state_->imu.angular_velocity(i) = imu_handles_[0].angular_velocity[i].get().get_value();
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+      odom_state_->imu.linear_acceleration(i) = imu_handles_[0].linear_acceleration[i].get().get_value();
+    }
+
+    odom_state_->imu.orientation.w() = imu_handles_[0].orientation[0].get().get_value();
+    odom_state_->imu.orientation.x() = imu_handles_[0].orientation[1].get().get_value();
+    odom_state_->imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
+    odom_state_->imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
+    
     visualization_->update(get_node()->now());
 
     pinocchio_interface_->Update();
 
-    RCLCPP_INFO(logger, "imu: %lf", imu_handles_[0].orientation[0].get().get_value());
+    RCLCPP_INFO(get_node()->get_logger(), "position\n%s", pinocchio_interface_->LegPositionInterpolation().str().c_str());
+    
+
+    // RCLCPP_INFO(logger, "imu: %lf", imu_handles_[0].orientation[0].get().get_value());
 
     // RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interface_->Logger().str().c_str());
 
@@ -376,7 +393,7 @@ namespace orthrus_controller
   }
 
   controller_interface::CallbackReturn OrthrusController::configure_imu(
-      const std::vector < std::string > &imu_data_types,
+      const std::vector<std::string> &imu_data_types,
       const std::vector<std::string> &imu_names,
       std::vector<ImuHandle> &registered_handles)
   {

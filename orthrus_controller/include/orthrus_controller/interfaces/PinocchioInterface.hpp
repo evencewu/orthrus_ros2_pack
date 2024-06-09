@@ -4,7 +4,6 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "controller_interface/controller_interface.hpp"
 
-
 #include "orthrus_controller/interfaces/OrthrusParma.hpp"
 
 #include <iostream>
@@ -16,7 +15,9 @@
 #include "pinocchio/algorithm/kinematics.hpp"
 #include "pinocchio/algorithm/geometry.hpp"
 
-
+#include <unsupported/Eigen/NonLinearOptimization>
+#include <unsupported/Eigen/NumericalDiff>
+#include <Eigen/Dense>
 
 namespace orthrus_controller
 {
@@ -29,8 +30,9 @@ namespace orthrus_controller
             node_ = node;
         }
 
-        void Init(std::shared_ptr<JointParma> joint_parma_ptr);
+        void Init(std::shared_ptr<JointState> joint_state_ptr);
         void Update();
+        std::stringstream LegPositionInterpolation();
 
         std::stringstream Logger();
 
@@ -45,7 +47,7 @@ namespace orthrus_controller
 
         Eigen::VectorXd joint_;
     private:
-        std::shared_ptr<JointParma> joint_parma_;
+        std::shared_ptr<JointState> joint_state_;
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
