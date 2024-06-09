@@ -32,6 +32,7 @@ namespace orthrus_controller
     struct OdomState
     {
         Eigen::Vector3d position;
+        Eigen::Vector3d velocity;
     
         ImuState imu;
         ImuState imu_last;
