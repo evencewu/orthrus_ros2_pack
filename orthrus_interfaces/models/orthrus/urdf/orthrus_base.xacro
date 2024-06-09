@@ -14,21 +14,21 @@
   
   <link name="base">
     <visual>
-      <origin xyz="-0.10 0.1385 -0.05" rpy="${pi/2} 0 0" />
+      <origin xyz="-0.1385 -0.10 -0.05" rpy="${pi/2} 0 ${pi/2}" />
       <geometry>
         <mesh filename="${meshes_folder}/body.STL"/>
       </geometry>
       <material name="blue"/>
     </visual>
     <collision>
-      <origin xyz="-0.10 0.1385 -0.05" rpy="${pi/2} 0 0" />
+      <origin xyz="-0.1385 -0.10 -0.05" rpy="${pi/2} 0 ${pi/2}" />
       <geometry>
         <mesh filename="${meshes_folder}/body.STL"/>
       </geometry>
     </collision>
     <inertial>
       <mass value="7"/>
-      <inertia ixx="4.9950395" ixy="0" ixz="0" iyy="2.4616377" iyz="0" izz="6.4183150" />
+      <inertia ixx="2.4616377" ixy="0" ixz="0" iyy="4.9950395" iyz="0" izz="6.4183150" />
     </inertial>
   </link>
 
@@ -60,16 +60,16 @@
       <dynamics damping="0.4" friction="0.3"/>
       <limit effort="35.0" lower="-${pi/2}" upper="${pi/2}" velocity="${pi}"/>
       <xacro:if value="${prefix == 'LF'}">
-        <origin xyz="-0.05 0.20 0" rpy="${pi/2} ${pi} 0" />
+        <origin xyz="0.20 0.05 0" rpy="${pi/2} ${pi} ${-pi/2}" />
       </xacro:if>
       <xacro:if value="${prefix == 'LH'}">
-        <origin xyz="-0.05 -0.20 0" rpy="-${pi/2} ${pi} 0" />
+        <origin xyz="-0.20 0.05 0" rpy="-${pi/2} ${pi} ${-pi/2}" />
       </xacro:if>
       <xacro:if value="${prefix == 'RH'}">
-        <origin xyz="0.05 -0.20 0" rpy="${pi/2} ${pi} ${pi}" />
+        <origin xyz="-0.20 -0.05 0" rpy="${pi/2} ${pi} ${pi/2}" />
       </xacro:if>
       <xacro:if value="${prefix == 'RF'}">
-        <origin xyz="0.05 0.20 0" rpy="-${pi/2} ${pi} ${pi}" />
+        <origin xyz="0.20 -0.05 0" rpy="-${pi/2} ${pi} ${pi/2}" />
       </xacro:if>
     </joint>
   </xacro:macro>
