@@ -25,15 +25,7 @@ def get_orthrus_ctrl(package, executable, name):
         parameters=[{'use_sim_time': use_sim_time}],
     )
 
-def get_orthrus_state_publisher():
-    return launch_ros.actions.Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        name='robot_state_publisher',
-        output='screen',
-        parameters=[{'use_sim_time': use_sim_time, 'robot_description': robot_desc}],
-        arguments=[urdf]
-    )
+
 
 def get_orthrus_gazebo_sim(package, executable):
     return launch.actions.IncludeLaunchDescription(
@@ -49,8 +41,6 @@ def generate_launch_description():
 
     
     orthrus_gazebo_sim = get_orthrus_gazebo_sim('orthrus_gazebo', 'orthrus_sim.launch.py')
-    AnyLaunchDescriptionSource
-    orthrus_state_publisher = get_orthrus_state_publisher()
 
     return launch.LaunchDescription(
         [
@@ -59,19 +49,5 @@ def generate_launch_description():
             ),
             
             orthrus_gazebo_sim,
-            orthrus_state_publisher,
         ]
     )
-
-
-def generate_launch_description():
-    # 获取 foxglove_bridge 包的共享目录
-    
-    
-    # 确定 XML 文件的路径
-    
-
-    # 包含 XML 文件中的启动描述
-    return LaunchDescription([
-
-    ])
