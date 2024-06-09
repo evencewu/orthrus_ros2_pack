@@ -67,6 +67,7 @@ add_library(orthrus_controller SHARED
   src/OrthrusController.cpp
   src/visualization/OrthrusVisualization.cpp
   src/interfaces/PinocchioInterface.cpp
+  src/algorithm/LeggedOdom.cpp
 )
 
 target_compile_features(orthrus_controller PUBLIC cxx_std_17)

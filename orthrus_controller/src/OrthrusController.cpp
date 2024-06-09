@@ -18,9 +18,8 @@ namespace orthrus_controller
   using controller_interface::InterfaceConfiguration;
   using lifecycle_msgs::msg::State;
 
-  OrthrusController::OrthrusController()
-      : controller_interface::ControllerInterface() {}
-
+  OrthrusController::OrthrusController(): controller_interface::ControllerInterface() {}
+      
   controller_interface::CallbackReturn OrthrusController::on_init()
   {
     RCLCPP_INFO(get_node()->get_logger(), "Loading orthrus controller...");
@@ -36,10 +35,18 @@ namespace orthrus_controller
       return controller_interface::CallbackReturn::ERROR;
     }
 
+    //class
     RCLCPP_INFO(get_node()->get_logger(), "Loading visualization");
     visualization_ = std::make_shared<OrthrusVisualization>(get_node(), params_.leg_joint_names);
     RCLCPP_INFO(get_node()->get_logger(), "Loading pinocchio_interface");
     pinocchio_interface_ = std::make_shared<PinocchioInterface>(get_node());
+    RCLCPP_INFO(get_node()->get_logger(), "Loading legged_odom");
+    legged_odom_ = std::make_shared<LeggedOdom>(get_node());
+
+    //struct
+    joint_state_ = std::make_shared<JointState>();
+    odom_state_ = std::make_shared<OdomState>();
+    touch_state_ = std::make_shared<std::vector<TouchState>>(4);
 
     return controller_interface::CallbackReturn::SUCCESS;
   }
@@ -96,13 +103,12 @@ namespace orthrus_controller
       return controller_interface::CallbackReturn::ERROR;
     }
 
-    joint_state_ = std::make_shared<JointState>();
-    odom_state_ = std::make_shared<OdomState>();
-
     RCLCPP_INFO(logger, "Init pinocchio_interface");
-    pinocchio_interface_->Init(joint_state_);
+    pinocchio_interface_->Init(joint_state_,touch_state_);
     RCLCPP_INFO(logger, "Init visualization");
-    visualization_->Init(joint_state_,odom_state_);
+    visualization_->Init(joint_state_,odom_state_,touch_state_);
+    RCLCPP_INFO(logger, "Init legged_odom");
+    legged_odom_->Init(odom_state_,touch_state_);
 
     // log
 
@@ -299,11 +305,11 @@ namespace orthrus_controller
     odom_state_->imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
     odom_state_->imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
     
-    visualization_->update(get_node()->now());
-
+    visualization_->Update(get_node()->now());
+    legged_odom_->Update(get_node()->now());
     pinocchio_interface_->Update();
 
-    RCLCPP_INFO(get_node()->get_logger(), "position\n%s", pinocchio_interface_->LegPositionInterpolation().str().c_str());
+    //RCLCPP_INFO(get_node()->get_logger(), "position\n%s", pinocchio_interface_->LegPositionInterpolation().str().c_str());
     
 
     // RCLCPP_INFO(logger, "imu: %lf", imu_handles_[0].orientation[0].get().get_value());

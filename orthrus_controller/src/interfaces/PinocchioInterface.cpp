@@ -2,10 +2,12 @@
 
 namespace orthrus_controller
 {
-    void PinocchioInterface::Init(std::shared_ptr<JointState> joint_state_ptr)
+    void PinocchioInterface::Init(std::shared_ptr<JointState> joint_ptr,
+                                  std::shared_ptr<std::vector<TouchState>> touch_ptr)
     {
 
-        joint_state_ = joint_state_ptr;
+        joint_state_ = joint_ptr;
+        touch_state_ = touch_ptr;
 
         pinocchio::urdf::buildModel(urdf_filename_, model_);
 
@@ -41,6 +43,14 @@ namespace orthrus_controller
         pinocchio::updateGlobalPlacements(model_, data_);
         pinocchio::updateGeometryPlacements(model_, data_, collision_model_, collision_data_);
         pinocchio::updateGeometryPlacements(model_, data_, visual_model_, visual_data_);
+
+        // 计算足端位置
+        Eigen::Vector3d point_in_joint_frame(0.0, 0.0, -0.2);
+        for (int foot_num = 0; foot_num < 4; foot_num++)
+        {
+            const pinocchio::SE3 &joint_frame_transform = data_.oMi[3+foot_num*3];
+            (*touch_state_)[foot_num].touch_position = joint_frame_transform.act(point_in_joint_frame);
+        }
     }
 
     std::stringstream PinocchioInterface::Logger()
@@ -55,23 +65,7 @@ namespace orthrus_controller
 
     std::stringstream PinocchioInterface::LegPositionInterpolation()
     {
-        // 逆运动学求解
-        // const std::string end_effector_frame = "LF_KFE";
-        // pinocchio::FrameIndex ee_idx = model_.getFrameId(end_effector_frame);
-
-        const std::string end_effector_frame = "LF_KFE";
-        pinocchio::JointIndex ee_idx = model_.getJointId(end_effector_frame);
-
         std::stringstream ss;
-
-        ss << data_.oMi[1].translation().transpose() << std::endl;
-        ss << data_.oMi[ee_idx].translation().transpose() << std::endl;
-        //
-        //for (int i = 0; i < 13; i++)
-        //{
-        //    ss << model_.names[i] << " " << ee_idx << " " << data_.oMi[i].translation().transpose() << std::endl;
-        //}
-
         return ss;
     }
 }

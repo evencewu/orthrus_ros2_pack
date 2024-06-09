@@ -26,13 +26,19 @@ namespace orthrus_controller
             odom_publisher_ = node->template create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
         }
 
-        void Init(std::shared_ptr<JointState> joint_ptr ,std::shared_ptr<OdomState> odom_ptr);
-        void update(rclcpp::Time time);
+        void Init(std::shared_ptr<JointState> joint_ptr,
+                  std::shared_ptr<OdomState> odom_ptr,
+                  std::shared_ptr<std::vector<TouchState>> touch_ptr);
+        void Update(rclcpp::Time time);
+        void ModelVisualization(rclcpp::Time time);
+        void ImuVisualization(rclcpp::Time time);
+        void FootPointVisualization(rclcpp::Time time);
 
         std::shared_ptr<JointState> joint_state_;
         std::shared_ptr<OdomState> odom_state_;
-    private:
+        std::shared_ptr<std::vector<TouchState>> touch_state_;
 
+    private:
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
         std::vector<std::string> joint_name_;

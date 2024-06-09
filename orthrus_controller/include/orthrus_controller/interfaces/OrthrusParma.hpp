@@ -32,12 +32,19 @@ namespace orthrus_controller
     struct OdomState
     {
         Eigen::Vector3d position;
+    
         ImuState imu;
         ImuState imu_last;
+
+        //欧拉角
+        Eigen::Vector3d euler;
     };
 
-    struct Touch
+    struct TouchState
     {
-        bool sensor[4];
+        bool sensor;
+        Eigen::Vector3d touch_position;
+
+        TouchState() : sensor(false), touch_position(Eigen::Vector3d::Zero()) {}
     };
 }

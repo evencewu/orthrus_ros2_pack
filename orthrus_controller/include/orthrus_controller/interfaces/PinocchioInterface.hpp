@@ -30,7 +30,8 @@ namespace orthrus_controller
             node_ = node;
         }
 
-        void Init(std::shared_ptr<JointState> joint_state_ptr);
+        void Init(std::shared_ptr<JointState> joint_ptr,
+                  std::shared_ptr<std::vector<TouchState>> touch_ptr);
         void Update();
         std::stringstream LegPositionInterpolation();
 
@@ -46,8 +47,10 @@ namespace orthrus_controller
         pinocchio::GeometryModel visual_model_;
 
         Eigen::VectorXd joint_;
+
     private:
         std::shared_ptr<JointState> joint_state_;
+        std::shared_ptr<std::vector<TouchState>> touch_state_;
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
