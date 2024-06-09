@@ -7,6 +7,8 @@ from launch.substitutions import LaunchConfiguration
 
 from ament_index_python.packages import get_package_share_directory
 
+from launch.launch_description_sources import AnyLaunchDescriptionSource
+
 use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
 urdf = os.path.join(
@@ -37,15 +39,39 @@ def get_orthrus_gazebo_sim(package, executable):
     return launch.actions.IncludeLaunchDescription(
         launch.launch_description_sources.PythonLaunchDescriptionSource([os.path.join(get_package_share_directory(package), 'launch/'),executable])
     )
+    
+#ros2 launch foxglove_bridge foxglove_bridge_launch.xml
 
+foxglove_bridge_share_dir = get_package_share_directory('foxglove_bridge')
+xml_launch_file = os.path.join(foxglove_bridge_share_dir, 'launch', 'foxglove_bridge_launch.xml')
+    
 def generate_launch_description():
+
+    
     orthrus_gazebo_sim = get_orthrus_gazebo_sim('orthrus_gazebo', 'orthrus_sim.launch.py')
+    AnyLaunchDescriptionSource
     orthrus_state_publisher = get_orthrus_state_publisher()
 
     return launch.LaunchDescription(
         [
+            launch.actions.IncludeLaunchDescription(
+                AnyLaunchDescriptionSource(xml_launch_file)
+            ),
+            
             orthrus_gazebo_sim,
             orthrus_state_publisher,
         ]
     )
 
+
+def generate_launch_description():
+    # 获取 foxglove_bridge 包的共享目录
+    
+    
+    # 确定 XML 文件的路径
+    
+
+    # 包含 XML 文件中的启动描述
+    return LaunchDescription([
+
+    ])
