@@ -73,14 +73,14 @@ def generate_launch_description():
             condition=IfCondition(LaunchConfiguration('server'))
         ),
 
-        #RegisterEventHandler(
-        #    event_handler=OnProcessExit(
-        #        target_action=spawn_entity,
-        #        on_exit=[active_orthrus_controller],
-        #    )
-        #),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=spawn_entity,
+                on_exit=[active_orthrus_controller],
+            )
+        ),
         
         node_robot_state_publisher,
         spawn_entity,
-        controller_manager,
+        #controller_manager,
     ])

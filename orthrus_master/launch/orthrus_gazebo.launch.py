@@ -3,7 +3,7 @@ import sys
 
 import launch
 import launch_ros.actions
-from launch.actions import ExecuteProcess
+from launch.actions import ExecuteProcess,RegisterEventHandler
 from launch.substitutions import LaunchConfiguration
 
 from ament_index_python.packages import get_package_share_directory
@@ -41,17 +41,23 @@ def get_orthrus_gazebo_sim(package, executable):
 
 foxglove = ExecuteProcess(
     cmd=['ros2', 'launch', 'foxglove_bridge', 'foxglove_bridge_launch.xml', 'use_compression:=true'],
-    # output='screen'
+    output='screen'
 )
     
 def generate_launch_description():
 
-    
     orthrus_gazebo_sim = get_orthrus_gazebo_sim('orthrus_gazebo', 'orthrus_sim.launch.py')
 
     return launch.LaunchDescription(
         [
-            #foxglove,
+            #RegisterEventHandler(
+            #    event_handler = launch.event_handlers.OnProcessExit(
+            #        target_action=orthrus_gazebo_sim,
+            #        on_exit=[foxglove],
+            #    )
+            #),
+            
+            foxglove,
             orthrus_gazebo_sim,
         ]
     )
