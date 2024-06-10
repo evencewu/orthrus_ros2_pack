@@ -66,7 +66,7 @@
   </ros2_control>
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-      <parameters>/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/config/orthrus.yaml</parameters>
+      <parameters>/home/orthrus/orthrus/src/orthrus_ros2_pack/orthrus_sim/orthrus_gazebo/config/orthrus.yaml</parameters>
     </plugin>
   </gazebo>
 </robot>

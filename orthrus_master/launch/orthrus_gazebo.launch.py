@@ -3,6 +3,7 @@ import sys
 
 import launch
 import launch_ros.actions
+from launch.actions import ExecuteProcess
 from launch.substitutions import LaunchConfiguration
 
 from ament_index_python.packages import get_package_share_directory
@@ -34,8 +35,14 @@ def get_orthrus_gazebo_sim(package, executable):
     
 #ros2 launch foxglove_bridge foxglove_bridge_launch.xml
 
-foxglove_bridge_share_dir = get_package_share_directory('foxglove_bridge')
-xml_launch_file = os.path.join(foxglove_bridge_share_dir, 'launch', 'foxglove_bridge_launch.xml')
+#foxglove_bridge_share_dir = get_package_share_directory('foxglove_bridge')
+#xml_launch_file = os.path.join(foxglove_bridge_share_dir, 'launch', 'foxglove_bridge_launch.xml','use_compression:=true')
+#foxglove = launch.actions.IncludeLaunchDescription(AnyLaunchDescriptionSource(xml_launch_file))
+
+foxglove = ExecuteProcess(
+    cmd=['ros2', 'launch', 'foxglove_bridge', 'foxglove_bridge_launch.xml', 'use_compression:=true'],
+    # output='screen'
+)
     
 def generate_launch_description():
 
@@ -44,10 +51,7 @@ def generate_launch_description():
 
     return launch.LaunchDescription(
         [
-            launch.actions.IncludeLaunchDescription(
-                AnyLaunchDescriptionSource(xml_launch_file)
-            ),
-            
+            #foxglove,
             orthrus_gazebo_sim,
         ]
     )

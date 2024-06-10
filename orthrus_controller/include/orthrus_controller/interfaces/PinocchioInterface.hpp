@@ -32,7 +32,7 @@ namespace orthrus_controller
 
         void Init(std::shared_ptr<JointState> joint_ptr,
                   std::shared_ptr<std::vector<TouchState>> touch_ptr);
-        void Update();
+        void Update(rclcpp::Time time);
         std::stringstream LegPositionInterpolation();
 
         std::stringstream Logger();
@@ -54,7 +54,7 @@ namespace orthrus_controller
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
-        std::string model_path_ = "/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus";
+        std::string model_path_ = "/home/orthrus/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus";
         std::string mesh_dir_ = model_path_ + "/meshes";
         std::string urdf_filename_ = model_path_ + "/urdf/orthrus.urdf";
     };

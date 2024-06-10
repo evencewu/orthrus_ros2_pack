@@ -33,7 +33,7 @@ namespace orthrus_controller
         pinocchio::updateGeometryPlacements(model_, data_, visual_model_, visual_data_);
     }
 
-    void PinocchioInterface::Update()
+    void PinocchioInterface::Update(rclcpp::Time time)
     {
         joint_ = Eigen::VectorXd::Map(joint_state_->position.data(), joint_state_->position.size());
         // 执行正向运动学

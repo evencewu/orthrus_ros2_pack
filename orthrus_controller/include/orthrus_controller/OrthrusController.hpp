@@ -76,6 +76,9 @@ namespace orthrus_controller
             override;
 
     protected:
+        rclcpp::Time last_time_;
+        rclcpp::Time now_time_;
+
         struct JointHandle
         {
             std::reference_wrapper<const hardware_interface::LoanedStateInterface> state_position;
@@ -109,11 +112,11 @@ namespace orthrus_controller
         std::shared_ptr<OdomState> odom_state_;
         std::shared_ptr<JointState> joint_state_;
 
-        std::shared_ptr<LeggedOdom> legged_odom_; //足式里程计
+        std::shared_ptr<LeggedOdom> legged_odom_;                 // 足式里程计
         std::shared_ptr<OrthrusVisualization> visualization_;     // 可视化
         std::shared_ptr<PinocchioInterface> pinocchio_interface_; // Pinocchio接口
 
-        //LeggedOdomState
+        // LeggedOdomState
 
         // 里程计
         // OdomStateetry odometry_;

@@ -32,7 +32,8 @@ namespace orthrus_controller
 
         void Init(std::shared_ptr<OdomState> odom_ptr,
                   std::shared_ptr<std::vector<TouchState>> touch_ptr);
-        void Update(rclcpp::Time time);
+        void Update(rclcpp::Time time, rclcpp::Duration duration);
+        void calibration(rclcpp::Time time, rclcpp::Duration duration);
 
         Eigen::Vector3d Quaternion2Euler(Eigen::Quaterniond quat);
 

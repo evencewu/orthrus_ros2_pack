@@ -9,16 +9,16 @@ namespace orthrus_controller
         odom_state_ = odom_ptr;
     }
     
-    void LeggedOdom::calibration(rclcpp::Time time)
+    void LeggedOdom::calibration(rclcpp::Time time,rclcpp::Duration duration)
     {
 
     }
 
-    void LeggedOdom::Update(rclcpp::Time time)
+    void LeggedOdom::Update(rclcpp::Time time,rclcpp::Duration duration)
     {
         odom_state_->euler = Quaternion2Euler(odom_state_->imu.orientation);
-        odom_state_->velocity = 
-        odom_state_->position = ;
+        //odom_state_->velocity = 
+        //odom_state_->position = ;
     }
 
     Eigen::Vector3d LeggedOdom::Quaternion2Euler(Eigen::Quaterniond quat)
