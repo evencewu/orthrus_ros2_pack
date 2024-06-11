@@ -124,109 +124,9 @@ namespace orthrus_controller
     RCLCPP_INFO(logger, "Init over");
 
     RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interface_->Logger().str().c_str());
-    
-
-    // log
-
-    // Print out the placement of each joint of the kinematic tree
-    std::stringstream ss;
-
-    for (pinocchio::JointIndex joint_id = 0; joint_id < (pinocchio::JointIndex)pinocchio_interface_->model_.njoints; ++joint_id)
-    {
-      ss << std::setw(24) << std::left << pinocchio_interface_->model_.names[joint_id] << ": " << std::fixed
-         << std::setprecision(2) << pinocchio_interface_->data_.oMi[joint_id].translation().transpose() << std::endl;
-    }
-
-    for (int joint_id = 1; joint_id < 12; joint_id++)
-    {
-      ss << pinocchio_interface_->model_.names[joint_id] << " " << pinocchio_interface_->joint_[joint_id] << std::endl;
-    }
-
-    /*
-    // Print out the placement of each collision geometry object
-    std::cout << "\nCollision object placements:" << std::endl;
-    for (pinocchio::GeomIndex geom_id = 0; geom_id < (pinocchio::GeomIndex)pinocchio_interface_->collision_model_.ngeoms; ++geom_id)
-    {
-      std::stringstream ss;
-      ss << geom_id << ": " << std::fixed << std::setprecision(2)
-                << pinocchio_interface_->collision_data_.oMg[geom_id].translation().transpose() << std::endl;
-    }
-
-    // Print out the placement of each visual geometry object
-    std::cout << "\nVisual object placements:" << std::endl;
-    for (pinocchio::GeomIndex geom_id = 0; geom_id < (pinocchio::GeomIndex)pinocchio_interface_->visual_model_.ngeoms; ++geom_id)
-    {
-      ss << geom_id << ": " << std::fixed << std::setprecision(2)
-                << pinocchio_interface_->visual_data_.oMg[geom_id].translation().transpose() << std::endl;
-    }
-    */
-
-    RCLCPP_INFO(get_node()->get_logger(), "Init: \n = %s", ss.str().c_str());
-
-    // auto node = rclcpp::Node::SharedPtr(get_node());
-
-    /*
-    const Twist empty_twist;
-    received_velocity_msg_ptr_.set(std::make_shared<Twist>(empty_twist));
-    // Fill last two commands with default constructed commands
-    previous_commands_.emplace(empty_twist);
-    previous_commands_.emplace(empty_twist);
-
-    // initialize command subscriber
-    velocity_command_subscriber_ =
-        get_node()->create_subscription<geometry_msgs::msg::Twist>(
-            DEFAULT_COMMAND_TOPIC, rclcpp::SystemDefaultsQoS(),
-            [this](const std::shared_ptr<geometry_msgs::msg::Twist> msg) -> void
-            {
-              if (!subscriber_is_active_)
-              {
-                RCLCPP_WARN(
-                    get_node()->get_logger(), "Can't accept new commands. subscriber is inactive");
-                return;
-              }
-              received_velocity_msg_ptr_.set(std::move(msg));
-            });
-
-    // initialize odometry publisher and messasge
-    odometry_publisher_ = get_node()->create_publisher<nav_msgs::msg::Odometry>(
-        DEFAULT_ODOMETRY_TOPIC, rclcpp::SystemDefaultsQoS());
-    realtime_odometry_publisher_ =
-        std::make_shared<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>(
-            odometry_publisher_);
-
-    auto &odometry_message = realtime_odometry_publisher_->msg_;
-    odometry_message.header.frame_id = odom_frame_id;
-    odometry_message.child_frame_id = base_frame_id;
-    // initialize odom values zeros
-    odometry_message.twist =
-        geometry_msgs::msg::TwistWithCovariance(rosidl_runtime_cpp::MessageInitialization::ALL);
-
-    constexpr size_t NUM_DIMENSIONS = 6;
-    for (size_t index = 0; index < 6; ++index)
-    {
-      // 0, 7, 14, 21, 28, 35
-      const size_t diagonal_index = NUM_DIMENSIONS * index + index;
-      odometry_message.pose.covariance[diagonal_index] = 0.0;
-      odometry_message.twist.covariance[diagonal_index] = 0.0;
-    }
-
-    odometry_.setWheelParams(params_.wheels_separation, params_.wheel_radius, params_.wheel_radius);
-
-    // initialize transform publisher and message
-    odometry_transform_publisher_ = get_node()->create_publisher<tf2_msgs::msg::TFMessage>(
-        DEFAULT_TRANSFORM_TOPIC, rclcpp::SystemDefaultsQoS());
-    realtime_odometry_transform_publisher_ =
-        std::make_shared<realtime_tools::RealtimePublisher<tf2_msgs::msg::TFMessage>>(
-            odometry_transform_publisher_);
-
-    // keeping track of odom and base_link transforms only
-    auto &odometry_transform_message = realtime_odometry_transform_publisher_->msg_;
-    odometry_transform_message.transforms.resize(1);
-    odometry_transform_message.transforms.front().header.frame_id = odom_frame_id;
-    odometry_transform_message.transforms.front().child_frame_id = base_frame_id;
 
     RCLCPP_INFO(logger, "Configure over...");
-    */
+
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
@@ -335,16 +235,25 @@ namespace orthrus_controller
 
     Eigen::VectorXd acc = pinocchio_interface_->LegGravityCompensation();
 
-    //Eigen::MatrixXd jac = pinocchio_interface_->GetJacobianMatrix(13);
+    Eigen::MatrixXd jac_1 = pinocchio_interface_->GetJacobianMatrix("LF_FOOT");
+    //Eigen::MatrixXd jac_2 = pinocchio_interface_->GetJacobianMatrix("LH_FOOT");
+    //Eigen::MatrixXd jac_3 = pinocchio_interface_->GetJacobianMatrix("RF_FOOT");
+    //Eigen::MatrixXd jac_4 = pinocchio_interface_->GetJacobianMatrix("RH_FOOT");
 
-    //std::stringstream ss;
+    std::stringstream ss;
     //ss << "acc:" << acc.transpose() << std::endl;
-    //Eigen::Matrix<double, 6, 1> F;
-    //F << 1.0, 0.0, 0.0, 0.0, 0.0, 0.0; // 示例力向量
+    Eigen::Matrix<double, 6, 1> F;
+    F << 1.0, 0.0, 0.0, 0.0, 0.0, 0.0; // 示例力向量
 
-    //ss << "jac:\n" << jac.transpose()<< std::endl;
-
+    ss << "jac:\n" << jac_1.transpose() *F<< std::endl;
+    RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
+    //ss << "jac:\n" << jac_2.transpose()<< std::endl;
     //RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
+    //ss << "jac:\n" << jac_3.transpose()<< std::endl;
+    //ss << "jac:\n" << jac_4.transpose()<< std::endl;
+
+
+    
 
     // RCLCPP_INFO(get_node()->get_logger(), "position\n%s", pinocchio_interface_->LegPositionInterpolation().str().c_str());
 

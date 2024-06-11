@@ -61,8 +61,6 @@ namespace orthrus_controller
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
-        std::vector<std::string> foot_names_ = {"LF_FOOT","LH_FOOT","RF_FOOT","RH_FOOT"};
-
         std::string model_path_ = "/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus";
         std::string mesh_dir_ = model_path_ + "/meshes";
         std::string urdf_filename_ = model_path_ + "/urdf/orthrus.urdf";

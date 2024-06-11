@@ -9,18 +9,22 @@
   <xacro:HAA prefix="LF"/>
   <xacro:HFE prefix="LF"/>
   <xacro:KFE prefix="LF"/>
+  <xacro:FOOT prefix="LF"/>
 
   <xacro:HAA prefix="LH"/>
   <xacro:HFE prefix="LH"/>
   <xacro:KFE prefix="LH"/>
+  <xacro:FOOT prefix="LH"/>
 
   <xacro:HAA prefix="RF"/>
   <xacro:HFE prefix="RF"/>
   <xacro:KFE prefix="RF"/>
+  <xacro:FOOT prefix="RF"/>
 
   <xacro:HAA prefix="RH"/>
   <xacro:HFE prefix="RH"/>
   <xacro:KFE prefix="RH"/>
+  <xacro:FOOT prefix="RH"/>
 
   <gazebo reference="base">
     <sensor name="imu_sensor" type="imu">
@@ -37,19 +41,22 @@
     <xacro:ros2_HAA_joint prefix="RF"/>
     <xacro:ros2_HFE_joint prefix="RF"/>
     <xacro:ros2_KFE_joint prefix="RF"/>
+    <xacro:ros2_FOOT_joint prefix="RF"/>
 
     <xacro:ros2_HAA_joint prefix="LF"/>
     <xacro:ros2_HFE_joint prefix="LF"/>
     <xacro:ros2_KFE_joint prefix="LF"/>
+    <xacro:ros2_FOOT_joint prefix="LF"/>
 
     <xacro:ros2_HAA_joint prefix="RH"/>
     <xacro:ros2_HFE_joint prefix="RH"/>
     <xacro:ros2_KFE_joint prefix="RH"/>
+    <xacro:ros2_FOOT_joint prefix="RH"/>
 
     <xacro:ros2_HAA_joint prefix="LH"/>
     <xacro:ros2_HFE_joint prefix="LH"/>
     <xacro:ros2_KFE_joint prefix="LH"/>
-
+    <xacro:ros2_FOOT_joint prefix="LH"/>
 
     <sensor name="imu_sensor">
       <state_interface name="orientation.x"/>
