@@ -44,13 +44,18 @@ namespace orthrus_controller
         pinocchio::updateGeometryPlacements(model_, data_, collision_model_, collision_data_);
         pinocchio::updateGeometryPlacements(model_, data_, visual_model_, visual_data_);
 
-        // 计算足端位置
-        Eigen::Vector3d point_in_joint_frame(0.0, 0.0, -0.2);
-        for (int foot_num = 0; foot_num < 4; foot_num++)
-        {
-            const pinocchio::SE3 &joint_frame_transform = data_.oMi[3+foot_num*3];
-            (*touch_state_)[foot_num].touch_position = joint_frame_transform.act(point_in_joint_frame);
-        }
+        FootPositionCalculation();
+        /*
+        // 设置重力向量，假设沿着 -z 方向
+        model.gravity.linear(Eigen::Vector3d(0, 0, -9.81));
+
+        // 使用 RNEA 算法计算重力补偿力矩
+        Eigen::VectorXd tau = pinocchio::rnea(model, data, q, v, a);
+
+        // 打印重力补偿力矩
+        std::cout << "Gravity compensation torques: \n"
+                  << tau << std::endl;
+                  */
     }
 
     std::stringstream PinocchioInterface::Logger()
@@ -63,9 +68,14 @@ namespace orthrus_controller
         return ss;
     }
 
-    std::stringstream PinocchioInterface::LegPositionInterpolation()
+    void PinocchioInterface::FootPositionCalculation()
     {
-        std::stringstream ss;
-        return ss;
+        // 计算足端位置
+        Eigen::Vector3d point_in_joint_frame(0.0, 0.0, -0.2);
+        for (int foot_num = 0; foot_num < 4; foot_num++)
+        {
+            const pinocchio::SE3 &joint_frame_transform = data_.oMi[3 + foot_num * 3];
+            (*touch_state_)[foot_num].touch_position = joint_frame_transform.act(point_in_joint_frame);
+        }
     }
 }

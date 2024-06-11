@@ -15,8 +15,6 @@
 #include "pinocchio/algorithm/kinematics.hpp"
 #include "pinocchio/algorithm/geometry.hpp"
 
-#include <unsupported/Eigen/NonLinearOptimization>
-#include <unsupported/Eigen/NumericalDiff>
 #include <Eigen/Dense>
 
 namespace orthrus_controller
@@ -33,7 +31,9 @@ namespace orthrus_controller
         void Init(std::shared_ptr<JointState> joint_ptr,
                   std::shared_ptr<std::vector<TouchState>> touch_ptr);
         void Update(rclcpp::Time time);
-        std::stringstream LegPositionInterpolation();
+
+        void FootPositionCalculation();
+        void GravityCompensation();
 
         std::stringstream Logger();
 

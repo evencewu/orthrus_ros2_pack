@@ -42,11 +42,16 @@ namespace orthrus_controller
     pinocchio_interface_ = std::make_shared<PinocchioInterface>(get_node());
     RCLCPP_INFO(get_node()->get_logger(), "Loading legged_odom");
     legged_odom_ = std::make_shared<LeggedOdom>(get_node());
+    RCLCPP_INFO(get_node()->get_logger(), "Loading joy_interface");
+    joy_interface_ = std::make_shared<JoyInterface>(get_node());
+    RCLCPP_INFO(get_node()->get_logger(), "Loading legged_mpc");
+    legged_mpc_ = std::make_shared<LeggedMpc>(get_node());
 
     // struct
     joint_state_ = std::make_shared<JointState>();
     odom_state_ = std::make_shared<OdomState>();
     touch_state_ = std::make_shared<std::vector<TouchState>>(4);
+    mpc_target_ = std::make_shared<MpcTarget>();
 
     return controller_interface::CallbackReturn::SUCCESS;
   }
@@ -112,6 +117,10 @@ namespace orthrus_controller
     visualization_->Init(joint_state_, odom_state_, touch_state_);
     RCLCPP_INFO(logger, "Init legged_odom");
     legged_odom_->Init(odom_state_, touch_state_);
+    RCLCPP_INFO(logger, "Init joy_interface");
+    //joy_interface_->Init(mpc_target_);
+    RCLCPP_INFO(logger, "Init legged_mpc");
+    legged_mpc_->Init(joint_state_, odom_state_, touch_state_, pinocchio_interface_);
 
     // log
 
@@ -273,6 +282,9 @@ namespace orthrus_controller
   controller_interface::return_type OrthrusController::update(
       const rclcpp::Time &time, const rclcpp::Duration &period)
   {
+
+    // mpc_target_->;
+
     now_time_ = get_node()->now();
     last_time_ = now_time_;
 

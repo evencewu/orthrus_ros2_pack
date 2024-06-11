@@ -21,7 +21,6 @@ namespace orthrus_controller
         OrthrusVisualization(std::shared_ptr<NodeType> node, std::vector<std::string> joint_name) : joint_name_(joint_name)
         {
             node_ = node;
-            RCLCPP_INFO(node->get_logger(), "OrthrusVisualization active.");
             joint_state_publisher_ = node->template create_publisher<sensor_msgs::msg::JointState>("/joint_states", 10);
             odom_publisher_ = node->template create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
         }
