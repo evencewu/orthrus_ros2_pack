@@ -60,10 +60,11 @@ namespace orthrus_controller
         Eigen::VectorXd joint_;
 
     private:
-        std::vector<std::string> foot_name_ = {"LF_FOOT","LH_FOOT","RF_FOOT","RH_FOOT"};
         std::shared_ptr<JointState> joint_state_;
         std::shared_ptr<std::vector<TouchState>> touch_state_;
 
+        std::vector<std::string> foot_name_ = {"LF_FOOT","LH_FOOT","RF_FOOT","RH_FOOT"};
+        
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
         std::string model_path_ = "/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus";

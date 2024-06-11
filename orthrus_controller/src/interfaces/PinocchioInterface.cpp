@@ -62,26 +62,19 @@ namespace orthrus_controller
     std::stringstream PinocchioInterface::Logger()
     {
         std::stringstream ss;
+        for (size_t i = 0; i < model_.frames.size(); ++i)
+        {
+            const pinocchio::Frame &frame = model_.frames[i];
+            ss << "Frame " << i << ": " << std::endl;
+            ss << "  Name: " << frame.name << std::endl;
+            ss << "  Parent joint ID: " << frame.parent << std::endl;
+            ss << "  Frame type: " << frame.type << std::endl;
+        }
 
-        pinocchio::FrameIndex frame_index = model_.getFrameId("LF_FOOT");
-
-        // Get the position of the frame in the world coordinate system
-        const pinocchio::SE3 &frame_position = data_.oMf[frame_index];
-
-        ss << "Translation: " << frame_position.translation().transpose() << std::endl;
-        // for (size_t i = 0; i < model_.frames.size(); ++i)
-        //{
-        //     const pinocchio::Frame &frame = model_.frames[i];
-        //     ss << "Frame " << i << ": " << std::endl;
-        //     ss << "  Name: " << frame.name << std::endl;
-        //     ss << "  Parent joint ID: " << frame.parent << std::endl;
-        //     ss << "  Frame type: " << frame.type << std::endl;
-        // }
-
-        // for (int joint_id = 1; joint_id < 12; joint_id++)
-        //{
-        //     ss << model_.names[joint_id] << " " << joint_[joint_id] << std::endl;
-        // }
+        for (int joint_id = 1; joint_id < 12; joint_id++)
+        {
+            ss << model_.names[joint_id] << " " << joint_[joint_id] << std::endl;
+        }
 
         return ss;
     }

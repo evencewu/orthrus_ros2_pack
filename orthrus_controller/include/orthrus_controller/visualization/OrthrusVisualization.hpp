@@ -9,6 +9,8 @@
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
+#include <visualization_msgs/msg/marker.hpp>
+
 #include "orthrus_controller/interfaces/OrthrusParma.hpp"
 #include "orthrus_controller/interfaces/PinocchioInterface.hpp"
 
@@ -21,8 +23,10 @@ namespace orthrus_controller
         OrthrusVisualization(std::shared_ptr<NodeType> node, std::vector<std::string> joint_name) : joint_name_(joint_name)
         {
             node_ = node;
+
             joint_state_publisher_ = node->template create_publisher<sensor_msgs::msg::JointState>("/joint_states", 10);
             odom_publisher_ = node->template create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
+            marker_publisher_ = node->template create_publisher<visualization_msgs::msg::Marker>("visualization_marker", 10);
         }
 
         void Init(std::shared_ptr<JointState> joint_ptr,
@@ -32,13 +36,15 @@ namespace orthrus_controller
         void ModelVisualization(rclcpp::Time time);
         void ImuVisualization(rclcpp::Time time);
         void FootPointVisualization(rclcpp::Time time);
-
+        void MarkVisualization(rclcpp::Time time);
         std::shared_ptr<JointState> joint_state_;
         std::shared_ptr<OdomState> odom_state_;
         std::shared_ptr<std::vector<TouchState>> touch_state_;
 
     private:
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
+
+        std::vector<std::string> foot_names_ = {"LF_FOOT", "LH_FOOT", "RF_FOOT", "RH_FOOT"};
 
         std::vector<std::string> joint_name_;
 
@@ -47,5 +53,8 @@ namespace orthrus_controller
 
         rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr odom_publisher_;
         tf2_msgs::msg::TFMessage odom_msg_;
+
+        rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_publisher_;
+        visualization_msgs::msg::Marker marker_msg_;
     };
 }

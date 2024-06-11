@@ -27,6 +27,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   tf2_msgs
   pinocchio
   xbox_interfaces
+  visualization_msgs
 )
 
 # find dependencies

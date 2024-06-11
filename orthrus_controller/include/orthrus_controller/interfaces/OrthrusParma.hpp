@@ -45,8 +45,12 @@ namespace orthrus_controller
     {
         bool sensor;
         Eigen::Vector3d touch_position;
+        Eigen::Vector3d touch_force;
 
-        TouchState() : sensor(false), touch_position(Eigen::Vector3d::Zero()) {}
+        TouchState() : sensor(false), touch_position(Eigen::Vector3d::Zero()),touch_force(Eigen::Vector3d::Zero())
+        {
+
+        }
     };
 
     struct MpcTarget
@@ -55,13 +59,13 @@ namespace orthrus_controller
 
         Eigen::Vector3d target_position;
         Eigen::Quaterniond target_attitude;
-        
+
         enum class Gait
         {
             STAND,
             LF_RH,
             LH_RF,
-        }gait;
+        } gait;
 
         MpcTarget()
         {

@@ -26,6 +26,7 @@ namespace orthrus_controller
                   std::shared_ptr<PinocchioInterface> pinocchio_ptr);
 
         void Update(rclcpp::Time time, rclcpp::Duration duration);
+        Eigen::VectorXd Foot2JointForce();
 
     private:
         std::shared_ptr<OdomState> odom_state_;
@@ -33,6 +34,10 @@ namespace orthrus_controller
         std::shared_ptr<std::vector<TouchState>> touch_state_;
 
         std::shared_ptr<PinocchioInterface> pinocchio_interface_; // Pinocchio接口
+
+        Eigen::VectorXd torq_;
+
+        std::vector<std::string> foot_name_ = {"LF_FOOT","LH_FOOT","RF_FOOT","RH_FOOT"};
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
     };

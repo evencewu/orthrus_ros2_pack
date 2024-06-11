@@ -34,6 +34,7 @@ namespace orthrus_controller
         joint_state_msg_.name = joint_name_;
         joint_state_publisher_->publish(joint_state_msg_);
     }
+
     void OrthrusVisualization::ImuVisualization(rclcpp::Time time)
     {
         geometry_msgs::msg::TransformStamped tf_stamped;
@@ -49,7 +50,6 @@ namespace orthrus_controller
         tf_stamped.transform.rotation.y = odom_state_->imu.orientation.y();
         tf_stamped.transform.rotation.z = odom_state_->imu.orientation.z();
 
-        
         odom_msg_.transforms.push_back(tf_stamped);
     }
 
@@ -59,11 +59,9 @@ namespace orthrus_controller
         tf_stamped.header.stamp = time;
         tf_stamped.header.frame_id = "base";
 
-        std::vector<std::string> foot_names = {"LF_foot", "LH_foot", "RF_foot", "RH_foot"};
-
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
-            tf_stamped.child_frame_id = foot_names[foot_num];
+            tf_stamped.child_frame_id = foot_names_[foot_num];
             tf_stamped.transform.translation.x = (*touch_state_)[foot_num].touch_position[0];
             tf_stamped.transform.translation.y = (*touch_state_)[foot_num].touch_position[1];
             tf_stamped.transform.translation.z = (*touch_state_)[foot_num].touch_position[2];
@@ -74,4 +72,6 @@ namespace orthrus_controller
             odom_msg_.transforms.push_back(tf_stamped);
         }
     }
+
+    void OrthrusVisualization::MarkVisualization(rclcpp::Time time)
 }
