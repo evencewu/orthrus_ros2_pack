@@ -4,6 +4,9 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "controller_interface/controller_interface.hpp"
 
+#include "orthrus_controller/interfaces/OrthrusParma.hpp"
+#include "orthrus_controller/interfaces/PinocchioInterface.hpp"
+
 #include <iostream>
 
 namespace orthrus_controller
@@ -16,9 +19,9 @@ namespace orthrus_controller
         {
             node_ = node;
         }
-
+        
         void Init(std::shared_ptr<JointState> joint_ptr,
-                  std::shared_ptr<OdomState> odom_state_,
+                  std::shared_ptr<OdomState> odom_ptr,
                   std::shared_ptr<std::vector<TouchState>> touch_ptr,
                   std::shared_ptr<PinocchioInterface> pinocchio_ptr);
 

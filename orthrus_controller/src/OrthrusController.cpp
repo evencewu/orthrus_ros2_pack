@@ -118,9 +118,13 @@ namespace orthrus_controller
     RCLCPP_INFO(logger, "Init legged_odom");
     legged_odom_->Init(odom_state_, touch_state_);
     RCLCPP_INFO(logger, "Init joy_interface");
-    //joy_interface_->Init(mpc_target_);
+    // joy_interface_->Init(mpc_target_);
     RCLCPP_INFO(logger, "Init legged_mpc");
     legged_mpc_->Init(joint_state_, odom_state_, touch_state_, pinocchio_interface_);
+    RCLCPP_INFO(logger, "Init over");
+
+    RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interface_->Logger().str().c_str());
+    
 
     // log
 
@@ -328,6 +332,19 @@ namespace orthrus_controller
     visualization_->Update(now_time_);
     legged_odom_->Update(now_time_, duration);
     pinocchio_interface_->Update(now_time_);
+
+    Eigen::VectorXd acc = pinocchio_interface_->LegGravityCompensation();
+
+    //Eigen::MatrixXd jac = pinocchio_interface_->GetJacobianMatrix(13);
+
+    //std::stringstream ss;
+    //ss << "acc:" << acc.transpose() << std::endl;
+    //Eigen::Matrix<double, 6, 1> F;
+    //F << 1.0, 0.0, 0.0, 0.0, 0.0, 0.0; // 示例力向量
+
+    //ss << "jac:\n" << jac.transpose()<< std::endl;
+
+    //RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
 
     // RCLCPP_INFO(get_node()->get_logger(), "position\n%s", pinocchio_interface_->LegPositionInterpolation().str().c_str());
 

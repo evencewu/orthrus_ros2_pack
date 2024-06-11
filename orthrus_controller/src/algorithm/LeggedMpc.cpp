@@ -11,12 +11,11 @@ namespace orthrus_controller
         odom_state_ = odom_ptr;
         touch_state_ = touch_ptr;
 
-        pinocchio_interface_ =  pinocchio_ptr;
+        pinocchio_interface_ = pinocchio_ptr;
     }
 
     void LeggedMpc::Update(rclcpp::Time time, rclcpp::Duration duration)
     {
-        
     }
-    
+
 }

@@ -11,9 +11,12 @@
 #include "pinocchio/multibody/fcl.hpp"
 #include "pinocchio/parsers/urdf.hpp"
 
-#include "pinocchio/algorithm/joint-configuration.hpp"
-#include "pinocchio/algorithm/kinematics.hpp"
-#include "pinocchio/algorithm/geometry.hpp"
+#include <pinocchio/algorithm/joint-configuration.hpp>
+#include <pinocchio/algorithm/kinematics.hpp>
+#include <pinocchio/algorithm/geometry.hpp>
+#include <pinocchio/algorithm/jacobian.hpp>
+#include <pinocchio/algorithm/rnea.hpp>
+#include <pinocchio/algorithm/aba.hpp>
 
 #include <Eigen/Dense>
 
@@ -35,6 +38,10 @@ namespace orthrus_controller
         void FootPositionCalculation();
         void GravityCompensation();
 
+        Eigen::VectorXd LegGravityCompensation();
+
+        Eigen::MatrixXd GetJacobianMatrix(std::string frame_name);
+
         std::stringstream Logger();
 
         pinocchio::Model model_;
@@ -54,7 +61,9 @@ namespace orthrus_controller
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
-        std::string model_path_ = "/home/orthrus/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus";
+        std::vector<std::string> foot_names_ = {"LF_FOOT","LH_FOOT","RF_FOOT","RH_FOOT"};
+
+        std::string model_path_ = "/home/evence/code_file/ros2_ws/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus";
         std::string mesh_dir_ = model_path_ + "/meshes";
         std::string urdf_filename_ = model_path_ + "/urdf/orthrus.urdf";
     };

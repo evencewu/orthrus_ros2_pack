@@ -116,11 +116,12 @@ namespace orthrus_controller
         std::shared_ptr<JointState> joint_state_;
 
         std::shared_ptr<LeggedOdom> legged_odom_;
-        std::shared_ptr<LeggedMpc> legged_mpc_;
-        std::shared_ptr<JoyInterface> joy_interface_;
+        
         // 足式里程计
         std::shared_ptr<OrthrusVisualization> visualization_;     // 可视化
         std::shared_ptr<PinocchioInterface> pinocchio_interface_; // Pinocchio接口
+        std::shared_ptr<LeggedMpc> legged_mpc_;                // MPC控制器
+        std::shared_ptr<JoyInterface> joy_interface_;
 
         // LeggedOdomState
 
