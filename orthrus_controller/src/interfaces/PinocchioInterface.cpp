@@ -23,6 +23,7 @@ namespace orthrus_controller
 
         // Perform the forward kinematics over the kinematic tree
         pinocchio::forwardKinematics(model_, data_, joint_);
+        pinocchio::framesForwardKinematics(model_, data_, joint_);
         pinocchio::updateGlobalPlacements(model_, data_);
 
         // Update Geometry models
@@ -35,13 +36,16 @@ namespace orthrus_controller
         joint_ = Eigen::VectorXd::Map(joint_state_->position.data(), joint_state_->position.size());
         // 执行正向运动学
         pinocchio::forwardKinematics(model_, data_, joint_);
+        pinocchio::framesForwardKinematics(model_, data_, joint_);
 
         // 更新模型中所有关节的位姿
         pinocchio::updateGlobalPlacements(model_, data_);
+
         pinocchio::updateGeometryPlacements(model_, data_, collision_model_, collision_data_);
         pinocchio::updateGeometryPlacements(model_, data_, visual_model_, visual_data_);
 
         FootPositionCalculation();
+
         /*
         // 设置重力向量，假设沿着 -z 方向
         model.gravity.linear(Eigen::Vector3d(0, 0, -9.81));
@@ -59,30 +63,37 @@ namespace orthrus_controller
     {
         std::stringstream ss;
 
-        for (size_t i = 0; i < model_.frames.size(); ++i)
-        {
-            const pinocchio::Frame &frame = model_.frames[i];
-            ss << "Frame " << i << ": " << std::endl;
-            ss << "  Name: " << frame.name << std::endl;
-            ss << "  Parent joint ID: " << frame.parent << std::endl;
-            ss << "  Frame type: " << frame.type << std::endl;
-        }
+        pinocchio::FrameIndex frame_index = model_.getFrameId("LF_FOOT");
 
-        //for (int joint_id = 1; joint_id < 12; joint_id++)
+        // Get the position of the frame in the world coordinate system
+        const pinocchio::SE3 &frame_position = data_.oMf[frame_index];
+
+        ss << "Translation: " << frame_position.translation().transpose() << std::endl;
+        // for (size_t i = 0; i < model_.frames.size(); ++i)
         //{
-        //    ss << model_.names[joint_id] << " " << joint_[joint_id] << std::endl;
-        //}
+        //     const pinocchio::Frame &frame = model_.frames[i];
+        //     ss << "Frame " << i << ": " << std::endl;
+        //     ss << "  Name: " << frame.name << std::endl;
+        //     ss << "  Parent joint ID: " << frame.parent << std::endl;
+        //     ss << "  Frame type: " << frame.type << std::endl;
+        // }
+
+        // for (int joint_id = 1; joint_id < 12; joint_id++)
+        //{
+        //     ss << model_.names[joint_id] << " " << joint_[joint_id] << std::endl;
+        // }
+
         return ss;
     }
 
     void PinocchioInterface::FootPositionCalculation()
     {
-        // 计算足端位置
-        Eigen::Vector3d point_in_joint_frame(0.0, 0.0, -0.2);
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
-            const pinocchio::SE3 &joint_frame_transform = data_.oMi[3 + foot_num * 3];
-            (*touch_state_)[foot_num].touch_position = joint_frame_transform.act(point_in_joint_frame);
+            pinocchio::FrameIndex frame_index = model_.getFrameId(foot_name_[foot_num]);
+            // Get the position of the frame in the world coordinate system
+            const pinocchio::SE3 &frame_position = data_.oMf[frame_index];
+            (*touch_state_)[foot_num].touch_position = frame_position.translation();
         }
     }
 
@@ -90,9 +101,9 @@ namespace orthrus_controller
     {
         pinocchio::FrameIndex frame_id = model_.getFrameId(frame_name);
         //  计算雅可比矩阵
-        Eigen::MatrixXd J(6, 12); // model_.nv nq
+        Eigen::MatrixXd J(6, model_.nv); // model_.nv nq
 
-        pinocchio::computeJointJacobian(model_, data_, joint_, frame_id, J);
+        J = computeJointJacobians(model_, data_, joint_);
 
         return J;
     }

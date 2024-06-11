@@ -9,8 +9,12 @@
 #include <iostream>
 
 #include "pinocchio/multibody/fcl.hpp"
+#include <pinocchio/multibody/model.hpp>
+#include <pinocchio/multibody/data.hpp>
 #include "pinocchio/parsers/urdf.hpp"
+#include <pinocchio/spatial/se3.hpp>
 
+#include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/joint-configuration.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <pinocchio/algorithm/geometry.hpp>
@@ -56,6 +60,7 @@ namespace orthrus_controller
         Eigen::VectorXd joint_;
 
     private:
+        std::vector<std::string> foot_name_ = {"LF_FOOT","LH_FOOT","RF_FOOT","RH_FOOT"};
         std::shared_ptr<JointState> joint_state_;
         std::shared_ptr<std::vector<TouchState>> touch_state_;
 

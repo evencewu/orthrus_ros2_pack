@@ -243,9 +243,9 @@ namespace orthrus_controller
     std::stringstream ss;
     //ss << "acc:" << acc.transpose() << std::endl;
     Eigen::Matrix<double, 6, 1> F;
-    F << 1.0, 0.0, 0.0, 0.0, 0.0, 0.0; // 示例力向量
+    F <<  1.0, 0.0, 0.0, 0.0, 0.0, 0.0; // 示例力向量
 
-    ss << "jac:\n" << jac_1.transpose() *F<< std::endl;
+    ss << "jac:\n" << jac_1.transpose() * F<< std::endl;
     RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
     //ss << "jac:\n" << jac_2.transpose()<< std::endl;
     //RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
