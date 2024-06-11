@@ -19,6 +19,8 @@ namespace orthrus_controller
         ImuVisualization(time);
         FootPointVisualization(time);
         odom_publisher_->publish(odom_msg_);
+
+        MarkVisualization(time);
     }
 
     void OrthrusVisualization::ModelVisualization(rclcpp::Time time)
@@ -74,4 +76,37 @@ namespace orthrus_controller
     }
 
     void OrthrusVisualization::MarkVisualization(rclcpp::Time time)
+    {
+        for (int foot_num = 0; foot_num < 4; foot_num++)
+        {
+            marker_msg_.header.frame_id = foot_names_[foot_num];
+            marker_msg_.header.stamp = time;
+            marker_msg_.ns = "arrows";
+            marker_msg_.id = foot_num;
+            marker_msg_.type = visualization_msgs::msg::Marker::ARROW;
+            marker_msg_.action = visualization_msgs::msg::Marker::ADD;
+
+            // 设置箭头的位置和方向
+            marker_msg_.pose.position.x = (*touch_state_)[foot_num].touch_force[0];
+            marker_msg_.pose.position.y = (*touch_state_)[foot_num].touch_force[1];
+            marker_msg_.pose.position.z = (*touch_state_)[foot_num].touch_force[2];
+            marker_msg_.pose.orientation.w = 1.0;
+            marker_msg_.pose.orientation.x = 0.0;
+            marker_msg_.pose.orientation.y = 0.0;
+            marker_msg_.pose.orientation.z = 0.0;
+
+            // 设置箭头的缩放（箭头的大小）
+            marker_msg_.scale.x = 1.0; // 箭头的长度
+            marker_msg_.scale.y = 0.1; // 箭头的宽度
+            marker_msg_.scale.z = 0.1; // 箭头的高度
+
+            // 设置箭头的颜色
+            marker_msg_.color.r = 1.0;
+            marker_msg_.color.g = 0.0;
+            marker_msg_.color.b = 0.0;
+            marker_msg_.color.a = 1.0;
+
+            marker_publisher_->publish(marker_msg_);
+        }
+    }
 }
