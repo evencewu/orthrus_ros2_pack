@@ -16,10 +16,10 @@ namespace orthrus_controller
 
     void LeggedMpc::Update(rclcpp::Time time, rclcpp::Duration duration)
     {
-        (*touch_state_)[0].touch_force = Eigen::Vector3d(3,0,0);
-        (*touch_state_)[1].touch_force = Eigen::Vector3d(3,0,0);
-        (*touch_state_)[2].touch_force = Eigen::Vector3d(3,0,0);
-        (*touch_state_)[3].touch_force = Eigen::Vector3d(3,0,0);
+        (*touch_state_)[0].touch_force = Eigen::Vector3d(3,1,1);
+        (*touch_state_)[1].touch_force = Eigen::Vector3d(3,1,1);
+        (*touch_state_)[2].touch_force = Eigen::Vector3d(3,1,1);
+        (*touch_state_)[3].touch_force = Eigen::Vector3d(3,1,1);
 
         torq_ =  Foot2JointForce();
     }

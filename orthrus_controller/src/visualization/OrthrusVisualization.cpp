@@ -86,19 +86,18 @@ namespace orthrus_controller
             marker_msg_.type = visualization_msgs::msg::Marker::ARROW;
             marker_msg_.action = visualization_msgs::msg::Marker::ADD;
 
-            // 设置箭头的位置和方向
-            marker_msg_.pose.position.x = (*touch_state_)[foot_num].touch_force[0];
-            marker_msg_.pose.position.y = (*touch_state_)[foot_num].touch_force[1];
-            marker_msg_.pose.position.z = (*touch_state_)[foot_num].touch_force[2];
-            marker_msg_.pose.orientation.w = 1.0;
-            marker_msg_.pose.orientation.x = 0.0;
-            marker_msg_.pose.orientation.y = 0.0;
-            marker_msg_.pose.orientation.z = 0.0;
+            marker_msg_.points.resize(2);
+            marker_msg_.points[0].x = 0.0;
+            marker_msg_.points[0].y = 0.0;
+            marker_msg_.points[0].z = 0.0;
+            marker_msg_.points[1].x = (*touch_state_)[foot_num].touch_force[0]/10;
+            marker_msg_.points[1].y = (*touch_state_)[foot_num].touch_force[1]/10;
+            marker_msg_.points[1].z = (*touch_state_)[foot_num].touch_force[2]/10;
 
             // 设置箭头的缩放（箭头的大小）
-            marker_msg_.scale.x = 1.0; // 箭头的长度
-            marker_msg_.scale.y = 0.1; // 箭头的宽度
-            marker_msg_.scale.z = 0.1; // 箭头的高度
+            marker_msg_.scale.x = 0.01; // 箭头的长度
+            marker_msg_.scale.y = 0.01; // 箭头的宽度
+            marker_msg_.scale.z = 0.01; // 箭头的高度
 
             // 设置箭头的颜色
             marker_msg_.color.r = 1.0;
