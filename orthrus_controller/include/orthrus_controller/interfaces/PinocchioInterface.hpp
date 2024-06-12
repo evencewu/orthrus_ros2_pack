@@ -8,10 +8,11 @@
 
 #include <iostream>
 
-#include "pinocchio/multibody/fcl.hpp"
+#include <pinocchio/multibody/joint/fwd.hpp>
+#include <pinocchio/multibody/fcl.hpp>
 #include <pinocchio/multibody/model.hpp>
 #include <pinocchio/multibody/data.hpp>
-#include "pinocchio/parsers/urdf.hpp"
+#include <pinocchio/parsers/urdf.hpp>
 #include <pinocchio/spatial/se3.hpp>
 
 #include <pinocchio/algorithm/frames.hpp>

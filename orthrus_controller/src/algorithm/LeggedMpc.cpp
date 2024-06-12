@@ -19,6 +19,9 @@ namespace orthrus_controller
 
     void LeggedMpc::Update(rclcpp::Time time, rclcpp::Duration duration)
     {
+        //更新pinocchio动力学参数
+        pinocchio_interface_->Update(time);
+
         Eigen::VectorXd body_force(6);
 
         // 直接赋值初始化
@@ -31,7 +34,7 @@ namespace orthrus_controller
         (*touch_state_)[2].touch_force = foot_force.segment<3>(6);
         (*touch_state_)[3].touch_force = foot_force.segment<3>(9);
         
-         torq_ = Foot2JointForce();
+        Eigen::VectorXd torq_ = Foot2JointForce();
     }
 
     Eigen::VectorXd LeggedMpc::Foot2JointForce()

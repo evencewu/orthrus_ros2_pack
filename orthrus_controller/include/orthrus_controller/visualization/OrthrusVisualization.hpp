@@ -10,6 +10,8 @@
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
 #include <visualization_msgs/msg/marker.hpp>
+#include "visualization_msgs/msg/marker_array.hpp"
+
 
 #include "orthrus_controller/interfaces/OrthrusParma.hpp"
 #include "orthrus_controller/interfaces/PinocchioInterface.hpp"
@@ -26,7 +28,7 @@ namespace orthrus_controller
 
             joint_state_publisher_ = node->template create_publisher<sensor_msgs::msg::JointState>("/joint_states", 10);
             odom_publisher_ = node->template create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
-            marker_publisher_ = node->template create_publisher<visualization_msgs::msg::Marker>("visualization_marker", 10);
+            marker_publisher_ = node->template create_publisher<visualization_msgs::msg::MarkerArray>("/visualization_marker", 10);
         }
 
         void Init(std::shared_ptr<JointState> joint_ptr,
@@ -54,7 +56,7 @@ namespace orthrus_controller
         rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr odom_publisher_;
         tf2_msgs::msg::TFMessage odom_msg_;
 
-        rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_publisher_;
-        visualization_msgs::msg::Marker marker_msg_;
+        rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_publisher_;
+        visualization_msgs::msg::MarkerArray markerarray_msg_;
     };
 }

@@ -231,28 +231,15 @@ namespace orthrus_controller
 
     visualization_->Update(now_time_);
     legged_odom_->Update(now_time_, duration);
-    pinocchio_interface_->Update(now_time_);
     legged_mpc_->Update(now_time_, duration);
     //RCLCPP_INFO(get_node()->get_logger(), "%s", legged_mpc_->Logger().str().c_str());
 
-    // Eigen::VectorXd acc = pinocchio_interface_->LegGravityCompensation();
+    //Eigen::VectorXd acc = pinocchio_interface_->LegGravityCompensation();
 
-    // Eigen::MatrixXd jac_1 = pinocchio_interface_->GetJacobianMatrix("LF_FOOT");
-    // Eigen::MatrixXd jac_2 = pinocchio_interface_->GetJacobianMatrix("LH_FOOT");
-    // Eigen::MatrixXd jac_3 = pinocchio_interface_->GetJacobianMatrix("RF_FOOT");
-    // Eigen::MatrixXd jac_4 = pinocchio_interface_->GetJacobianMatrix("RH_FOOT");
+    //std::stringstream ss;
+    //ss << "acc:" << acc.transpose() << std::endl;
+    //RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
 
-    std::stringstream ss;
-    // ss << "acc:" << acc.transpose() << std::endl;
-    // Eigen::Matrix<double, 6, 1> F;
-    // F <<  1.0, 0.0, 0.0, 0.0, 0.0, 0.0; // 示例力向量
-
-    // ss << "jac:\n" << jac_1.transpose() * F<< std::endl;
-    // RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
-    // ss << "jac:\n" << jac_2.transpose()<< std::endl;
-    // RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
-    // ss << "jac:\n" << jac_3.transpose()<< std::endl;
-    // ss << "jac:\n" << jac_4.transpose()<< std::endl;
 
     // RCLCPP_INFO(get_node()->get_logger(), "position\n%s", pinocchio_interface_->LegPositionInterpolation().str().c_str());
 

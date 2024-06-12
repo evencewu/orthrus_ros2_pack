@@ -77,35 +77,41 @@ namespace orthrus_controller
 
     void OrthrusVisualization::MarkVisualization(rclcpp::Time time)
     {
+        markerarray_msg_.markers.clear();
+
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
-            marker_msg_.header.frame_id = foot_names_[foot_num];
-            marker_msg_.header.stamp = time;
-            marker_msg_.ns = "arrows";
-            marker_msg_.id = foot_num;
-            marker_msg_.type = visualization_msgs::msg::Marker::ARROW;
-            marker_msg_.action = visualization_msgs::msg::Marker::ADD;
+            visualization_msgs::msg::Marker marker;
 
-            marker_msg_.points.resize(2);
-            marker_msg_.points[0].x = 0.0;
-            marker_msg_.points[0].y = 0.0;
-            marker_msg_.points[0].z = 0.0;
-            marker_msg_.points[1].x = (*touch_state_)[foot_num].touch_force[0]/100;
-            marker_msg_.points[1].y = (*touch_state_)[foot_num].touch_force[1]/100;
-            marker_msg_.points[1].z = (*touch_state_)[foot_num].touch_force[2]/100;
+            marker.header.frame_id = foot_names_[foot_num];
+            marker.header.stamp = time;
+            marker.ns = foot_names_[foot_num];
+            marker.id = foot_num;
+            marker.type = visualization_msgs::msg::Marker::ARROW;
+            marker.action = visualization_msgs::msg::Marker::ADD;
+
+            marker.points.resize(2);
+            marker.points[0].x = 0.0;
+            marker.points[0].y = 0.0;
+            marker.points[0].z = 0.0;
+            marker.points[1].x = (*touch_state_)[foot_num].touch_force[0] / 100;
+            marker.points[1].y = (*touch_state_)[foot_num].touch_force[1] / 100;
+            marker.points[1].z = (*touch_state_)[foot_num].touch_force[2] / 100;
 
             // 设置箭头的缩放（箭头的大小）
-            marker_msg_.scale.x = 0.01; // 箭头的长度
-            marker_msg_.scale.y = 0.01; // 箭头的宽度
-            marker_msg_.scale.z = 0.01; // 箭头的高度
+            marker.scale.x = 0.01; // 箭头的长度
+            marker.scale.y = 0.01; // 箭头的宽度
+            marker.scale.z = 0.01; // 箭头的高度
 
             // 设置箭头的颜色
-            marker_msg_.color.r = 1.0;
-            marker_msg_.color.g = 0.0;
-            marker_msg_.color.b = 0.0;
-            marker_msg_.color.a = 1.0;
+            marker.color.r = 1.0;
+            marker.color.g = 0.0;
+            marker.color.b = 0.0;
+            marker.color.a = 1.0;
 
-            marker_publisher_->publish(marker_msg_);
+            markerarray_msg_.markers.push_back(marker);
         }
+
+        marker_publisher_->publish(markerarray_msg_);
     }
 }

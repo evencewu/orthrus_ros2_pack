@@ -9,6 +9,7 @@ namespace orthrus_controller
         joint_state_ = joint_ptr;
         touch_state_ = touch_ptr;
 
+        //pinocchio::JointModelFreeFlyer root_joint;
         pinocchio::urdf::buildModel(urdf_filename_, model_);
 
         pinocchio::urdf::buildGeom(model_, urdf_filename_, pinocchio::COLLISION, collision_model_, mesh_dir_);
