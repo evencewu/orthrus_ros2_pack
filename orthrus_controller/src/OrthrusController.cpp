@@ -233,7 +233,7 @@ namespace orthrus_controller
     legged_odom_->Update(now_time_, duration);
     pinocchio_interface_->Update(now_time_);
     legged_mpc_->Update(now_time_, duration);
-    RCLCPP_INFO(get_node()->get_logger(), "%s", legged_mpc_->Logger().str().c_str());
+    //RCLCPP_INFO(get_node()->get_logger(), "%s", legged_mpc_->Logger().str().c_str());
 
     // Eigen::VectorXd acc = pinocchio_interface_->LegGravityCompensation();
 
