@@ -16,12 +16,19 @@ namespace orthrus_controller
 
     void LeggedMpc::Update(rclcpp::Time time, rclcpp::Duration duration)
     {
-        (*touch_state_)[0].touch_force = Eigen::Vector3d(3,1,1);
-        (*touch_state_)[1].touch_force = Eigen::Vector3d(3,1,1);
-        (*touch_state_)[2].touch_force = Eigen::Vector3d(3,1,1);
-        (*touch_state_)[3].touch_force = Eigen::Vector3d(3,1,1);
 
-        torq_ =  Foot2JointForce();
+        Eigen::VectorXd body_force(6);
+
+        // 直接赋值初始化
+        body_force << 0, 0, 140, 0, 0, 0;
+
+        Eigen::VectorXd foot_force = Body2FootForce(body_force);
+
+        (*touch_state_)[0].touch_force = foot_force.segment<3>(0);
+        (*touch_state_)[1].touch_force = foot_force.segment<3>(3);
+        (*touch_state_)[2].touch_force = foot_force.segment<3>(6);
+        (*touch_state_)[3].touch_force = foot_force.segment<3>(9);
+        torq_ = Foot2JointForce();
     }
 
     Eigen::VectorXd LeggedMpc::Foot2JointForce()
@@ -39,10 +46,68 @@ namespace orthrus_controller
             Eigen::MatrixXd j = pinocchio_interface_->GetJacobianMatrix(foot_name_[foot_num]);
             torq_v12 = j.transpose() * pos;
 
-            torq.segment<3>(foot_num*3) = torq_v12.segment<3>(foot_num*3);
+            torq.segment<3>(foot_num * 3) = torq_v12.segment<3>(foot_num * 3);
         }
 
         return torq + gravity_torq;
+    }
+
+    Eigen::VectorXd LeggedMpc::Body2FootForce(Eigen::VectorXd body_force)
+    {
+        // 定义一个 6x12 的矩阵 Mat
+        Eigen::MatrixXd Mat = Eigen::MatrixXd::Random(6, 12);
+
+        for (int foot_num = 0; foot_num < 4; foot_num++)
+        {
+            Mat.block<3, 3>(0, foot_num * 3) = (*touch_state_)[foot_num].touch_position.asDiagonal();
+            Mat.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix((*touch_state_)[foot_num].touch_position);
+        }
+
+        // 进行 SVD 分解
+        Eigen::JacobiSVD<Eigen::MatrixXd> svd(Mat, Eigen::ComputeThinU | Eigen::ComputeThinV);
+
+        // 获取 U, S, V 矩阵
+        Eigen::MatrixXd U = svd.matrixU();
+        Eigen::MatrixXd V = svd.matrixV();
+        Eigen::VectorXd S = svd.singularValues();
+
+        //// 构造 S 的伪逆
+        Eigen::VectorXd S_inv(S.size());
+        for (int i = 0; i < S.size(); ++i)
+        {
+            if (S(i) > 1e-10)
+            { // 处理奇异值接近于0的情况
+                S_inv(i) = 1.0 / S(i);
+            }
+            else
+            {
+                S_inv(i) = 0.0;
+            }
+        }
+        Eigen::MatrixXd Sigma_inv = S_inv.asDiagonal();
+
+        // 计算 Mat 的伪逆 Mat+
+        Eigen::MatrixXd Mat_plus = V * Sigma_inv * U.transpose();
+
+        return Mat_plus * body_force;
+    }
+
+    Eigen::Matrix3d LeggedMpc::VectorToSkewSymmetricMatrix(const Eigen::Vector3d &v)
+    {
+        Eigen::Matrix3d V;
+        V << 0, -v(2), v(1),
+            v(2), 0, -v(0),
+            -v(1), v(0), 0;
+        return V;
+    }
+
+    Eigen::Matrix3d LeggedMpc::VectorToDiagonalMatrix(const Eigen::Vector3d &v)
+    {
+        Eigen::Matrix3d V;
+        V << v(0), 0, 0,
+            0, v(1), 0,
+            0, 0, v(2);
+        return V;
     }
 
 }

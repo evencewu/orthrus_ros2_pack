@@ -27,6 +27,10 @@ namespace orthrus_controller
 
         void Update(rclcpp::Time time, rclcpp::Duration duration);
         Eigen::VectorXd Foot2JointForce();
+        Eigen::VectorXd Body2FootForce(Eigen::VectorXd body_force);
+
+        Eigen::Matrix3d VectorToSkewSymmetricMatrix(const Eigen::Vector3d &v);
+        Eigen::Matrix3d VectorToDiagonalMatrix(const Eigen::Vector3d &v);
 
     private:
         std::shared_ptr<OdomState> odom_state_;
