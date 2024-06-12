@@ -13,6 +13,14 @@
 
 namespace orthrus_controller
 {
+    //struct RobotState
+    //{
+    //    JointState joint
+    //    OdomState odom
+    //    TouchState
+    //    MpcTarget
+    //}
+
     struct JointState
     {
         std::vector<double> position;
