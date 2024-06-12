@@ -22,16 +22,16 @@ namespace orthrus_controller
         Eigen::VectorXd body_force(6);
 
         // 直接赋值初始化
-        body_force << 0, 0, 5, 0, 0, 0;
+        body_force << 0, 0, 100, 0, 0, 0;
 
         Eigen::VectorXd foot_force = Body2FootForce(body_force);
 
-        //(*touch_state_)[0].touch_force = foot_force.segment<3>(0);
-        //(*touch_state_)[1].touch_force = foot_force.segment<3>(3);
-        //(*touch_state_)[2].touch_force = foot_force.segment<3>(6);
-        //(*touch_state_)[3].touch_force = foot_force.segment<3>(9);
-        //
-        // torq_ = Foot2JointForce();
+        (*touch_state_)[0].touch_force = foot_force.segment<3>(0);
+        (*touch_state_)[1].touch_force = foot_force.segment<3>(3);
+        (*touch_state_)[2].touch_force = foot_force.segment<3>(6);
+        (*touch_state_)[3].touch_force = foot_force.segment<3>(9);
+        
+         torq_ = Foot2JointForce();
     }
 
     Eigen::VectorXd LeggedMpc::Foot2JointForce()

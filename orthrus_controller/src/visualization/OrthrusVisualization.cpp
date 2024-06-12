@@ -90,9 +90,9 @@ namespace orthrus_controller
             marker_msg_.points[0].x = 0.0;
             marker_msg_.points[0].y = 0.0;
             marker_msg_.points[0].z = 0.0;
-            marker_msg_.points[1].x = (*touch_state_)[foot_num].touch_force[0]/10;
-            marker_msg_.points[1].y = (*touch_state_)[foot_num].touch_force[1]/10;
-            marker_msg_.points[1].z = (*touch_state_)[foot_num].touch_force[2]/10;
+            marker_msg_.points[1].x = (*touch_state_)[foot_num].touch_force[0]/100;
+            marker_msg_.points[1].y = (*touch_state_)[foot_num].touch_force[1]/100;
+            marker_msg_.points[1].z = (*touch_state_)[foot_num].touch_force[2]/100;
 
             // 设置箭头的缩放（箭头的大小）
             marker_msg_.scale.x = 0.01; // 箭头的长度
