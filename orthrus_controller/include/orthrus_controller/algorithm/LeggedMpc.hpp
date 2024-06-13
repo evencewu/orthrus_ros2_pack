@@ -48,10 +48,12 @@ namespace orthrus_controller
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
         Eigen::VectorXd Body2FootForce(Eigen::VectorXd body_force);
-        Eigen::MatrixXd body2footforce_mat_;
-        Eigen::MatrixXd body2footforce_mat_plus_;
+        Eigen::MatrixXd body2footforce_mat_ = Eigen::MatrixXd::Random(6, 12);
+        Eigen::MatrixXd body2footforce_mat_plus_= Eigen::MatrixXd::Random(6, 12);
 
         // 最小二乘伪逆
         Eigen::MatrixXd GetMinimumTworamTMat(Eigen::MatrixXd input);
+
+        Eigen::MatrixXd GetTMat(Eigen::MatrixXd input);
     };
 }

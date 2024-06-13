@@ -12,14 +12,11 @@ namespace orthrus_controller
         touch_state_ = touch_ptr;
 
         pinocchio_interface_ = pinocchio_ptr;
-
-        body2footforce_mat_ = Eigen::MatrixXd::Random(6, 12);
-        body2footforce_mat_plus_ = Eigen::MatrixXd::Random(6, 12);
     }
 
     void LeggedMpc::Update(rclcpp::Time time, rclcpp::Duration duration)
     {
-        //更新pinocchio动力学参数
+        // 更新pinocchio动力学参数
         pinocchio_interface_->Update(time);
 
         Eigen::VectorXd body_force(6);
@@ -33,7 +30,7 @@ namespace orthrus_controller
         (*touch_state_)[1].touch_force = foot_force.segment<3>(3);
         (*touch_state_)[2].touch_force = foot_force.segment<3>(6);
         (*touch_state_)[3].touch_force = foot_force.segment<3>(9);
-        
+
         Eigen::VectorXd torq_ = Foot2JointForce();
     }
 
@@ -66,37 +63,13 @@ namespace orthrus_controller
             body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix((*touch_state_)[foot_num].touch_position);
         }
 
-        // 进行 SVD 分解
-        Eigen::JacobiSVD<Eigen::MatrixXd> svd(body2footforce_mat_, Eigen::ComputeThinU | Eigen::ComputeThinV);
-
-        // 获取 U, S, V 矩阵
-        Eigen::MatrixXd U = svd.matrixU();
-        Eigen::MatrixXd V = svd.matrixV();
-        Eigen::VectorXd S = svd.singularValues();
-
-        //// 构造 S 的伪逆
-        Eigen::VectorXd S_inv(S.size());
-        for (int i = 0; i < S.size(); ++i)
-        {
-            if (S(i) > 1e-10)
-            { // 处理奇异值接近于0的情况
-                S_inv(i) = 1.0 / S(i);
-            }
-            else
-            {
-                S_inv(i) = 0.0;
-            }
-        }
-        Eigen::MatrixXd Sigma_inv = S_inv.asDiagonal();
-
-        // 计算 Mat 的伪逆 Mat+
-        body2footforce_mat_plus_ = V * Sigma_inv * U.transpose();
+        body2footforce_mat_plus_ = GetMinimumTworamTMat(body2footforce_mat_);
 
         return body2footforce_mat_plus_ * body_force;
 
-        //body2footforce_mat_ = Eigen::MatrixXd::Random(6, 12);
-//
-        //for (int foot_num = 0; foot_num < 4; foot_num++)
+        // body2footforce_mat_ = Eigen::MatrixXd::Random(6, 12);
+        //
+        // for (int foot_num = 0; foot_num < 4; foot_num++)
         //{
         //    body2footforce_mat_.block<3, 3>(0, foot_num * 3) = (*touch_state_)[foot_num].touch_position.asDiagonal();
         //    body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix((*touch_state_)[foot_num].touch_position);
@@ -107,7 +80,7 @@ namespace orthrus_controller
         // return body2footforce_mat_plus_ * body_force;
     }
 
-    Eigen::MatrixXd GetMinimumTworamTMat(Eigen::MatrixXd input)
+    Eigen::MatrixXd LeggedMpc::GetMinimumTworamTMat(Eigen::MatrixXd input)
     {
         Eigen::JacobiSVD<Eigen::MatrixXd> svd(input, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
@@ -131,9 +104,13 @@ namespace orthrus_controller
         }
         Eigen::MatrixXd Sigma_inv = S_inv.asDiagonal();
 
-        Eigen::MatrixXd output = V * Sigma_inv * U.transpose();
+        Eigen::MatrixXd  output = V * Sigma_inv * U.transpose();
         // 计算 Mat 的伪逆 Mat+
         return output;
+    }
+
+    Eigen::MatrixXd LeggedMpc::GetTMat(Eigen::MatrixXd input){
+        return input.inverse();
     }
 
     Eigen::Matrix3d LeggedMpc::VectorToSkewSymmetricMatrix(const Eigen::Vector3d &v)
