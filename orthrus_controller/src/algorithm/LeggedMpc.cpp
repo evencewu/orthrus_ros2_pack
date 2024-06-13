@@ -24,7 +24,8 @@ namespace orthrus_controller
         // 直接赋值初始化
         body_force << 0, 0, 100, 0, 0, 0;
 
-        Eigen::VectorXd foot_force = Body2FootForce(body_force);
+        std::vector<bool> vec = {1,0,0,1};
+        Eigen::VectorXd foot_force = Body2FootForce(body_force,vec);
 
         (*touch_state_)[0].touch_force = foot_force.segment<3>(0);
         (*touch_state_)[1].touch_force = foot_force.segment<3>(3);
@@ -55,29 +56,22 @@ namespace orthrus_controller
         return torq + gravity_torq;
     }
 
-    Eigen::VectorXd LeggedMpc::Body2FootForce(Eigen::VectorXd body_force)
+    Eigen::VectorXd LeggedMpc::Body2FootForce(Eigen::VectorXd body_force, std::vector<bool> gait_touch_sequence)
     {
+        body2footforce_mat_ = Eigen::MatrixXd::Zero(6, 12);
+        body2footforce_mat_plus_= Eigen::MatrixXd::Zero(6, 12);
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
-            body2footforce_mat_.block<3, 3>(0, foot_num * 3) = Eigen::Matrix3d::Identity();
-            body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix((*touch_state_)[foot_num].touch_position);
+            if (gait_touch_sequence[foot_num])
+            {
+                body2footforce_mat_.block<3, 3>(0, foot_num * 3) = Eigen::Matrix3d::Identity();
+                body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix((*touch_state_)[foot_num].touch_position);
+            }
         }
 
         body2footforce_mat_plus_ = GetMinimumTworamTMat(body2footforce_mat_);
 
         return body2footforce_mat_plus_ * body_force;
-
-        // body2footforce_mat_ = Eigen::MatrixXd::Random(6, 12);
-        //
-        // for (int foot_num = 0; foot_num < 4; foot_num++)
-        //{
-        //    body2footforce_mat_.block<3, 3>(0, foot_num * 3) = (*touch_state_)[foot_num].touch_position.asDiagonal();
-        //    body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix((*touch_state_)[foot_num].touch_position);
-        //}
-
-        // body2footforce_mat_plus_ = GetMinimumTworamTMat(body2footforce_mat_);
-
-        // return body2footforce_mat_plus_ * body_force;
     }
 
     Eigen::MatrixXd LeggedMpc::GetMinimumTworamTMat(Eigen::MatrixXd input)
@@ -104,12 +98,13 @@ namespace orthrus_controller
         }
         Eigen::MatrixXd Sigma_inv = S_inv.asDiagonal();
 
-        Eigen::MatrixXd  output = V * Sigma_inv * U.transpose();
+        Eigen::MatrixXd output = V * Sigma_inv * U.transpose();
         // 计算 Mat 的伪逆 Mat+
         return output;
     }
 
-    Eigen::MatrixXd LeggedMpc::GetTMat(Eigen::MatrixXd input){
+    Eigen::MatrixXd LeggedMpc::GetTMat(Eigen::MatrixXd input)
+    {
         return input.inverse();
     }
 
