@@ -114,7 +114,7 @@ namespace orthrus_controller
     RCLCPP_INFO(logger, "Init legged_odom");
     legged_odom_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init joy_interfaces");
-    // joy_interface_->Init(mpc_target_);
+    //joy_interface_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init legged_mpc");
     legged_mpc_->Init(orthrus_interfaces_, pinocchio_interfaces_);
     RCLCPP_INFO(logger, "Init over");
@@ -185,7 +185,7 @@ namespace orthrus_controller
     now_time_ = get_node()->now();
     last_time_ = now_time_;
 
-    orthrus_interfaces_->robot_target.gait_num = 0 ;
+    //orthrus_interfaces_->robot_target.gait_num = 0 ;
 
     rclcpp::Duration duration = now_time_ - last_time_;
 

@@ -4,8 +4,6 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "controller_interface/controller_interface.hpp"
 
-
-
 #include <xbox_interfaces/msg/xbox_control.hpp>
 
 #include <iostream>
@@ -21,6 +19,8 @@ namespace orthrus_controller
         JoyInterface(std::shared_ptr<NodeType> node)
         {
             node_ = node;
+
+            xbox_sub_ = node->template create_subscription<xbox_interfaces::msg::XboxControl>("/xbox", 2, std::bind(&JoyInterface::JoyCallback, this, std::placeholders::_1));
         }
 
         void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);

@@ -16,8 +16,7 @@ namespace orthrus_controller
 
         // 直接赋值初始化
         orthrus_interfaces_->robot_target.target_body_force << 0, 0, 100, 0, 0, 0;
-        //std::vector<bool> gait = orthrus_interfaces_->robot_target.gait_sequence[orthrus_interfaces_->robot_target.gait_num];
-        std::vector<bool> gait = {1,0,0,1};
+        std::vector<bool> gait = orthrus_interfaces_->robot_target.gait_sequence[orthrus_interfaces_->robot_target.gait_num];
         Eigen::VectorXd foot_force = Body2FootForce(orthrus_interfaces_->robot_target.target_body_force, gait);
 
         orthrus_interfaces_->odom_state.touch_state[0].touch_force = foot_force.segment<3>(0);
