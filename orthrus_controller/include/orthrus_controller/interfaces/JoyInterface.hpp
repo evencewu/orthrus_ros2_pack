@@ -4,7 +4,7 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "controller_interface/controller_interface.hpp"
 
-#include "orthrus_controller/interfaces/OrthrusParma.hpp"
+
 
 #include <xbox_interfaces/msg/xbox_control.hpp>
 
@@ -23,13 +23,13 @@ namespace orthrus_controller
             node_ = node;
         }
 
-        void Init(std::shared_ptr<MpcTarget> target_ptr);
+        void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
 
     private:
         void JoyCallback(const xbox_interfaces::msg::XboxControl::SharedPtr msg);
 
         // Controller Interface
-        std::shared_ptr<MpcTarget> mpc_target_;
+        std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
 
         // ROS2
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;

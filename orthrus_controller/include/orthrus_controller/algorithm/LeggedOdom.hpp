@@ -5,6 +5,8 @@
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "controller_interface/controller_interface.hpp"
 
+#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
+
 #include <chrono>
 #include <cmath>
 #include <memory>
@@ -15,8 +17,6 @@
 #include <Eigen/Dense>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
-
-#include "orthrus_controller/interfaces/OrthrusParma.hpp"
 
 namespace orthrus_controller
 {
@@ -30,17 +30,13 @@ namespace orthrus_controller
             RCLCPP_INFO(node->get_logger(), "Legged odom active.");
         }
 
-        void Init(std::shared_ptr<OdomState> odom_ptr,
-                  std::shared_ptr<std::vector<TouchState>> touch_ptr);
+        void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
         void Update(rclcpp::Time time, rclcpp::Duration duration);
         void calibration(rclcpp::Time time, rclcpp::Duration duration);
 
         Eigen::Vector3d Quaternion2Euler(Eigen::Quaterniond quat);
-
-        std::shared_ptr<OdomState> odom_state_;
-        std::shared_ptr<std::vector<TouchState>> touch_state_;
-
     private:
+        std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
     };
 }

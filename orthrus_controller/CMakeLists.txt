@@ -68,7 +68,7 @@ ament_target_dependencies(test1 PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 add_library(orthrus_controller SHARED
   src/OrthrusController.cpp
   src/visualization/OrthrusVisualization.cpp
-  src/interfaces/PinocchioInterface.cpp
+  src/interfaces/PinocchioInterfaces.cpp
   src/algorithm/LeggedOdom.cpp
   src/algorithm/LeggedMpc.cpp
 )

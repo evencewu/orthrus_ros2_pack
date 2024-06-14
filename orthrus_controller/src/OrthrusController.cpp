@@ -36,22 +36,18 @@ namespace orthrus_controller
     }
 
     // class
+    RCLCPP_INFO(get_node()->get_logger(), "Loading orthrus_interface");
+    orthrus_interfaces_ = std::make_shared<OrthrusInterfaces>();
     RCLCPP_INFO(get_node()->get_logger(), "Loading visualization");
     visualization_ = std::make_shared<OrthrusVisualization>(get_node(), params_.leg_joint_names);
     RCLCPP_INFO(get_node()->get_logger(), "Loading pinocchio_interface");
-    pinocchio_interface_ = std::make_shared<PinocchioInterface>(get_node());
+    pinocchio_interfaces_ = std::make_shared<PinocchioInterfaces>(get_node());
     RCLCPP_INFO(get_node()->get_logger(), "Loading legged_odom");
     legged_odom_ = std::make_shared<LeggedOdom>(get_node());
     RCLCPP_INFO(get_node()->get_logger(), "Loading joy_interface");
     joy_interface_ = std::make_shared<JoyInterface>(get_node());
     RCLCPP_INFO(get_node()->get_logger(), "Loading legged_mpc");
     legged_mpc_ = std::make_shared<LeggedMpc>(get_node());
-
-    // struct
-    joint_state_ = std::make_shared<JointState>();
-    odom_state_ = std::make_shared<OdomState>();
-    touch_state_ = std::make_shared<std::vector<TouchState>>(4);
-    mpc_target_ = std::make_shared<MpcTarget>();
 
     return controller_interface::CallbackReturn::SUCCESS;
   }
@@ -111,19 +107,19 @@ namespace orthrus_controller
       return controller_interface::CallbackReturn::ERROR;
     }
 
-    RCLCPP_INFO(logger, "Init pinocchio_interface");
-    pinocchio_interface_->Init(joint_state_, touch_state_);
+    RCLCPP_INFO(logger, "Init pinocchio_interfaces");
+    pinocchio_interfaces_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init visualization");
-    visualization_->Init(joint_state_, odom_state_, touch_state_);
+    visualization_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init legged_odom");
-    legged_odom_->Init(odom_state_, touch_state_);
-    RCLCPP_INFO(logger, "Init joy_interface");
+    legged_odom_->Init(orthrus_interfaces_);
+    RCLCPP_INFO(logger, "Init joy_interfaces");
     // joy_interface_->Init(mpc_target_);
     RCLCPP_INFO(logger, "Init legged_mpc");
-    legged_mpc_->Init(joint_state_, odom_state_, touch_state_, pinocchio_interface_);
+    legged_mpc_->Init(orthrus_interfaces_, pinocchio_interfaces_);
     RCLCPP_INFO(logger, "Init over");
 
-    RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interface_->Logger().str().c_str());
+    RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
 
     RCLCPP_INFO(logger, "Configure over...");
 
@@ -186,11 +182,10 @@ namespace orthrus_controller
   controller_interface::return_type OrthrusController::update(
       const rclcpp::Time &time, const rclcpp::Duration &period)
   {
-
-    // mpc_target_->;
-
     now_time_ = get_node()->now();
     last_time_ = now_time_;
+
+    orthrus_interfaces_->robot_target.gait_num = 0 ;
 
     rclcpp::Duration duration = now_time_ - last_time_;
 
@@ -202,9 +197,9 @@ namespace orthrus_controller
       double position = joint_handles_[joint_number].state_position.get().get_value();
       double velocity = joint_handles_[joint_number].state_velocity.get().get_value();
       double effort = joint_handles_[joint_number].state_effort.get().get_value();
-      joint_state_->position[joint_number] = position;
-      joint_state_->velocity[joint_number] = velocity;
-      joint_state_->effort[joint_number] = effort;
+      orthrus_interfaces_->robot_state.joint.position[joint_number] = position;
+      orthrus_interfaces_->robot_state.joint.velocity[joint_number] = velocity;
+      orthrus_interfaces_->robot_state.joint.effort[joint_number] = effort;
 
       if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
       {
@@ -216,36 +211,35 @@ namespace orthrus_controller
     // Update imu/odom data
     for (int i = 0; i < 3; i++)
     {
-      odom_state_->imu.angular_velocity(i) = imu_handles_[0].angular_velocity[i].get().get_value();
+      orthrus_interfaces_->robot_state.body_imu.angular_velocity(i) = imu_handles_[0].angular_velocity[i].get().get_value();
     }
 
     for (int i = 0; i < 3; i++)
     {
-      odom_state_->imu.linear_acceleration(i) = imu_handles_[0].linear_acceleration[i].get().get_value();
+      orthrus_interfaces_->robot_state.body_imu.linear_acceleration(i) = imu_handles_[0].linear_acceleration[i].get().get_value();
     }
 
-    odom_state_->imu.orientation.w() = imu_handles_[0].orientation[0].get().get_value();
-    odom_state_->imu.orientation.x() = imu_handles_[0].orientation[1].get().get_value();
-    odom_state_->imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
-    odom_state_->imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
+    orthrus_interfaces_->robot_state.body_imu.orientation.w() = imu_handles_[0].orientation[0].get().get_value();
+    orthrus_interfaces_->robot_state.body_imu.orientation.x() = imu_handles_[0].orientation[1].get().get_value();
+    orthrus_interfaces_->robot_state.body_imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
+    orthrus_interfaces_->robot_state.body_imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
 
     visualization_->Update(now_time_);
     legged_odom_->Update(now_time_, duration);
     legged_mpc_->Update(now_time_, duration);
-    //RCLCPP_INFO(get_node()->get_logger(), "%s", legged_mpc_->Logger().str().c_str());
+    // RCLCPP_INFO(get_node()->get_logger(), "%s", legged_mpc_->Logger().str().c_str());
 
-    //Eigen::VectorXd acc = pinocchio_interface_->LegGravityCompensation();
+    // Eigen::VectorXd acc = pinocchio_interfaces_->LegGravityCompensation();
 
-    //std::stringstream ss;
-    //ss << "acc:" << acc.transpose() << std::endl;
-    //RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
+    // std::stringstream ss;
+    // ss << "acc:" << acc.transpose() << std::endl;
+    // RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
 
-
-    // RCLCPP_INFO(get_node()->get_logger(), "position\n%s", pinocchio_interface_->LegPositionInterpolation().str().c_str());
+    // RCLCPP_INFO(get_node()->get_logger(), "position\n%s", pinocchio_interfaces_->LegPositionInterpolation().str().c_str());
 
     // RCLCPP_INFO(logger, "imu: %lf", imu_handles_[0].orientation[0].get().get_value());
 
-    // RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interface_->Logger().str().c_str());
+    // RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interfaces_->Logger().str().c_str());
 
     return controller_interface::return_type::OK;
   }
@@ -429,5 +423,4 @@ namespace orthrus_controller
 
 #include "class_loader/register_macro.hpp"
 
-CLASS_LOADER_REGISTER_CLASS(
-    orthrus_controller::OrthrusController, controller_interface::ControllerInterface)
+CLASS_LOADER_REGISTER_CLASS(orthrus_controller::OrthrusController, controller_interface::ControllerInterface)

@@ -9,12 +9,12 @@
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
+#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
+
 #include <visualization_msgs/msg/marker.hpp>
 #include "visualization_msgs/msg/marker_array.hpp"
 
-
-#include "orthrus_controller/interfaces/OrthrusParma.hpp"
-#include "orthrus_controller/interfaces/PinocchioInterface.hpp"
+#include "orthrus_controller/interfaces/PinocchioInterfaces.hpp"
 
 namespace orthrus_controller
 {
@@ -31,19 +31,17 @@ namespace orthrus_controller
             marker_publisher_ = node->template create_publisher<visualization_msgs::msg::MarkerArray>("/visualization_marker", 10);
         }
 
-        void Init(std::shared_ptr<JointState> joint_ptr,
-                  std::shared_ptr<OdomState> odom_ptr,
-                  std::shared_ptr<std::vector<TouchState>> touch_ptr);
+        void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
+
         void Update(rclcpp::Time time);
         void ModelVisualization(rclcpp::Time time);
         void ImuVisualization(rclcpp::Time time);
         void FootPointVisualization(rclcpp::Time time);
         void MarkVisualization(rclcpp::Time time);
-        std::shared_ptr<JointState> joint_state_;
-        std::shared_ptr<OdomState> odom_state_;
-        std::shared_ptr<std::vector<TouchState>> touch_state_;
 
     private:
+        std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
+
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
         std::vector<std::string> foot_names_ = {"LF_FOOT", "LH_FOOT", "RF_FOOT", "RH_FOOT"};

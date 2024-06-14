@@ -1,13 +1,10 @@
-#include "orthrus_controller/interfaces/PinocchioInterface.hpp"
+#include "orthrus_controller/interfaces/PinocchioInterfaces.hpp"
 
 namespace orthrus_controller
 {
-    void PinocchioInterface::Init(std::shared_ptr<JointState> joint_ptr,
-                                  std::shared_ptr<std::vector<TouchState>> touch_ptr)
+    void PinocchioInterfaces::Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr)
     {
-
-        joint_state_ = joint_ptr;
-        touch_state_ = touch_ptr;
+        orthrus_interfaces_ = orthrus_interfaces_ptr;
 
         //pinocchio::JointModelFreeFlyer root_joint;
         pinocchio::urdf::buildModel(urdf_filename_, model_);
@@ -32,9 +29,9 @@ namespace orthrus_controller
         pinocchio::updateGeometryPlacements(model_, data_, visual_model_, visual_data_);
     }
 
-    void PinocchioInterface::Update(rclcpp::Time time)
+    void PinocchioInterfaces::Update(rclcpp::Time time)
     {
-        joint_ = Eigen::VectorXd::Map(joint_state_->position.data(), joint_state_->position.size());
+        joint_ = Eigen::VectorXd::Map(orthrus_interfaces_->robot_state.joint.position.data(), orthrus_interfaces_->robot_state.joint.position.size());
         // 执行正向运动学
         pinocchio::forwardKinematics(model_, data_, joint_);
         pinocchio::framesForwardKinematics(model_, data_, joint_);
@@ -60,7 +57,7 @@ namespace orthrus_controller
                   */
     }
 
-    std::stringstream PinocchioInterface::Logger()
+    std::stringstream PinocchioInterfaces::Logger()
     {
         std::stringstream ss;
         for (size_t i = 0; i < model_.frames.size(); ++i)
@@ -80,18 +77,18 @@ namespace orthrus_controller
         return ss;
     }
 
-    void PinocchioInterface::FootPositionCalculation()
+    void PinocchioInterfaces::FootPositionCalculation()
     {
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
             pinocchio::FrameIndex frame_index = model_.getFrameId(foot_name_[foot_num]);
             // Get the position of the frame in the world coordinate system
             const pinocchio::SE3 &frame_position = data_.oMf[frame_index];
-            (*touch_state_)[foot_num].touch_position = frame_position.translation();
+            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_position = frame_position.translation();
         }
     }
 
-    Eigen::MatrixXd PinocchioInterface::GetJacobianMatrix(std::string frame_name)
+    Eigen::MatrixXd PinocchioInterfaces::GetJacobianMatrix(std::string frame_name)
     {
         pinocchio::FrameIndex frame_id = model_.getFrameId(frame_name);
         //  计算雅可比矩阵
@@ -102,7 +99,7 @@ namespace orthrus_controller
         return J;
     }
 
-    Eigen::VectorXd PinocchioInterface::LegGravityCompensation()
+    Eigen::VectorXd PinocchioInterfaces::LegGravityCompensation()
     {
         // 定义机器人的配置（关节角度），速度和加速度
         Eigen::VectorXd v = Eigen::VectorXd::Zero(model_.nv); // 速度为零

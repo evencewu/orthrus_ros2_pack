@@ -2,23 +2,21 @@
 
 namespace orthrus_controller
 {
-    void LeggedOdom::Init(std::shared_ptr<OdomState> odom_ptr,
-                          std::shared_ptr<std::vector<TouchState>> touch_ptr)
+    void LeggedOdom::Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr)
     {
-        touch_state_ = touch_ptr;
-        odom_state_ = odom_ptr;
-    }
-    
-    void LeggedOdom::calibration(rclcpp::Time time,rclcpp::Duration duration)
-    {
-
+        orthrus_interfaces_ = orthrus_interfaces_ptr;
     }
 
-    void LeggedOdom::Update(rclcpp::Time time,rclcpp::Duration duration)
+    void LeggedOdom::calibration(rclcpp::Time time, rclcpp::Duration duration)
     {
-        odom_state_->euler = Quaternion2Euler(odom_state_->imu.orientation);
-        //odom_state_->velocity = 
-        //odom_state_->position = ;
+    }
+
+    void LeggedOdom::Update(rclcpp::Time time, rclcpp::Duration duration)
+    {
+        orthrus_interfaces_->odom_state.imu = orthrus_interfaces_->robot_state.body_imu;
+        orthrus_interfaces_->odom_state.euler = Quaternion2Euler(orthrus_interfaces_->odom_state.imu.orientation);
+        // odom_state_->velocity =
+        // odom_state_->position = ;
     }
 
     Eigen::Vector3d LeggedOdom::Quaternion2Euler(Eigen::Quaterniond quat)

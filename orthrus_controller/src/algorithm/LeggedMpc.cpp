@@ -2,42 +2,35 @@
 
 namespace orthrus_controller
 {
-    void LeggedMpc::Init(std::shared_ptr<JointState> joint_ptr,
-                         std::shared_ptr<OdomState> odom_ptr,
-                         std::shared_ptr<std::vector<TouchState>> touch_ptr,
-                         std::shared_ptr<PinocchioInterface> pinocchio_ptr)
+    void LeggedMpc::Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr,
+                         std::shared_ptr<PinocchioInterfaces> pinocchio_ptr)
     {
-        joint_state_ = joint_ptr;
-        odom_state_ = odom_ptr;
-        touch_state_ = touch_ptr;
-
-        pinocchio_interface_ = pinocchio_ptr;
+        orthrus_interfaces_ = orthrus_interfaces_ptr;
+        pinocchio_interfaces_ = pinocchio_ptr;
     }
 
     void LeggedMpc::Update(rclcpp::Time time, rclcpp::Duration duration)
     {
         // 更新pinocchio动力学参数
-        pinocchio_interface_->Update(time);
-
-        Eigen::VectorXd body_force(6);
+        pinocchio_interfaces_->Update(time);
 
         // 直接赋值初始化
-        body_force << 0, 0, 100, 0, 0, 0;
+        orthrus_interfaces_->robot_target.target_body_force << 0, 0, 100, 0, 0, 0;
+        //std::vector<bool> gait = orthrus_interfaces_->robot_target.gait_sequence[orthrus_interfaces_->robot_target.gait_num];
+        std::vector<bool> gait = {1,0,0,1};
+        Eigen::VectorXd foot_force = Body2FootForce(orthrus_interfaces_->robot_target.target_body_force, gait);
 
-        std::vector<bool> vec = {1,0,0,1};
-        Eigen::VectorXd foot_force = Body2FootForce(body_force,vec);
-
-        (*touch_state_)[0].touch_force = foot_force.segment<3>(0);
-        (*touch_state_)[1].touch_force = foot_force.segment<3>(3);
-        (*touch_state_)[2].touch_force = foot_force.segment<3>(6);
-        (*touch_state_)[3].touch_force = foot_force.segment<3>(9);
+        orthrus_interfaces_->odom_state.touch_state[0].touch_force = foot_force.segment<3>(0);
+        orthrus_interfaces_->odom_state.touch_state[1].touch_force = foot_force.segment<3>(3);
+        orthrus_interfaces_->odom_state.touch_state[2].touch_force = foot_force.segment<3>(6);
+        orthrus_interfaces_->odom_state.touch_state[3].touch_force = foot_force.segment<3>(9);
 
         Eigen::VectorXd torq_ = Foot2JointForce();
     }
 
     Eigen::VectorXd LeggedMpc::Foot2JointForce()
     {
-        Eigen::VectorXd gravity_torq = pinocchio_interface_->LegGravityCompensation();
+        Eigen::VectorXd gravity_torq = pinocchio_interfaces_->LegGravityCompensation();
         Eigen::VectorXd torq(12);
 
         for (int foot_num = 0; foot_num < 4; foot_num++)
@@ -45,9 +38,9 @@ namespace orthrus_controller
             Eigen::VectorXd torq_v12;
             Eigen::VectorXd pos(6);
             pos.setZero(); // 可选的初始化为零向量
-            pos.segment<3>(0) = (*touch_state_)[foot_num].touch_force;
+            pos.segment<3>(0) = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force;
 
-            Eigen::MatrixXd j = pinocchio_interface_->GetJacobianMatrix(foot_name_[foot_num]);
+            Eigen::MatrixXd j = pinocchio_interfaces_->GetJacobianMatrix(foot_name_[foot_num]);
             torq_v12 = j.transpose() * pos;
 
             torq.segment<3>(foot_num * 3) = torq_v12.segment<3>(foot_num * 3);
@@ -59,13 +52,13 @@ namespace orthrus_controller
     Eigen::VectorXd LeggedMpc::Body2FootForce(Eigen::VectorXd body_force, std::vector<bool> gait_touch_sequence)
     {
         body2footforce_mat_ = Eigen::MatrixXd::Zero(6, 12);
-        body2footforce_mat_plus_= Eigen::MatrixXd::Zero(6, 12);
+        body2footforce_mat_plus_ = Eigen::MatrixXd::Zero(6, 12);
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
             if (gait_touch_sequence[foot_num])
             {
                 body2footforce_mat_.block<3, 3>(0, foot_num * 3) = Eigen::Matrix3d::Identity();
-                body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix((*touch_state_)[foot_num].touch_position);
+                body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix(orthrus_interfaces_->odom_state.touch_state[foot_num].touch_position);
             }
         }
 

@@ -2,14 +2,9 @@
 
 namespace orthrus_controller
 {
-    void OrthrusVisualization::Init(std::shared_ptr<JointState> joint_ptr,
-                                    std::shared_ptr<OdomState> odom_ptr,
-                                    std::shared_ptr<std::vector<TouchState>> touch_ptr)
+    void OrthrusVisualization::Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr)
     {
-        // JointState joint_state_;
-        touch_state_ = touch_ptr;
-        joint_state_ = joint_ptr;
-        odom_state_ = odom_ptr;
+        orthrus_interfaces_ = orthrus_interfaces_ptr;
     }
 
     void OrthrusVisualization::Update(rclcpp::Time time)
@@ -29,9 +24,9 @@ namespace orthrus_controller
         joint_state_msg_.header.frame_id = "body";
 
         // Direct initialization with zeros
-        joint_state_msg_.position = joint_state_->position;
-        joint_state_msg_.velocity = joint_state_->velocity;
-        joint_state_msg_.effort = joint_state_->effort;
+        joint_state_msg_.position = orthrus_interfaces_->robot_state.joint.position;
+        joint_state_msg_.velocity = orthrus_interfaces_->robot_state.joint.velocity;
+        joint_state_msg_.effort = orthrus_interfaces_->robot_state.joint.effort;
 
         joint_state_msg_.name = joint_name_;
         joint_state_publisher_->publish(joint_state_msg_);
@@ -47,10 +42,10 @@ namespace orthrus_controller
         tf_stamped.transform.translation.x = 0.0;
         tf_stamped.transform.translation.y = 0.0;
         tf_stamped.transform.translation.z = 0.0;
-        tf_stamped.transform.rotation.w = odom_state_->imu.orientation.w();
-        tf_stamped.transform.rotation.x = odom_state_->imu.orientation.x();
-        tf_stamped.transform.rotation.y = odom_state_->imu.orientation.y();
-        tf_stamped.transform.rotation.z = odom_state_->imu.orientation.z();
+        tf_stamped.transform.rotation.w = orthrus_interfaces_->odom_state.imu.orientation.w();
+        tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.imu.orientation.x();
+        tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.imu.orientation.y();
+        tf_stamped.transform.rotation.z = orthrus_interfaces_->odom_state.imu.orientation.z();
 
         odom_msg_.transforms.push_back(tf_stamped);
     }
@@ -64,13 +59,13 @@ namespace orthrus_controller
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
             tf_stamped.child_frame_id = foot_names_[foot_num];
-            tf_stamped.transform.translation.x = (*touch_state_)[foot_num].touch_position[0];
-            tf_stamped.transform.translation.y = (*touch_state_)[foot_num].touch_position[1];
-            tf_stamped.transform.translation.z = (*touch_state_)[foot_num].touch_position[2];
-            tf_stamped.transform.rotation.w = -odom_state_->imu.orientation.w();
-            tf_stamped.transform.rotation.x = odom_state_->imu.orientation.x();
-            tf_stamped.transform.rotation.y = odom_state_->imu.orientation.y();
-            tf_stamped.transform.rotation.z = odom_state_->imu.orientation.z();
+            tf_stamped.transform.translation.x = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_position[0];
+            tf_stamped.transform.translation.y = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_position[1];
+            tf_stamped.transform.translation.z = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_position[2];
+            tf_stamped.transform.rotation.w = -orthrus_interfaces_->odom_state.imu.orientation.w();
+            tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.imu.orientation.x();
+            tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.imu.orientation.y();
+            tf_stamped.transform.rotation.z = orthrus_interfaces_->odom_state.imu.orientation.z();
             odom_msg_.transforms.push_back(tf_stamped);
         }
     }
@@ -94,9 +89,9 @@ namespace orthrus_controller
             marker.points[0].x = 0.0;
             marker.points[0].y = 0.0;
             marker.points[0].z = 0.0;
-            marker.points[1].x = (*touch_state_)[foot_num].touch_force[0] / 100;
-            marker.points[1].y = (*touch_state_)[foot_num].touch_force[1] / 100;
-            marker.points[1].z = (*touch_state_)[foot_num].touch_force[2] / 100;
+            marker.points[1].x = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[0] / 100;
+            marker.points[1].y = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[1] / 100;
+            marker.points[1].z = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[2] / 100;
 
             // 设置箭头的缩放（箭头的大小）
             marker.scale.x = 0.01; // 箭头的长度

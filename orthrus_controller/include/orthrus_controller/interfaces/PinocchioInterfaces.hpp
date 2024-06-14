@@ -4,7 +4,7 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "controller_interface/controller_interface.hpp"
 
-#include "orthrus_controller/interfaces/OrthrusParma.hpp"
+#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
 
 #include <iostream>
 
@@ -27,17 +27,17 @@
 
 namespace orthrus_controller
 {
-    class PinocchioInterface : public std::enable_shared_from_this<PinocchioInterface>
+    class PinocchioInterfaces : public std::enable_shared_from_this<PinocchioInterfaces>
     {
     public:
         template <typename NodeType>
-        PinocchioInterface(std::shared_ptr<NodeType> node)
+        PinocchioInterfaces(std::shared_ptr<NodeType> node)
         {
             node_ = node;
         }
 
-        void Init(std::shared_ptr<JointState> joint_ptr,
-                  std::shared_ptr<std::vector<TouchState>> touch_ptr);
+        void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
+        
         void Update(rclcpp::Time time);
 
         void FootPositionCalculation();
@@ -61,8 +61,8 @@ namespace orthrus_controller
         Eigen::VectorXd joint_;
 
     private:
-        std::shared_ptr<JointState> joint_state_;
-        std::shared_ptr<std::vector<TouchState>> touch_state_;
+
+        std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
 
         std::vector<std::string> foot_name_ = {"LF_FOOT","LH_FOOT","RF_FOOT","RH_FOOT"};
         

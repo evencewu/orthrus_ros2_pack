@@ -20,7 +20,7 @@
 #include "tf2_msgs/msg/tf_message.hpp"
 
 #include "orthrus_controller/visibility_control.h"
-#include "orthrus_controller/interfaces/OrthrusParma.hpp"
+#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
 #include "orthrus_controller/interfaces/JoyInterface.hpp"
 #include "orthrus_controller/visualization/OrthrusVisualization.hpp"
 #include "orthrus_controller/algorithm/LeggedMpc.hpp"
@@ -110,21 +110,18 @@ namespace orthrus_controller
             std::vector<ImuHandle> &registered_handles);
 
         // parma
-        std::shared_ptr<MpcTarget> mpc_target_;
-        std::shared_ptr<std::vector<TouchState>> touch_state_;
-        std::shared_ptr<OdomState> odom_state_;
-        std::shared_ptr<JointState> joint_state_;
 
-        std::shared_ptr<LeggedOdom> legged_odom_;
-        
         // 足式里程计
+
         std::shared_ptr<OrthrusVisualization> visualization_;     // 可视化
-        std::shared_ptr<PinocchioInterface> pinocchio_interface_; // Pinocchio接口
-        std::shared_ptr<LeggedMpc> legged_mpc_;                // MPC控制器
+        std::shared_ptr<PinocchioInterfaces> pinocchio_interfaces_; // Pinocchio接口
+        std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
+        std::shared_ptr<LeggedMpc> legged_mpc_;   // MPC控制器
+        std::shared_ptr<LeggedOdom> legged_odom_; // 里程计
         std::shared_ptr<JoyInterface> joy_interface_;
 
         // LeggedOdomState
-
+        
         // 里程计
         // OdomStateetry odometry_;
         // 发布里程计数据
