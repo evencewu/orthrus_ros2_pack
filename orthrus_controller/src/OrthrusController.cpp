@@ -114,13 +114,11 @@ namespace orthrus_controller
     RCLCPP_INFO(logger, "Init legged_odom");
     legged_odom_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init joy_interfaces");
-    //joy_interface_->Init(orthrus_interfaces_);
+    joy_interface_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init legged_mpc");
     legged_mpc_->Init(orthrus_interfaces_, pinocchio_interfaces_);
     RCLCPP_INFO(logger, "Init over");
-
     RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
-
     RCLCPP_INFO(logger, "Configure over...");
 
     return controller_interface::CallbackReturn::SUCCESS;
@@ -185,7 +183,7 @@ namespace orthrus_controller
     now_time_ = get_node()->now();
     last_time_ = now_time_;
 
-    //orthrus_interfaces_->robot_target.gait_num = 0 ;
+    // orthrus_interfaces_->robot_target.gait_num = 0 ;
 
     rclcpp::Duration duration = now_time_ - last_time_;
 
@@ -227,6 +225,7 @@ namespace orthrus_controller
     visualization_->Update(now_time_);
     legged_odom_->Update(now_time_, duration);
     legged_mpc_->Update(now_time_, duration);
+
     // RCLCPP_INFO(get_node()->get_logger(), "%s", legged_mpc_->Logger().str().c_str());
 
     // Eigen::VectorXd acc = pinocchio_interfaces_->LegGravityCompensation();

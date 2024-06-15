@@ -48,8 +48,13 @@ namespace orthrus_controller
 
         std::vector<std::vector<bool>> gait_sequence = {{1, 1, 1, 1},{1, 0, 0, 1}, {0, 1, 1, 0}};
 
-        int gait_num = 0;
+        int gait_num;
         bool if_stand;
+
+        RobotTarget()
+        {
+            gait_num = 0;
+        }
     };
 
     struct RobotCmd

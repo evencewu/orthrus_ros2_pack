@@ -6,6 +6,7 @@
 #include <queue>
 #include <string>
 #include <vector>
+#include <mutex>
 
 #include "controller_interface/controller_interface.hpp"
 
@@ -121,7 +122,8 @@ namespace orthrus_controller
         std::shared_ptr<JoyInterface> joy_interface_;
 
         // LeggedOdomState
-        
+        std::mutex mylock_;
+
         // 里程计
         // OdomStateetry odometry_;
         // 发布里程计数据

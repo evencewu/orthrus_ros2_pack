@@ -69,6 +69,7 @@ add_library(orthrus_controller SHARED
   src/OrthrusController.cpp
   src/visualization/OrthrusVisualization.cpp
   src/interfaces/PinocchioInterfaces.cpp
+  src/interfaces/JoyInterface.cpp
   src/algorithm/LeggedOdom.cpp
   src/algorithm/LeggedMpc.cpp
 )

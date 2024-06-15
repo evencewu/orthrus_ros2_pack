@@ -5,14 +5,16 @@
 #include "controller_interface/controller_interface.hpp"
 
 #include <xbox_interfaces/msg/xbox_control.hpp>
+#include "orthrus_controller/interfaces/PinocchioInterfaces.hpp"
 
 #include <iostream>
+#include <mutex>
 
 #include <Eigen/Dense>
 
 namespace orthrus_controller
 {
-    class JoyInterface
+    class JoyInterface : public std::enable_shared_from_this<JoyInterface>
     {
     public:
         template <typename NodeType>
@@ -24,12 +26,17 @@ namespace orthrus_controller
         }
 
         void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
+        void JoyCallback(const xbox_interfaces::msg::XboxControl::SharedPtr msg);
+        std::stringstream GetJoyTarget();
 
     private:
-        void JoyCallback(const xbox_interfaces::msg::XboxControl::SharedPtr msg);
+        std::mutex mtx_;
+        //std::mutex mylock_;
 
         // Controller Interface
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
+        
+        OrthrusInterfaces orthrus_interfaces_self_;
 
         // ROS2
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;

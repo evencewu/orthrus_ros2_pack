@@ -43,7 +43,17 @@ foxglove = ExecuteProcess(
     cmd=['ros2', 'launch', 'foxglove_bridge', 'foxglove_bridge_launch.xml', 'use_compression:=true'],
     output='screen'
 )
-    
+
+#from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
+
+#foxglove_bridge = IncludeLaunchDescription(
+#        XMLLaunchDescriptionSource(
+#            [get_package_share_directory("foxglove_bridge"), '/launch/foxglove_bridge_launch.xml']),
+#        launch_arguments={
+#            'include_hidden': 'true',
+#        }.items(),
+#    )
+
 def generate_launch_description():
 
     orthrus_gazebo_sim = get_orthrus_gazebo_sim('orthrus_gazebo', 'orthrus_sim.launch.py')

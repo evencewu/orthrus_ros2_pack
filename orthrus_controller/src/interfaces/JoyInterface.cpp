@@ -9,17 +9,25 @@ namespace orthrus_controller
 
     void JoyInterface::JoyCallback(const xbox_interfaces::msg::XboxControl::SharedPtr msg)
     {
-        if(msg->y == 1)
+        // mtx_.lock();
+
+        if (msg->y == 1)
         {
             orthrus_interfaces_->robot_target.gait_num = 0;
         }
 
-        if(msg->x == 0)
+        if (msg->x == 1)
         {
             orthrus_interfaces_->robot_target.gait_num = 1;
         }
-        
-        
-        // target_ptr_->target_velocity = msg.
+
+        // mtx_.unlock();
+    }
+
+    std::stringstream JoyInterface::GetJoyTarget()
+    {
+        std::stringstream ss;
+        ss << "JoyInterface: " << orthrus_interfaces_->robot_target.gait_num << " " << std::endl;
+        return ss;
     }
 }
