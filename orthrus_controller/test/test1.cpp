@@ -1,74 +1,71 @@
-#include "pinocchio/multibody/fcl.hpp"
-#include "pinocchio/parsers/urdf.hpp"
- 
-#include "pinocchio/algorithm/joint-configuration.hpp"
-#include "pinocchio/algorithm/kinematics.hpp"
-#include "pinocchio/algorithm/geometry.hpp"
- 
 #include <iostream>
- 
-// PINOCCHIO_MODEL_DIR is defined by the CMake but you can define your own directory here.
-#ifndef PINOCCHIO_MODEL_DIR
-  #define PINOCCHIO_MODEL_DIR "/home/orthrus/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus"
-#endif
- 
-int main(int argc, char ** argv)
+#include <memory>
+
+struct Share
 {
-  
-  using namespace pinocchio;
- 
-  const std::string model_path =
-    (argc <= 1) ? PINOCCHIO_MODEL_DIR : argv[1];
-  const std::string mesh_dir = (argc <= 1) ? PINOCCHIO_MODEL_DIR : argv[1];
-  const std::string urdf_filename = model_path + "/urdf/orthrus.urdf";
- 
-  // Load the urdf model
-  Model model;
-  
-  pinocchio::urdf::buildModel(urdf_filename, model);
+  int value;
+};
 
-  GeometryModel collision_model;
-  pinocchio::urdf::buildGeom(model, urdf_filename, COLLISION, collision_model, mesh_dir);
-  GeometryModel visual_model;
-  pinocchio::urdf::buildGeom(model, urdf_filename, VISUAL, visual_model, mesh_dir);
-  std::cout << "model name: " << model.name << std::endl;
- 
-  // Create data required by the algorithms
-  Data data(model);
-  GeometryData collision_data(collision_model);
-  GeometryData visual_data(visual_model);
- 
-  // Sample a random configuration
-  Eigen::VectorXd q = randomConfiguration(model);
-  std::cout << "q: " << q.transpose() << std::endl;
- 
-  // Perform the forward kinematics over the kinematic tree
-  forwardKinematics(model, data, q);
- 
-  // Update Geometry models
-  updateGeometryPlacements(model, data, collision_model, collision_data);
-  updateGeometryPlacements(model, data, visual_model, visual_data);
- 
-  // Print out the placement of each joint of the kinematic tree
-  std::cout << "\nJoint placements:" << std::endl;
-  for (JointIndex joint_id = 0; joint_id < (JointIndex)model.njoints; ++joint_id)
-    std::cout << std::setw(24) << std::left << model.names[joint_id] << ": " << std::fixed
-              << std::setprecision(2) << data.oMi[joint_id].translation().transpose() << std::endl;
- 
-  // Print out the placement of each collision geometry object
-  std::cout << "\nCollision object placements:" << std::endl;
-  for (GeomIndex geom_id = 0; geom_id < (GeomIndex)collision_model.ngeoms; ++geom_id)
-    std::cout << geom_id << ": " << std::fixed << std::setprecision(2)
-              << collision_data.oMg[geom_id].translation().transpose() << std::endl;
- 
-  // Print out the placement of each visual geometry object
-  std::cout << "\nVisual object placements:" << std::endl;
-  for (GeomIndex geom_id = 0; geom_id < (GeomIndex)visual_model.ngeoms; ++geom_id)
-    std::cout << geom_id << ": " << std::fixed << std::setprecision(2)
-              << visual_data.oMg[geom_id].translation().transpose() << std::endl;
-              
+class ClassA
+{
+private:
+  std::shared_ptr<Share> share;
+
+public:
+  // 设置Share的shared_ptr
+  void setShare(std::shared_ptr<Share> newShare)
+  {
+    share = newShare;
+  }
+
+  // 读取结构体Share中的值
+  int readValue() const
+  {
+    return share->value;
+  }
+
+  // 写入新的值到结构体Share
+  void writeValue(int newValue)
+  {
+    share->value = newValue;
+  }
+};
+
+class ClassC
+{
+public:
+  void init()
+  {
+    a->setShare(shared);
+  }
+
+  void update(int Value)
+  {
+
+    a->writeValue(Value);
+
+    std::cout << "Value in Share: " << a->readValue() << " " << shared->value << std::endl; // 输出: 42
+  }
+
+  // 在main中创建std::shared_ptr<Share>
+  std::shared_ptr<Share> shared = std::make_shared<Share>();
+
+  // 创建std::shared_ptr<ClassA>
+  std::shared_ptr<ClassA> a = std::make_shared<ClassA>();
+};
+
+int main()
+{
+  ClassC c;
+
+  c.init();
+  c.update(1);
+  c.update(2);
+  c.update(3);
+  c.update(4);
+
+  // 读取Share中的值
+
+  // 由于使用了std::shared_ptr，ClassA和Share的生命周期将自动管理
+  return 0;
 }
-
-  /*
-
-  */
