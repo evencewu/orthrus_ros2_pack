@@ -12,21 +12,48 @@ namespace orthrus_controller
     void LeggedMpc::Update(rclcpp::Time time, rclcpp::Duration duration)
     {
         // 更新pinocchio动力学参数
-        pinocchio_interfaces_->Update(time);
+        
 
         // 直接赋值初始化
-        orthrus_interfaces_->robot_target.target_body_force << 0, 0, 100, 0, 0, 0;
+        GetBodyForcePD();
+        orthrus_interfaces_->robot_target.target_body_force << 0, 0, 200, 0, 0, 0;
+
         std::vector<bool> gait = orthrus_interfaces_->robot_target.gait_sequence[orthrus_interfaces_->robot_target.gait_num];
+
         Eigen::VectorXd foot_force = Body2FootForce(orthrus_interfaces_->robot_target.target_body_force, gait);
 
-        orthrus_interfaces_->odom_state.touch_state[0].touch_force = foot_force.segment<3>(0);
-        orthrus_interfaces_->odom_state.touch_state[1].touch_force = foot_force.segment<3>(3);
-        orthrus_interfaces_->odom_state.touch_state[2].touch_force = foot_force.segment<3>(6);
-        orthrus_interfaces_->odom_state.touch_state[3].touch_force = foot_force.segment<3>(9);
+        //Eigen::Vector3d foot_3d;
+        //foot_3d << 0, 0, 100;
+        foot_force << 0, 0, 100, 0, 0, 100, 0, 0, 100, 0, 0, 100;
 
-        Eigen::VectorXd torq_ = Foot2JointForce();
+        Eigen::Vector3d foot_f;
+        foot_f << 0, 0, 100;
+
+        for (int foot_num; foot_num < 4; foot_num++)
+        {
+            //pinocchio::FrameIndex frame_index = pinocchio_interfaces_->model_.getFrameId(foot_name_[foot_num]);
+            //orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = rotation_matrix.transpose() * foot_3d;
+
+            //swapped_matrix * 
+            //orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation * foot_force.segment<3>(foot_num*3);
+            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation *foot_f;
+        }
+
+        orthrus_interfaces_->robot_cmd.effort = Foot2JointForce();
+
+        // orthrus_interfaces_->robot_cmd.effort[1] = 0;
+        // orthrus_interfaces_->robot_cmd.effort[2] = 0;
+        // orthrus_interfaces_->robot_cmd.effort[4] = 0;
+        // orthrus_interfaces_->robot_cmd.effort[5] = 0;
+        // orthrus_interfaces_->robot_cmd.effort[7] = 0;
+        // orthrus_interfaces_->robot_cmd.effort[8] = 0;
+        // orthrus_interfaces_->robot_cmd.effort[10] = 0;
+        // orthrus_interfaces_->robot_cmd.effort[11] = 0;
+
+        // orthrus_interfaces_->robot_cmd.effort << 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 0, 0;
     }
 
+    // 计算反作用力所需的关节力矩
     Eigen::VectorXd LeggedMpc::Foot2JointForce()
     {
         Eigen::VectorXd gravity_torq = pinocchio_interfaces_->LegGravityCompensation();
@@ -45,7 +72,8 @@ namespace orthrus_controller
             torq.segment<3>(foot_num * 3) = torq_v12.segment<3>(foot_num * 3);
         }
 
-        return torq + gravity_torq;
+        // return torq + gravity_torq;
+        return torq;
     }
 
     Eigen::VectorXd LeggedMpc::Body2FootForce(Eigen::VectorXd body_force, std::vector<bool> gait_touch_sequence)
@@ -100,6 +128,29 @@ namespace orthrus_controller
         return input.inverse();
     }
 
+    void LeggedMpc::GetBodyForcePD()
+    {
+
+        double kp_position = 1;
+        double kd_position = 1;
+        double kp_angular = 1;
+        double kd_angular = 1;
+
+        // error P
+        Eigen::Vector3d error_position = orthrus_interfaces_->robot_target.target_position - orthrus_interfaces_->odom_state.position;
+        Eigen::Vector3d error_angular = orthrus_interfaces_->robot_target.target_euler - orthrus_interfaces_->odom_state.euler;
+
+        // error D
+        Eigen::Vector3d error_velocity = orthrus_interfaces_->robot_target.target_velocity - orthrus_interfaces_->odom_state.velocity;
+        Eigen::Vector3d error_angular_velocity = orthrus_interfaces_->robot_target.target_angular_velocity - orthrus_interfaces_->odom_state.angular_velocity;
+
+        Eigen::Vector3d position = error_position * kp_position - error_velocity * kd_position;
+        Eigen::Vector3d angular = error_angular * kp_angular - error_angular_velocity * kd_angular;
+
+        orthrus_interfaces_->robot_target.target_body_force.segment<3>(0) = position;
+        orthrus_interfaces_->robot_target.target_body_force.segment<3>(3) = angular;
+    }
+
     Eigen::Matrix3d LeggedMpc::VectorToSkewSymmetricMatrix(const Eigen::Vector3d &v)
     {
         Eigen::Matrix3d V;
@@ -118,12 +169,20 @@ namespace orthrus_controller
         return V;
     }
 
-    std::stringstream LeggedMpc::Logger()
+    std::stringstream LeggedMpc::Logger(int log_num)
     {
         std::stringstream ss;
-        ss << body2footforce_mat_ << std::endl;
-        ss << body2footforce_mat_plus_ << std::endl;
+
+        if (log_num = BODY2FOOTFORCE_LOG)
+        {
+            ss << body2footforce_mat_ << std::endl;
+            ss << body2footforce_mat_plus_ << std::endl;
+        }
+        else if (JOINT_EFFOT_LOG)
+        {
+            ss << orthrus_interfaces_->robot_cmd.effort << std::endl;
+        }
+
         return ss;
     }
-
 }

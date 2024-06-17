@@ -222,15 +222,36 @@ namespace orthrus_controller
     orthrus_interfaces_->robot_state.body_imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
     orthrus_interfaces_->robot_state.body_imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
 
-    visualization_->Update(now_time_);
+    //----------------------------------------
+    pinocchio_interfaces_->Update(time);
     legged_odom_->Update(now_time_, duration);
     legged_mpc_->Update(now_time_, duration);
+    visualization_->Update(now_time_);
 
-    // RCLCPP_INFO(get_node()->get_logger(), "%s", legged_mpc_->Logger().str().c_str());
+    std::stringstream ss;
+
+    //test
+    Eigen::Vector3d foot_force;
+    foot_force << 0 ,0 ,100;
+    Eigen::Vector3d foot_test = orthrus_interfaces_->odom_state.touch_state[0].touch_rotation * foot_force;
+    //ss << foot_test << std::endl;
+    ss << orthrus_interfaces_->odom_state.touch_state[0].touch_force << std::endl;
+    ss << orthrus_interfaces_->odom_state.touch_state[0].touch_position << std::endl;
+    ss << orthrus_interfaces_->odom_state.touch_state[0].touch_rotation << std::endl;
+    
+    //for (int foot_num = 0; foot_num < 4; foot_num++)
+    //{
+    //  ss << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.w() << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.x()
+    //     << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.y() << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.z() << std::endl;
+    //  ss << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[0] << " " <<orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[1] << " " << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[2] << std::endl;
+    //}
+    RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
+    
+
+    // RCLCPP_INFO(get_node()->get_logger(), "%s", legged_mpc_->Logger(LeggedMpc::JOINT_EFFOT_LOG).str().c_str());
 
     // Eigen::VectorXd acc = pinocchio_interfaces_->LegGravityCompensation();
 
-    // std::stringstream ss;
     // ss << "acc:" << acc.transpose() << std::endl;
     // RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
 
@@ -239,6 +260,20 @@ namespace orthrus_controller
     // RCLCPP_INFO(logger, "imu: %lf", imu_handles_[0].orientation[0].get().get_value());
 
     // RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interfaces_->Logger().str().c_str());
+    if (orthrus_interfaces_->robot_target.if_enable)
+    {
+      for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
+      {
+        joint_handles_[joint_number].cmd_effort.get().set_value(orthrus_interfaces_->robot_cmd.effort[joint_number]);
+      }
+    }
+    else
+    {
+      for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
+      {
+        joint_handles_[joint_number].cmd_effort.get().set_value(0.0);
+      }
+    }
 
     return controller_interface::return_type::OK;
   }

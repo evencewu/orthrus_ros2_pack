@@ -45,6 +45,7 @@ namespace orthrus_controller
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
         std::vector<std::string> foot_names_ = {"LF_FOOT", "LH_FOOT", "RF_FOOT", "RH_FOOT"};
+        std::vector<std::string> haa_names_ = {"LF_HAA", "LH_HAA", "RF_HAA", "RH_HAA"};
 
         std::vector<std::string> joint_name_;
 

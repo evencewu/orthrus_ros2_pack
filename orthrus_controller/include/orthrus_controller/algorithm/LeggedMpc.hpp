@@ -25,12 +25,18 @@ namespace orthrus_controller
 
         void Update(rclcpp::Time time, rclcpp::Duration duration);
 
-        std::stringstream Logger();
+        std::stringstream Logger(int log_num);
         
         Eigen::VectorXd Foot2JointForce();
 
         Eigen::Matrix3d VectorToSkewSymmetricMatrix(const Eigen::Vector3d &v);
         Eigen::Matrix3d VectorToDiagonalMatrix(const Eigen::Vector3d &v);
+        void GetBodyForcePD();
+
+        //Log
+
+        static const int BODY2FOOTFORCE_LOG = 0;
+        static const int JOINT_EFFOT_LOG = 1;
 
     private:
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
@@ -50,5 +56,7 @@ namespace orthrus_controller
         Eigen::MatrixXd GetMinimumTworamTMat(Eigen::MatrixXd input);
 
         Eigen::MatrixXd GetTMat(Eigen::MatrixXd input);
+
+        
     };
 }

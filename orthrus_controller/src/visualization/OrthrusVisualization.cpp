@@ -39,9 +39,9 @@ namespace orthrus_controller
         tf_stamped.header.frame_id = "odom";
         tf_stamped.child_frame_id = "base";
 
-        tf_stamped.transform.translation.x = 0.0;
-        tf_stamped.transform.translation.y = 0.0;
-        tf_stamped.transform.translation.z = 0.0;
+        tf_stamped.transform.translation.x = orthrus_interfaces_->odom_state.position[0];
+        tf_stamped.transform.translation.y = orthrus_interfaces_->odom_state.position[1];
+        tf_stamped.transform.translation.z = orthrus_interfaces_->odom_state.position[2];
         tf_stamped.transform.rotation.w = orthrus_interfaces_->odom_state.imu.orientation.w();
         tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.imu.orientation.x();
         tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.imu.orientation.y();
@@ -66,6 +66,11 @@ namespace orthrus_controller
             tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.imu.orientation.x();
             tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.imu.orientation.y();
             tf_stamped.transform.rotation.z = orthrus_interfaces_->odom_state.imu.orientation.z();
+
+            //tf_stamped.transform.rotation.w = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.w();
+            //tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.x();
+            //tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.y();
+            //tf_stamped.transform.rotation.z = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.z();
             odom_msg_.transforms.push_back(tf_stamped);
         }
     }
@@ -78,7 +83,7 @@ namespace orthrus_controller
         {
             visualization_msgs::msg::Marker marker;
 
-            marker.header.frame_id = foot_names_[foot_num];
+            marker.header.frame_id = haa_names_[foot_num] + "_link";
             marker.header.stamp = time;
             marker.ns = foot_names_[foot_num];
             marker.id = foot_num;

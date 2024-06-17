@@ -13,12 +13,12 @@ namespace orthrus_controller
 
         if (msg->y == 1)
         {
-            orthrus_interfaces_->robot_target.gait_num = 0;
+            orthrus_interfaces_->robot_target.if_enable = 0;
         }
 
         if (msg->x == 1)
         {
-            orthrus_interfaces_->robot_target.gait_num = 1;
+            orthrus_interfaces_->robot_target.if_enable = 1;
         }
 
         // mtx_.unlock();

@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 500  # Hz
+    update_rate: 200  # Hz
 
     orthrus_controller:
       type: orthrus_controller/OrthrusController

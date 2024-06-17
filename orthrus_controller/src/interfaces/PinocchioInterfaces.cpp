@@ -6,7 +6,7 @@ namespace orthrus_controller
     {
         orthrus_interfaces_ = orthrus_interfaces_ptr;
 
-        //pinocchio::JointModelFreeFlyer root_joint;
+        // pinocchio::JointModelFreeFlyer root_joint;
         pinocchio::urdf::buildModel(urdf_filename_, model_);
 
         pinocchio::urdf::buildGeom(model_, urdf_filename_, pinocchio::COLLISION, collision_model_, mesh_dir_);
@@ -81,10 +81,19 @@ namespace orthrus_controller
     {
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
-            pinocchio::FrameIndex frame_index = model_.getFrameId(foot_name_[foot_num]);
+            pinocchio::FrameIndex frame_index = model_.getFrameId(haa_names_[foot_num]);
             // Get the position of the frame in the world coordinate system
             const pinocchio::SE3 &frame_position = data_.oMf[frame_index];
             orthrus_interfaces_->odom_state.touch_state[foot_num].touch_position = frame_position.translation();
+
+            // 获取关节名称和对应的 ID
+            pinocchio::JointIndex joint_id = model_.getJointId(haa_names_[foot_num]);
+
+            // 获取关节的位姿（在世界坐标系下）
+            const pinocchio::SE3 &joint_placement = data_.oMi[joint_id];
+
+            // Eigen::Quaterniond quaternion(frame_position.rotation());
+            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation = frame_position.rotation() * joint_placement.rotation();
         }
     }
 

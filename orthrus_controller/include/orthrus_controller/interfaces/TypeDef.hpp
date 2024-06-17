@@ -33,6 +33,7 @@ namespace orthrus_controller
     {
         bool sensor;
         Eigen::Vector3d touch_position;
+        Eigen::Matrix3d touch_rotation;
         Eigen::Vector3d touch_force;
 
         TouchState() : sensor(false), touch_position(Eigen::Vector3d::Zero()), touch_force(Eigen::Vector3d::Zero()) {}
