@@ -114,9 +114,9 @@ namespace orthrus_controller
 
         // 足式里程计
 
+        std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
         std::shared_ptr<OrthrusVisualization> visualization_;     // 可视化
         std::shared_ptr<PinocchioInterfaces> pinocchio_interfaces_; // Pinocchio接口
-        std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
         std::shared_ptr<LeggedMpc> legged_mpc_;   // MPC控制器
         std::shared_ptr<LeggedOdom> legged_odom_; // 里程计
         std::shared_ptr<JoyInterface> joy_interface_;

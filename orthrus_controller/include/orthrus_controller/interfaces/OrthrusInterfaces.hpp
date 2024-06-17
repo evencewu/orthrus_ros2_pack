@@ -62,9 +62,8 @@ namespace orthrus_controller
         Eigen::VectorXd effort;
     };
 
-    class OrthrusInterfaces
+    struct OrthrusInterfaces
     {
-    public:
         struct RobotState robot_state;
         struct OdomState odom_state;
         struct RobotTarget robot_target;

@@ -234,7 +234,7 @@ namespace orthrus_controller
     Eigen::Vector3d foot_force;
     foot_force << 0 ,0 ,100;
     Eigen::Vector3d foot_test = orthrus_interfaces_->odom_state.touch_state[0].touch_rotation * foot_force;
-    //ss << foot_test << std::endl;
+    ss << foot_test << std::endl;
     ss << orthrus_interfaces_->odom_state.touch_state[0].touch_force << std::endl;
     ss << orthrus_interfaces_->odom_state.touch_state[0].touch_position << std::endl;
     ss << orthrus_interfaces_->odom_state.touch_state[0].touch_rotation << std::endl;
