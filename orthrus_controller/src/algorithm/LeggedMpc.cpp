@@ -22,35 +22,13 @@ namespace orthrus_controller
 
         Eigen::VectorXd foot_force = Body2FootForce(orthrus_interfaces_->robot_target.target_body_force, gait);
 
-        //Eigen::Vector3d foot_3d;
-        //foot_3d << 0, 0, 100;
-        foot_force << 0, 0, 100, 0, 0, 100, 0, 0, 100, 0, 0, 100;
-
-        Eigen::Vector3d foot_f;
-        foot_f << 0, 0, 100;
-
-        for (int foot_num; foot_num < 4; foot_num++)
+        for (int foot_num = 0; foot_num < 4; foot_num++)
         {
-            //pinocchio::FrameIndex frame_index = pinocchio_interfaces_->model_.getFrameId(foot_name_[foot_num]);
-            //orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = rotation_matrix.transpose() * foot_3d;
-
-            //swapped_matrix * 
-            //orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation * foot_force.segment<3>(foot_num*3);
-            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation *foot_f;
+            pinocchio::FrameIndex frame_index = pinocchio_interfaces_->model_.getFrameId(foot_name_[foot_num]);
+            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.transpose() * foot_force.segment<3>(foot_num*3);
         }
 
         orthrus_interfaces_->robot_cmd.effort = Foot2JointForce();
-
-        // orthrus_interfaces_->robot_cmd.effort[1] = 0;
-        // orthrus_interfaces_->robot_cmd.effort[2] = 0;
-        // orthrus_interfaces_->robot_cmd.effort[4] = 0;
-        // orthrus_interfaces_->robot_cmd.effort[5] = 0;
-        // orthrus_interfaces_->robot_cmd.effort[7] = 0;
-        // orthrus_interfaces_->robot_cmd.effort[8] = 0;
-        // orthrus_interfaces_->robot_cmd.effort[10] = 0;
-        // orthrus_interfaces_->robot_cmd.effort[11] = 0;
-
-        // orthrus_interfaces_->robot_cmd.effort << 10, 0, 0, 10, 0, 0, 10, 0, 0, 10, 0, 0;
     }
 
     // 计算反作用力所需的关节力矩

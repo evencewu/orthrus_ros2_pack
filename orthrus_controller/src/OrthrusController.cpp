@@ -230,23 +230,22 @@ namespace orthrus_controller
 
     std::stringstream ss;
 
-    //test
-    Eigen::Vector3d foot_force;
-    foot_force << 0 ,0 ,100;
-    Eigen::Vector3d foot_test = orthrus_interfaces_->odom_state.touch_state[0].touch_rotation * foot_force;
-    ss << foot_test << std::endl;
+    // test
+    // Eigen::Vector3d foot_force;
+    // foot_force << 0 ,0 ,100;
+    // Eigen::Vector3d foot_test = orthrus_interfaces_->odom_state.touch_state[0].touch_rotation * foot_force;
+    // ss << foot_test << std::endl;
     ss << orthrus_interfaces_->odom_state.touch_state[0].touch_force << std::endl;
-    ss << orthrus_interfaces_->odom_state.touch_state[0].touch_position << std::endl;
+    // ss << orthrus_interfaces_->odom_state.touch_state[0].touch_position << std::endl;
     ss << orthrus_interfaces_->odom_state.touch_state[0].touch_rotation << std::endl;
-    
-    //for (int foot_num = 0; foot_num < 4; foot_num++)
+
+    // for (int foot_num = 0; foot_num < 4; foot_num++)
     //{
-    //  ss << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.w() << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.x()
-    //     << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.y() << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.z() << std::endl;
-    //  ss << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[0] << " " <<orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[1] << " " << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[2] << std::endl;
-    //}
+    //   ss << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.w() << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.x()
+    //      << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.y() << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.z() << std::endl;
+    //   ss << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[0] << " " <<orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[1] << " " << orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[2] << std::endl;
+    // }
     RCLCPP_INFO(get_node()->get_logger(), "%s", ss.str().c_str());
-    
 
     // RCLCPP_INFO(get_node()->get_logger(), "%s", legged_mpc_->Logger(LeggedMpc::JOINT_EFFOT_LOG).str().c_str());
 

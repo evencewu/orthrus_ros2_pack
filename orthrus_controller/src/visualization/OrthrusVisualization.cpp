@@ -83,7 +83,7 @@ namespace orthrus_controller
         {
             visualization_msgs::msg::Marker marker;
 
-            marker.header.frame_id = haa_names_[foot_num] + "_link";
+            marker.header.frame_id = foot_names_[foot_num] + "_link";
             marker.header.stamp = time;
             marker.ns = foot_names_[foot_num];
             marker.id = foot_num;
