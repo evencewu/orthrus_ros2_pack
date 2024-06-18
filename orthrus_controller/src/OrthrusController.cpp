@@ -230,14 +230,17 @@ namespace orthrus_controller
 
     std::stringstream ss;
 
+    ss << "\n"<< pinocchio_interfaces_->GetJacobianMatrix("RH_FOOT_link") << std::endl;
+    //pinocchio_interfaces_->GetJacobianMatrix("RH_FOOT");
+    //ss <<orthrus_interfaces_->robot_cmd.effort<< std::endl;
     // test
     // Eigen::Vector3d foot_force;
     // foot_force << 0 ,0 ,100;
     // Eigen::Vector3d foot_test = orthrus_interfaces_->odom_state.touch_state[0].touch_rotation * foot_force;
     // ss << foot_test << std::endl;
-    ss << orthrus_interfaces_->odom_state.touch_state[0].touch_force << std::endl;
+    //ss << orthrus_interfaces_->odom_state.touch_state[0].touch_force << std::endl;
     // ss << orthrus_interfaces_->odom_state.touch_state[0].touch_position << std::endl;
-    ss << orthrus_interfaces_->odom_state.touch_state[0].touch_rotation << std::endl;
+    //ss << orthrus_interfaces_->odom_state.touch_state[0].touch_rotation << std::endl;
 
     // for (int foot_num = 0; foot_num < 4; foot_num++)
     //{

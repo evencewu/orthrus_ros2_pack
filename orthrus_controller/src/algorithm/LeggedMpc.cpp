@@ -12,7 +12,6 @@ namespace orthrus_controller
     void LeggedMpc::Update(rclcpp::Time time, rclcpp::Duration duration)
     {
         // 更新pinocchio动力学参数
-        
 
         // 直接赋值初始化
         GetBodyForcePD();
@@ -25,7 +24,7 @@ namespace orthrus_controller
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
             pinocchio::FrameIndex frame_index = pinocchio_interfaces_->model_.getFrameId(foot_name_[foot_num]);
-            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.transpose() * foot_force.segment<3>(foot_num*3);
+            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.transpose() * (-foot_force.segment<3>(foot_num*3));
         }
 
         orthrus_interfaces_->robot_cmd.effort = Foot2JointForce();

@@ -90,7 +90,7 @@ namespace orthrus_controller
             const pinocchio::SE3 &base_position = data_.oMf[frame_index];
 
             // Eigen::Quaterniond quaternion(frame_position.rotation());
-            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation =  frame_position.rotation();
+            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation = frame_position.rotation();
         }
     }
 
@@ -100,7 +100,8 @@ namespace orthrus_controller
         //  计算雅可比矩阵
         Eigen::MatrixXd J(6, model_.nv); // model_.nv nq
 
-        J = computeJointJacobians(model_, data_, joint_);
+        pinocchio::computeJointJacobians(model_, data_, joint_);
+        pinocchio::getFrameJacobian(model_, data_, frame_id,pinocchio::LOCAL, J);
 
         return J;
     }
