@@ -39,8 +39,6 @@ namespace orthrus_controller
         TouchState() : sensor(false), touch_position(Eigen::Vector3d::Zero()), touch_force(Eigen::Vector3d::Zero()) {}
     };
 
-
-
     //struct GaitSequence
     //{
     //    std::vector<std::vector<bool>> vec = {1,0,0,1};

@@ -48,6 +48,7 @@ namespace orthrus_controller
         Eigen::MatrixXd GetJacobianMatrix(std::string frame_name);
 
         std::stringstream Logger();
+        void GetLagrange();
 
         pinocchio::Model model_;
 
@@ -65,9 +66,7 @@ namespace orthrus_controller
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
 
         std::vector<std::string> foot_name_ = {"LF_FOOT","LH_FOOT","RF_FOOT","RH_FOOT"};
-        std::vector<std::string> kfe_name_ = {"LF_KFE","LH_KFE","RF_KFE","RH_KFE"};
-        std::vector<std::string> haa_names_ = {"LF_HAA", "LH_HAA", "RF_HAA", "RH_HAA"};
-        
+
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
         std::string model_path_ = "/home/orthrus/orthrus/src/orthrus_ros2_pack/orthrus_interfaces/models/orthrus";

@@ -7,7 +7,9 @@ namespace orthrus_controller
         orthrus_interfaces_ = orthrus_interfaces_ptr;
 
         // pinocchio::JointModelFreeFlyer root_joint;
-        pinocchio::urdf::buildModel(urdf_filename_, model_);
+        //pinocchio::urdf::buildModel(urdf_filename_, model_);
+
+        pinocchio::urdf::buildModel(urdf_filename_,pinocchio::JointModelFreeFlyer(), model_);
 
         pinocchio::urdf::buildGeom(model_, urdf_filename_, pinocchio::COLLISION, collision_model_, mesh_dir_);
         pinocchio::urdf::buildGeom(model_, urdf_filename_, pinocchio::VISUAL, visual_model_, mesh_dir_);
@@ -18,6 +20,8 @@ namespace orthrus_controller
         // Sample a random configuration
         data_ = pinocchio::Data(model_);
         joint_ = pinocchio::neutral(model_);
+
+        model_.jointPlacements[1] = pinocchio::SE3::Identity();
 
         // Perform the forward kinematics over the kinematic tree
         pinocchio::forwardKinematics(model_, data_, joint_);
@@ -31,7 +35,13 @@ namespace orthrus_controller
 
     void PinocchioInterfaces::Update(rclcpp::Time time)
     {
-        joint_ = Eigen::VectorXd::Map(orthrus_interfaces_->robot_state.joint.position.data(), orthrus_interfaces_->robot_state.joint.position.size());
+        joint_[3] = orthrus_interfaces_->odom_state.imu.orientation.x();
+        joint_[4] = orthrus_interfaces_->odom_state.imu.orientation.y();
+        joint_[5] = orthrus_interfaces_->odom_state.imu.orientation.z();
+        joint_[6] = orthrus_interfaces_->odom_state.imu.orientation.w();
+        joint_.segment<12>(6) = Eigen::VectorXd::Map(orthrus_interfaces_->robot_state.joint.position.data(), orthrus_interfaces_->robot_state.joint.position.size());
+
+        //joint_ = Eigen::VectorXd::Zero(13);
         // 执行正向运动学
         pinocchio::forwardKinematics(model_, data_, joint_);
         pinocchio::framesForwardKinematics(model_, data_, joint_);
@@ -41,6 +51,9 @@ namespace orthrus_controller
 
         pinocchio::updateGeometryPlacements(model_, data_, collision_model_, collision_data_);
         pinocchio::updateGeometryPlacements(model_, data_, visual_model_, visual_data_);
+        
+        //雅可比矩阵计算
+        pinocchio::computeJointJacobians(model_, data_, joint_);
 
         FootPositionCalculation();
 
@@ -69,9 +82,14 @@ namespace orthrus_controller
             ss << "  Frame type: " << frame.type << std::endl;
         }
 
-        for (int joint_id = 1; joint_id < 12; joint_id++)
+        for (int joint_id = 1; joint_id < 14; joint_id++)
         {
-            ss << model_.names[joint_id] << " " << joint_[joint_id] << std::endl;
+            ss << joint_id << " "<< model_.names[joint_id] << std::endl;
+        }
+
+        for (int joint_id = 0; joint_id < 19; joint_id++)
+        {
+        ss << joint_id << " "<< joint_[joint_id] << std::endl;
         }
 
         return ss;
@@ -100,8 +118,8 @@ namespace orthrus_controller
         //  计算雅可比矩阵
         Eigen::MatrixXd J(6, model_.nv); // model_.nv nq
 
-        pinocchio::computeJointJacobians(model_, data_, joint_);
-        pinocchio::getFrameJacobian(model_, data_, frame_id,pinocchio::LOCAL, J);
+        
+        pinocchio::getFrameJacobian(model_, data_, frame_id, pinocchio::LOCAL, J);
 
         return J;
     }
@@ -117,5 +135,18 @@ namespace orthrus_controller
         Eigen::VectorXd tau = pinocchio::rnea(model_, data_, joint_, v, a);
 
         return tau;
+    }
+
+    void PinocchioInterfaces::GetLagrange()
+    {
+        // 定义机器人的配置（关节角度），速度和加速度
+        Eigen::VectorXd v = Eigen::VectorXd::Zero(model_.nv); // 速度为零
+        // Eigen::VectorXd tau = Eigen::VectorXd::Zero(model_.nv); // 定义关节力矩
+        Eigen::VectorXd a = Eigen::VectorXd::Zero(model_.nv); // 关节加速度
+        // tau[0] = 1.0;                                          // 假设第一个关节力矩为1
+        Eigen::VectorXd tau = Eigen::VectorXd::Zero(6);
+
+        //Eigen::Matrix<double, Eigen::Dynamic, 1> force;
+        //force = pinocchio::rnea(model_, data_, joint_, v, a,tau);
     }
 }
