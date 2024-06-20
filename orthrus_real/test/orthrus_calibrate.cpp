@@ -105,7 +105,6 @@ void sigint_handler(int sig)
 
 void safe_stop()
 {
-    Ethercat.packet_tx[0].LED = 0;
     Ethercat.EcatSyncMsg();
     printf("stop motor!");
 }

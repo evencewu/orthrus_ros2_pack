@@ -25,8 +25,13 @@ namespace orthrus_controller
 
     struct OdomState
     {
+        double dt;
+
+        Eigen::Vector3d acceleration = Eigen::Vector3d::Zero();
         Eigen::Vector3d position = Eigen::Vector3d::Zero();
         Eigen::Vector3d velocity = Eigen::Vector3d::Zero();
+
+        Eigen::Vector3d gravity;
 
         // 欧拉角
         Eigen::Vector3d euler;
@@ -36,6 +41,12 @@ namespace orthrus_controller
         ImuState imu_last;
 
         TouchState touch_state[4];
+
+        OdomState()
+        {
+            dt = 0.0;
+            gravity << 0, 0, -9.8;
+        }
     };
 
     struct RobotTarget

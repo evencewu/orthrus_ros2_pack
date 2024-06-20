@@ -16,12 +16,14 @@ namespace orthrus_controller
         orthrus_interfaces_->odom_state.imu = orthrus_interfaces_->robot_state.body_imu;
         orthrus_interfaces_->odom_state.euler = Quaternion2Euler(orthrus_interfaces_->odom_state.imu.orientation);
 
-        double dt = duration.seconds();
+        orthrus_interfaces_->odom_state.dt = (double)(duration.nanoseconds()) / 1000000000;
 
-        Eigen::Vector3d world_acc = orthrus_interfaces_->odom_state.imu.orientation * orthrus_interfaces_->odom_state.imu.linear_acceleration;
-        
+        double dt = orthrus_interfaces_->odom_state.dt;
+
+        orthrus_interfaces_->odom_state.acceleration = orthrus_interfaces_->odom_state.imu.orientation * orthrus_interfaces_->odom_state.imu.linear_acceleration + orthrus_interfaces_->odom_state.gravity;
+
         // 积分得到速度
-        orthrus_interfaces_->odom_state.velocity += world_acc * dt;
+        orthrus_interfaces_->odom_state.velocity += orthrus_interfaces_->odom_state.acceleration * dt;
 
         // 积分得到位置
         orthrus_interfaces_->odom_state.position += orthrus_interfaces_->odom_state.velocity * dt;

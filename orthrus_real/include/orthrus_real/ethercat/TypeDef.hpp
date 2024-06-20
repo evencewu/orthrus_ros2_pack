@@ -46,7 +46,7 @@ namespace orthrus_real
 
     typedef struct Ecat_Outputs_Pack
     {
-        uint8_t LED;
+        uint8_t power;
         uint8_t null;
         struct can_pack can;
 

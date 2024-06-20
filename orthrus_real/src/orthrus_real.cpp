@@ -21,7 +21,7 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::Init()
   {
-    char phy[] = "enp5s0";
+    char phy[] = "enp2s0";
 
     RCLCPP_INFO(this->get_logger(), "wl_driver启动,网口%s\n", phy);
 
@@ -48,7 +48,11 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::MainLoop()
   {
-    SetLED(1000);
+    //SetLED(1000);
+
+    Ethercat.packet_tx[0].power = 0x01;
+    Ethercat.packet_tx[1].power = 0x01;
+
     SetLeg();
 
     Ethercat.EcatSyncMsg();
@@ -58,7 +62,7 @@ namespace orthrus_real
 
     ImuTfPub();
 
-    Log(LOG_FLAG);
+    //Log(LOG_FLAG);
   }
 
   void OrthrusInterfacesNode::Log(int flag)
@@ -93,26 +97,6 @@ namespace orthrus_real
       //             leg[2].imu.euler_(YAW), leg[2].imu.euler_(PITCH), leg[2].imu.euler_(ROLL),
       //             leg[3].imu.euler_(YAW), leg[3].imu.euler_(PITCH), leg[3].imu.euler_(ROLL));
       // RCLCPP_INFO(this->get_logger(), "=================");
-    }
-  }
-
-  void OrthrusInterfacesNode::SetLED(int frequency_division)
-  {
-    if (led_flag_ < frequency_division / 2)
-    {
-      Ethercat.packet_tx[0].LED = 0x02;
-      Ethercat.packet_tx[1].LED = 0x02;
-      led_flag_++;
-    }
-    else if (led_flag_ < frequency_division)
-    {
-      Ethercat.packet_tx[0].LED = 0x05;
-      Ethercat.packet_tx[1].LED = 0x05;
-      led_flag_++;
-    }
-    else
-    {
-      led_flag_ = 0;
     }
   }
 
