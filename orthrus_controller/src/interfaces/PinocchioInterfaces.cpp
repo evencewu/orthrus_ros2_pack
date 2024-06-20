@@ -7,9 +7,9 @@ namespace orthrus_controller
         orthrus_interfaces_ = orthrus_interfaces_ptr;
 
         // pinocchio::JointModelFreeFlyer root_joint;
-        pinocchio::urdf::buildModel(urdf_filename_, model_);
+        //pinocchio::urdf::buildModel(urdf_filename_, model_);
 
-        //pinocchio::urdf::buildModel(urdf_filename_,pinocchio::JointModelFreeFlyer(), model_);
+        pinocchio::urdf::buildModel(urdf_filename_,pinocchio::JointModelFreeFlyer(), model_);
 
         pinocchio::urdf::buildGeom(model_, urdf_filename_, pinocchio::COLLISION, collision_model_, mesh_dir_);
         pinocchio::urdf::buildGeom(model_, urdf_filename_, pinocchio::VISUAL, visual_model_, mesh_dir_);
@@ -39,9 +39,9 @@ namespace orthrus_controller
         //joint_[4] = orthrus_interfaces_->odom_state.imu.orientation.y();
         //joint_[5] = orthrus_interfaces_->odom_state.imu.orientation.z();
         //joint_[6] = orthrus_interfaces_->odom_state.imu.orientation.w();
-        //joint_.segment<12>(6) = Eigen::VectorXd::Map(orthrus_interfaces_->robot_state.joint.position.data(), orthrus_interfaces_->robot_state.joint.position.size());
+        joint_.segment<12>(7) = Eigen::VectorXd::Map(orthrus_interfaces_->robot_state.joint.position.data(), orthrus_interfaces_->robot_state.joint.position.size());
 
-        joint_ = Eigen::VectorXd::Map(orthrus_interfaces_->robot_state.joint.position.data(), orthrus_interfaces_->robot_state.joint.position.size());
+        //joint_ = Eigen::VectorXd::Map(orthrus_interfaces_->robot_state.joint.position.data(), orthrus_interfaces_->robot_state.joint.position.size());
 
         //joint_ = Eigen::VectorXd::Zero(13);
         // 执行正向运动学
@@ -84,7 +84,7 @@ namespace orthrus_controller
             ss << "  Frame type: " << frame.type << std::endl;
         }
 
-        /*
+        
         for (int joint_id = 1; joint_id < 14; joint_id++)
         {
             ss << joint_id << " "<< model_.names[joint_id] << std::endl;
@@ -94,7 +94,6 @@ namespace orthrus_controller
         {
         ss << joint_id << " "<< joint_[joint_id] << std::endl;
         }
-        */
 
         return ss;
     }
@@ -110,9 +109,10 @@ namespace orthrus_controller
 
             pinocchio::FrameIndex base_index = model_.getFrameId("base");
             const pinocchio::SE3 &base_position = data_.oMf[frame_index];
+            //base_position.rotation()
 
             // Eigen::Quaterniond quaternion(frame_position.rotation());
-            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation = frame_position.rotation();
+            orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation =  frame_position.rotation();
         }
     }
 
@@ -122,7 +122,6 @@ namespace orthrus_controller
         //  计算雅可比矩阵
         Eigen::MatrixXd J(6, model_.nv); // model_.nv nq
 
-        
         pinocchio::getFrameJacobian(model_, data_, frame_id, pinocchio::LOCAL, J);
 
         return J;

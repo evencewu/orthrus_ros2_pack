@@ -21,10 +21,13 @@ namespace orthrus_controller
 
         Eigen::VectorXd foot_force = Body2FootForce(orthrus_interfaces_->robot_target.target_body_force, gait);
 
+        //Eigen::Vector3d foot_f;
+        //foot_f << 0, 0, -100;
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
             pinocchio::FrameIndex frame_index = pinocchio_interfaces_->model_.getFrameId(foot_name_[foot_num]);
             orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.transpose() * (-foot_force.segment<3>(foot_num*3));
+            //orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.transpose() * foot_f;
         }
 
         orthrus_interfaces_->robot_cmd.effort = Foot2JointForce();
@@ -43,7 +46,7 @@ namespace orthrus_controller
             pos.setZero(); // 可选的初始化为零向量
             pos.segment<3>(0) = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force;
 
-            Eigen::MatrixXd j = pinocchio_interfaces_->GetJacobianMatrix(foot_name_[foot_num]);
+            Eigen::MatrixXd j = pinocchio_interfaces_->GetJacobianMatrix(foot_name_[foot_num]).block(0,6,6,12);
             torq_v12 = j.transpose() * pos;
 
             torq.segment<3>(foot_num * 3) = torq_v12.segment<3>(foot_num * 3);

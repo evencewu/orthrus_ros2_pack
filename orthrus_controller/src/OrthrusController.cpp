@@ -224,24 +224,35 @@ namespace orthrus_controller
 
     //----------------------------------------
     legged_odom_->Update(now_time_, duration);
-    
+
     pinocchio_interfaces_->Update(time);
     legged_mpc_->Update(now_time_, duration);
     visualization_->Update(now_time_);
 
     std::stringstream ss;
 
-    //ss << "\n"<< pinocchio_interfaces_->GetJacobianMatrix("RH_FOOT_link") << std::endl;
-    //pinocchio_interfaces_->GetJacobianMatrix("RH_FOOT");
-    //ss <<orthrus_interfaces_->robot_cmd.effort<< std::endl;
-    // test
-    // Eigen::Vector3d foot_force;
-    // foot_force << 0 ,0 ,100;
-    // Eigen::Vector3d foot_test = orthrus_interfaces_->odom_state.touch_state[0].touch_rotation * foot_force;
-    // ss << foot_test << std::endl;
-    //ss << orthrus_interfaces_->odom_state.touch_state[0].touch_force << std::endl;
-    // ss << orthrus_interfaces_->odom_state.touch_state[0].touch_position << std::endl;
-    //ss << orthrus_interfaces_->odom_state.touch_state[0].touch_rotation << std::endl;
+    //for (int joint_id = 0; joint_id < 19; joint_id++)
+    //{
+    //  ss << joint_id << " " << pinocchio_interfaces_->joint_[joint_id] << std::endl;
+    //}
+
+    //ss << pinocchio_interfaces_->GetJacobianMatrix("base").segment<6,12>(6,0) << std::endl;
+    //ss << "\n" <<pinocchio_interfaces_->GetJacobianMatrix("base").block(0,6,6,12) << std::endl;
+
+    // pinocchio::FrameIndex frame_index = pinocchio_interfaces_->model_.getFrameId("base");
+    // const pinocchio::SE3 &frame_position = pinocchio_interfaces_->data_.oMf[frame_index];
+
+    // ss << frame_position.rotation() << std::endl;
+
+    // ss <<orthrus_interfaces_->robot_cmd.effort<< std::endl;
+    //  test
+    //  Eigen::Vector3d foot_force;
+    //  foot_force << 0 ,0 ,100;
+    //  Eigen::Vector3d foot_test = orthrus_interfaces_->odom_state.touch_state[0].touch_rotation * foot_force;
+    //  ss << foot_test << std::endl;
+    // ss << orthrus_interfaces_->odom_state.touch_state[0].touch_force << std::endl;
+    //  ss << orthrus_interfaces_->odom_state.touch_state[0].touch_position << std::endl;
+    // ss << orthrus_interfaces_->odom_state.touch_state[0].touch_rotation << std::endl;
 
     // for (int foot_num = 0; foot_num < 4; foot_num++)
     //{

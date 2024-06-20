@@ -31,6 +31,7 @@ namespace orthrus_controller
 
         Eigen::Matrix3d VectorToSkewSymmetricMatrix(const Eigen::Vector3d &v);
         Eigen::Matrix3d VectorToDiagonalMatrix(const Eigen::Vector3d &v);
+        
         void GetBodyForcePD();
 
         //Log
