@@ -62,7 +62,7 @@ namespace orthrus_real
 
     ImuTfPub();
 
-    //Log(LOG_FLAG);
+    Log(LOG_FLAG);
   }
 
   void OrthrusInterfacesNode::Log(int flag)
