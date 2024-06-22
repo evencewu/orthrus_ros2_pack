@@ -48,7 +48,7 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::MainLoop()
   {
-    //SetLED(1000);
+    // SetLED(1000);
 
     Ethercat.packet_tx[0].power = 0x01;
     Ethercat.packet_tx[1].power = 0x01;
@@ -77,7 +77,7 @@ namespace orthrus_real
       // RCLCPP_INFO(this->get_logger(), "imu %lf %lf %lf %lf", body_imu.standard_gyro_.w(), body_imu.standard_gyro_.x(), body_imu.standard_gyro_.y(), body_imu.standard_gyro_.z());
       // RCLCPP_INFO(this->get_logger(), "=================");
 
-      RCLCPP_INFO(this->get_logger(), "=================");
+      // RCLCPP_INFO(this->get_logger(), "=================");
       RCLCPP_INFO(this->get_logger(), "\n motor1 %lf %lf %lf %lf \n motor2 %lf %lf %lf %lf ",
                   body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL),
                   body_imu.euler_(PITCH) - leg[1].imu.euler_(ROLL),
@@ -87,7 +87,14 @@ namespace orthrus_real
                   body_imu.euler_(ROLL) - leg[1].imu.euler_(PITCH),
                   body_imu.euler_(ROLL) - leg[2].imu.euler_(PITCH),
                   body_imu.euler_(ROLL) - leg[3].imu.euler_(PITCH));
-      RCLCPP_INFO(this->get_logger(), "\n motor0 %lf %lf %lf %lf", leg[0].motor[0].Pos_, leg[1].motor[0].Pos_, leg[2].motor[0].Pos_, leg[3].motor[0].Pos_);
+
+      //RCLCPP_INFO(this->get_logger(), "%d" ,Ethercat.packet_rx[0].can.StdId);
+
+      RCLCPP_INFO(this->get_logger(), " motor0 %lf %lf %lf %lf", leg[0].motor[0].Pos_, leg[1].motor[0].Pos_, leg[2].motor[0].Pos_, leg[3].motor[0].Pos_);
+      RCLCPP_INFO(this->get_logger(), " motor1 %lf %lf %lf %lf", leg[0].motor[1].Pos_, leg[1].motor[1].Pos_, leg[2].motor[1].Pos_, leg[3].motor[1].Pos_);
+      RCLCPP_INFO(this->get_logger(), " motor2 %lf %lf %lf %lf", leg[0].motor[2].Pos_, leg[1].motor[2].Pos_, leg[2].motor[2].Pos_, leg[3].motor[2].Pos_);
+
+      // RCLCPP_INFO(Ethercat.packet_tx[0].)
       RCLCPP_INFO(this->get_logger(), "=================");
 
       // RCLCPP_INFO(this->get_logger(), "=================");
@@ -121,11 +128,11 @@ namespace orthrus_real
 
   void OrthrusInterfacesNode::AnalyzeAll()
   {
-    leg[0].Analyze(&Ethercat.packet_rx[0]);
-    leg[1].Analyze(&Ethercat.packet_rx[0]);
-    leg[2].Analyze(&Ethercat.packet_rx[1]);
-    leg[3].Analyze(&Ethercat.packet_rx[1]);
-    body_imu.Analyze(&Ethercat.packet_rx[1]);
+    leg[0].Analyze(&Ethercat.packet_rx[1]);
+    leg[1].Analyze(&Ethercat.packet_rx[1]);
+    leg[2].Analyze(&Ethercat.packet_rx[0]);
+    leg[3].Analyze(&Ethercat.packet_rx[0]);
+    body_imu.Analyze(&Ethercat.packet_rx[0]);
   }
 
   void OrthrusInterfacesNode::LegPositionCalibrate()
