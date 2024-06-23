@@ -41,7 +41,7 @@ def get_orthrus_gazebo_sim(package, executable):
 
 foxglove = ExecuteProcess(
     cmd=['ros2', 'launch', 'foxglove_bridge', 'foxglove_bridge_launch.xml', 'use_compression:=true'],
-    output='screen'
+    output='log'
 )
 
 #from launch_xml.launch_description_sources import XMLLaunchDescriptionSource

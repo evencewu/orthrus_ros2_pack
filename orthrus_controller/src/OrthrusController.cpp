@@ -22,6 +22,7 @@ namespace orthrus_controller
 
   controller_interface::CallbackReturn OrthrusController::on_init()
   {
+    auto logger = get_node()->get_logger();
     RCLCPP_INFO(get_node()->get_logger(), "Loading orthrus controller...");
     try
     {
@@ -36,18 +37,21 @@ namespace orthrus_controller
     }
 
     // class
-    RCLCPP_INFO(get_node()->get_logger(), "Loading orthrus_interface");
+    RCLCPP_INFO(logger, "Loading orthrus_interface");
     orthrus_interfaces_ = std::make_shared<OrthrusInterfaces>();
-    RCLCPP_INFO(get_node()->get_logger(), "Loading visualization");
+    RCLCPP_INFO(logger, "Loading visualization");
     visualization_ = std::make_shared<OrthrusVisualization>(get_node(), params_.leg_joint_names);
-    RCLCPP_INFO(get_node()->get_logger(), "Loading pinocchio_interface");
+    RCLCPP_INFO(logger, "Loading pinocchio_interface");
     pinocchio_interfaces_ = std::make_shared<PinocchioInterfaces>(get_node());
-    RCLCPP_INFO(get_node()->get_logger(), "Loading legged_odom");
+    RCLCPP_INFO(logger, "Loading legged_odom");
     legged_odom_ = std::make_shared<LeggedOdom>(get_node());
-    RCLCPP_INFO(get_node()->get_logger(), "Loading joy_interface");
+    RCLCPP_INFO(logger, "Loading joy_interface");
     joy_interface_ = std::make_shared<JoyInterface>(get_node());
-    RCLCPP_INFO(get_node()->get_logger(), "Loading legged_mpc");
+    RCLCPP_INFO(logger, "Loading legged_mpc");
     legged_mpc_ = std::make_shared<LeggedMpc>(get_node());
+
+    params_.package_path = ament_index_cpp::get_package_share_directory(params_.package_name);
+    RCLCPP_INFO(logger, "finish [%s]-path: %s", params_.package_name, params_.package_path);
 
     return controller_interface::CallbackReturn::SUCCESS;
   }
@@ -108,7 +112,7 @@ namespace orthrus_controller
     }
 
     RCLCPP_INFO(logger, "Init pinocchio_interfaces");
-    pinocchio_interfaces_->Init(orthrus_interfaces_);
+    pinocchio_interfaces_->Init(orthrus_interfaces_, params_.package_path);
     RCLCPP_INFO(logger, "Init visualization");
     visualization_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init legged_odom");
@@ -232,13 +236,13 @@ namespace orthrus_controller
 
     ss << orthrus_interfaces_->odom_state.acceleration << std::endl;
 
-    //for (int joint_id = 0; joint_id < 19; joint_id++)
+    // for (int joint_id = 0; joint_id < 19; joint_id++)
     //{
-    //  ss << joint_id << " " << pinocchio_interfaces_->joint_[joint_id] << std::endl;
-    //}
+    //   ss << joint_id << " " << pinocchio_interfaces_->joint_[joint_id] << std::endl;
+    // }
 
-    //ss << pinocchio_interfaces_->GetJacobianMatrix("base").segment<6,12>(6,0) << std::endl;
-    //ss << "\n" <<pinocchio_interfaces_->GetJacobianMatrix("base").block(0,6,6,12) << std::endl;
+    // ss << pinocchio_interfaces_->GetJacobianMatrix("base").segment<6,12>(6,0) << std::endl;
+    // ss << "\n" <<pinocchio_interfaces_->GetJacobianMatrix("base").block(0,6,6,12) << std::endl;
 
     // pinocchio::FrameIndex frame_index = pinocchio_interfaces_->model_.getFrameId("base");
     // const pinocchio::SE3 &frame_position = pinocchio_interfaces_->data_.oMf[frame_index];
@@ -275,7 +279,7 @@ namespace orthrus_controller
     // RCLCPP_INFO(logger, "imu: %lf", imu_handles_[0].orientation[0].get().get_value());
 
     // RCLCPP_INFO(get_node()->get_logger(), "JOINT\n%s", pinocchio_interfaces_->Logger().str().c_str());
-    
+
     if (orthrus_interfaces_->robot_target.if_enable)
     {
       for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)

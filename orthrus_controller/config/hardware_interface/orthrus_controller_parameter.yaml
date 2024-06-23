@@ -1,4 +1,5 @@
 orthrus_controller:
+  
   leg_joint_num:
     {
       type: int,
@@ -25,6 +26,7 @@ orthrus_controller:
         ],
       description: "Joint name of legged robot",
     }
+
   imu_names:
     {
       type: string_array,
@@ -50,31 +52,17 @@ orthrus_controller:
       description: "imu data type name of robot",
     }
 
-  wheels_separation:
+  package_name:
     {
-      type: double,
-      default_value: 0.0,
-      description: "Shortest distance between the left and right wheels. If this parameter is wrong, the robot will not behave correctly in curves.",
+      type: string,
+      default_value: "orthrus_interfaces",
+      description: "Package name",
     }
-  wheel_radius:
+
+  package_path:
     {
-      type: double,
-      default_value: 0.0,
-      description: "Radius of a wheel, used for transformation of linear velocity into wheel rotations. If this parameter is wrong the robot will move faster or slower then expected.",
+      type: string,
+      default_value: "/home/evence/ros2_ws/src/orthrus_ros2_pack/orthrus_interfaces",
+      description: "Path to package name",
     }
-  linear:
-    x:
-      velocity_clamp:
-        {
-          type: double,
-          default_value: .NAN,
-          description: "Velocity clamp. Symmetrical in both positive and negative direction.",
-        }
-  angular:
-    z:
-      velocity_clamp:
-        {
-          type: double,
-          default_value: .NAN,
-          description: "Velocity clamp. Symmetrical in both positive and negative direction.",
-        }
+
