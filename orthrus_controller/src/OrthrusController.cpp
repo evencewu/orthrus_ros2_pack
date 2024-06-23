@@ -51,7 +51,7 @@ namespace orthrus_controller
     legged_mpc_ = std::make_shared<LeggedMpc>(get_node());
 
     params_.package_path = ament_index_cpp::get_package_share_directory(params_.package_name);
-    RCLCPP_INFO(logger, "finish [%s]-path: %s", params_.package_name, params_.package_path);
+    RCLCPP_INFO(logger, "finish [%s]-path: %s", params_.package_name.c_str(), params_.package_path.c_str());
 
     return controller_interface::CallbackReturn::SUCCESS;
   }

@@ -3,7 +3,7 @@
   xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:property name="meshes_folder" value="file:///$(find orthrus_interfaces)/models/orthrus/meshes" />
-  <xacro:property name="orthrus_config_path" value="$(find orthrus_gazebo)/config/orthrus.yaml" />
+  <xacro:property name="orthrus_config_path" value="file:///$(find orthrus_gazebo)/config/orthrus.yaml" />
 
   <xacro:include filename="orthrus_base.xacro"/>
 
@@ -75,7 +75,7 @@
   </ros2_control>
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
-      <parameters><xacro:property name="orthrus_config_path" value="$(find orthrus_gazebo)/config/orthrus.yaml" /></parameters>
+      <parameters>$(find orthrus_gazebo)/config/orthrus.yaml</parameters>
     </plugin>
   </gazebo>
 </robot>

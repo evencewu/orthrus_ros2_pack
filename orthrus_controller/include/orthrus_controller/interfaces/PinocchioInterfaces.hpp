@@ -23,8 +23,6 @@
 #include <pinocchio/algorithm/rnea.hpp>
 #include <pinocchio/algorithm/aba.hpp>
 
-#include "orthrus_controller_parameters.hpp"
-
 #include <Eigen/Dense>
 
 namespace orthrus_controller
@@ -38,7 +36,8 @@ namespace orthrus_controller
             node_ = node;
         }
 
-        void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr, std::string path_name);
+        void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr,
+                                   std::string path_name);
         
         void Update(rclcpp::Time time);
 
@@ -71,10 +70,7 @@ namespace orthrus_controller
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
-        //std::string package_name = "your_package_name";
-        //std::string package_path = ament_index_cpp::get_package_share_directory(package_name);
-
-        std::string mesh_dir_ = "/models/orthrus/meshes";
+        std::string mesh_filename_ = "/models/orthrus/meshes";
         std::string urdf_filename_ = "/models/orthrus/urdf/orthrus.urdf";
     };
 }
