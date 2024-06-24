@@ -1,6 +1,6 @@
-#include "orthrus_real/orthrus_leg.hpp"
+#include "orthrus_ethercat/assembly/Leg.hpp"
 
-namespace orthrus_real
+namespace orthrus_ethercat
 {
     void Leg::Analyze(Ecat_Inputs_Pack *pack)
     {

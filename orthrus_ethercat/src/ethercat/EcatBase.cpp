@@ -1,8 +1,8 @@
-#include "orthrus_real/ethercat/ecat_base.hpp"
+#include "orthrus_ethercat/ethercat/EcatBase.hpp"
 
 #include <unistd.h>
 
-namespace orthrus_real
+namespace orthrus_ethercat
 {
     EcatBase::EcatBase(int _slave_num)
     {

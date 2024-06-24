@@ -16,6 +16,8 @@
   <depend>rclcpp_lifecycle</depend>
   <depend>realtime_tools</depend>
 
+  <depend>orthrus_ethercat</depend>
+
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>thruster_pid_controller</exec_depend>
   <exec_depend>ros2controlcli</exec_depend>

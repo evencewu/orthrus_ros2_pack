@@ -1,6 +1,6 @@
 #pragma once
 
-#include "orthrus_real/ethercat/TypeDef.hpp"
+#include "orthrus_ethercat/ethercat/TypeDef.hpp"
 
 #include <inttypes.h>
 #include <cstdio>
@@ -12,7 +12,7 @@
 #define RF 2
 #define LF 3
 
-namespace orthrus_real
+namespace orthrus_ethercat
 {
     class Motor
     {

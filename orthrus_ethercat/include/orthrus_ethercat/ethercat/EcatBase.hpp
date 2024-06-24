@@ -5,11 +5,11 @@
 #include <inttypes.h>
 
 #include "soem_ros2/soem.h"
-#include "orthrus_real/ethercat/TypeDef.hpp"
+#include "orthrus_ethercat/ethercat/TypeDef.hpp"
 
 #define EC_VER1
 
-namespace orthrus_real
+namespace orthrus_ethercat
 {
     class EcatBase
     {

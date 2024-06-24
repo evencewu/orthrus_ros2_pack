@@ -5,7 +5,7 @@
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 
-#include "orthrus_real/ethercat/TypeDef.hpp"
+#include "orthrus_ethercat/ethercat/TypeDef.hpp"
 
 #define IMU1 0
 #define IMU2 3
@@ -17,7 +17,7 @@
 #define PITCH 1
 #define ROLL 2
 
-namespace orthrus_real
+namespace orthrus_ethercat
 {
     class Imu
     {

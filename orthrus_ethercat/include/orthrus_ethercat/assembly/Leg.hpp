@@ -2,10 +2,10 @@
 
 #include <inttypes.h>
 
-#include "orthrus_real/ethercat/TypeDef.hpp"
-#include "orthrus_real/assembly/Imu.hpp"
-#include "orthrus_real/assembly/Encoder.hpp"
-#include "orthrus_real/assembly/Motor.hpp"
+#include "orthrus_ethercat/ethercat/TypeDef.hpp"
+#include "orthrus_ethercat/assembly/Imu.hpp"
+#include "orthrus_ethercat/assembly/Encoder.hpp"
+#include "orthrus_ethercat/assembly/Motor.hpp"
 
 #include <cstdio>
 
@@ -14,7 +14,7 @@
 #define USART3 2
 #define USART6 3
 
-namespace orthrus_real
+namespace orthrus_ethercat
 {
     class Leg
     {

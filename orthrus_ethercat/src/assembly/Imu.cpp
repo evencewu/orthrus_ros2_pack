@@ -1,9 +1,9 @@
-#include "orthrus_real/assembly/Imu.hpp"
+#include "orthrus_ethercat/assembly/Imu.hpp"
 
 #include <inttypes.h>
 #include <cstdio>
 
-namespace orthrus_real
+namespace orthrus_ethercat
 {
     void Imu::Correction(double standard_yaw)
     {

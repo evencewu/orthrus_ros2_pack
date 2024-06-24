@@ -154,6 +154,10 @@ namespace orthrus_control
     hardware_interface::CallbackReturn OrthrusSystemHardware::on_activate(
         const rclcpp_lifecycle::State & /*previous_state*/)
     {
+        char phy[] = "enp2s0";
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "Ethercat start%s\n", phy);
+
+        //Ethercat.EcatStart(phy);
 
         // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "Activating ...please wait...");
@@ -179,6 +183,7 @@ namespace orthrus_control
     hardware_interface::CallbackReturn OrthrusSystemHardware::on_deactivate(
         const rclcpp_lifecycle::State & /*previous_state*/)
     {
+        //Ethercat.EcatStop();
 
         RCLCPP_INFO(rclcpp::get_logger("OrthrusSystemHardware"), "Successfully deactivated!");
 
