@@ -39,6 +39,7 @@ namespace orthrus_control
     hardware_interface::CallbackReturn OrthrusSystemHardware::on_init(
         const hardware_interface::HardwareInfo &info)
     {
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware on init");
         // 错误检查
         if (
             hardware_interface::SystemInterface::on_init(info) !=
@@ -51,11 +52,13 @@ namespace orthrus_control
         hw_velocities_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
         hw_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
         hw_effort_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+        hw_sensor_states_.resize(info_.sensors[0].state_interfaces.size(), std::numeric_limits<double>::quiet_NaN());
 
         for (const hardware_interface::ComponentInfo &joint : info_.joints)
         {
+
             // DiffBotSystem has exactly two states and one command interface on each joint
-            if (joint.command_interfaces.size() != 12)
+            if (joint.command_interfaces.size() != 1)
             {
                 RCLCPP_FATAL(
                     rclcpp::get_logger("OrthrusHardware"),
@@ -73,7 +76,7 @@ namespace orthrus_control
                 return hardware_interface::CallbackReturn::ERROR;
             }
 
-            if (joint.state_interfaces.size() != 12)
+            if (joint.state_interfaces.size() != 3)
             {
                 RCLCPP_FATAL(
                     rclcpp::get_logger("OrthruHardware"),
@@ -100,7 +103,7 @@ namespace orthrus_control
                 return hardware_interface::CallbackReturn::ERROR;
             }
 
-            if (joint.state_interfaces[1].name != hardware_interface::HW_IF_EFFORT)
+            if (joint.state_interfaces[2].name != hardware_interface::HW_IF_EFFORT)
             {
                 RCLCPP_FATAL(
                     rclcpp::get_logger("OrthruHardware"),
@@ -110,6 +113,7 @@ namespace orthrus_control
             }
         }
 
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware init finish");
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
@@ -126,6 +130,12 @@ namespace orthrus_control
                 info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_effort_[i]));
         }
 
+        for (uint i = 0; i < info_.sensors[0].state_interfaces.size(); i++)
+        {
+            state_interfaces.emplace_back(hardware_interface::StateInterface(
+                info_.sensors[0].name, info_.sensors[0].state_interfaces[i].name, &hw_sensor_states_[i]));
+        }
+
         return state_interfaces;
     }
 
@@ -135,7 +145,7 @@ namespace orthrus_control
         for (auto i = 0u; i < info_.joints.size(); i++)
         {
             command_interfaces.emplace_back(hardware_interface::CommandInterface(
-                info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_commands_[i]));
+                info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_commands_[i]));
         }
 
         return command_interfaces;

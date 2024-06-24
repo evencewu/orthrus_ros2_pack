@@ -61,6 +61,7 @@ namespace orthrus_control
         std::vector<double> hw_positions_;
         std::vector<double> hw_velocities_;
         std::vector<double> hw_effort_;
+        std::vector<double> hw_sensor_states_;
         
         std::vector<double> hw_commands_;
 

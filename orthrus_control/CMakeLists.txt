@@ -61,7 +61,12 @@ install(
 )
 
 install(
-  DIRECTORY config/
+  DIRECTORY  description/ros2_control description/urdf  description/launch description/rviz
+  DESTINATION share/orthrus_control
+)
+
+install(
+  DIRECTORY bringup/launch bringup/config
   DESTINATION share/orthrus_control
 )
 

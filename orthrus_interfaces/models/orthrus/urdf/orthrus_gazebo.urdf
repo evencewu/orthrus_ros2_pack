@@ -431,8 +431,6 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="RF_FOOT">
-    </joint>
     <joint name="LF_HAA">
       <command_interface name="effort">
         <param name="min">-35</param>
@@ -459,8 +457,6 @@
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
-    </joint>
-    <joint name="LF_FOOT">
     </joint>
     <joint name="RH_HAA">
       <command_interface name="effort">
@@ -489,8 +485,6 @@
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
     </joint>
-    <joint name="RH_FOOT">
-    </joint>
     <joint name="LH_HAA">
       <command_interface name="effort">
         <param name="min">-35</param>
@@ -517,8 +511,6 @@
       <state_interface name="position"/>
       <state_interface name="velocity"/>
       <state_interface name="effort"/>
-    </joint>
-    <joint name="LH_FOOT">
     </joint>
     <sensor name="imu_sensor">
       <state_interface name="orientation.x"/>

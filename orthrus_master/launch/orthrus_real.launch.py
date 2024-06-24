@@ -3,80 +3,98 @@ import sys
 
 import launch
 import launch_ros.actions
-from launch.substitutions import LaunchConfiguration
+from launch.actions import ExecuteProcess, RegisterEventHandler
+from launch.substitutions import (
+    Command,
+    FindExecutable,
+    LaunchConfiguration,
+    PathJoinSubstitution,
+)
 
+from launch.event_handlers import OnProcessExit
 from ament_index_python.packages import get_package_share_directory
+from launch.launch_description_sources import AnyLaunchDescriptionSource
 
-sys.path.append(os.path.join(get_package_share_directory('orthrus_master'), 'launch'))
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 
-ArgumentDescriptionName = launch.actions.DeclareLaunchArgument(
-    name='description_name',
-    default_value='legged_robot_description'
+pkg_dir = get_package_share_directory("orthrus_interfaces")
+simulation_description_path = os.path.join(pkg_dir)
+
+robot_description_content = Command(
+    [
+        PathJoinSubstitution([FindExecutable(name="xacro")]),
+        " ",
+        PathJoinSubstitution(
+            [
+                FindPackageShare("orthrus_interfaces"),
+                "models",
+                "orthrus",
+                "urdf",
+                "orthrus_real.urdf.xacro",
+            ]
+        ),
+        " ",
+    ]
 )
 
-ArgumentMultiplot = launch.actions.DeclareLaunchArgument(
-    name='multiplot',
-    default_value='false'
+robot_description = {"robot_description": robot_description_content}
+
+robot_controllers = PathJoinSubstitution(
+    [
+        FindPackageShare("orthrus_control"),
+        "config",
+        "orthrus_controllers.yaml",
+    ]
 )
 
-ArgumentTaskFile = launch.actions.DeclareLaunchArgument(
-    name='taskFile',
-    default_value=get_package_share_directory(
-        'ocs2_legged_robot') + '/config/mpc/task.info'
+control_node = Node(
+    package="controller_manager",
+    executable="ros2_control_node",
+    parameters=[robot_controllers],
+    output="screen",
 )
 
-ArgumentReferenceFile = launch.actions.DeclareLaunchArgument(
-    name='referenceFile',
-    default_value=get_package_share_directory(
-        'ocs2_legged_robot') + '/config/command/reference.info'
+
+
+node_robot_state_publisher = Node(
+    package="robot_state_publisher",
+    executable="robot_state_publisher",
+    output="screen",
+    parameters=[
+        {"robot_description": robot_description_content},
+    ],
 )
 
-ArgumentUrdfFile = launch.actions.DeclareLaunchArgument(
-    name='urdfFile',
-    default_value=get_package_share_directory(
-        'ocs2_robotic_assets') + '/resources/anymal_c/urdf/anymal.urdf'
+foxglove = ExecuteProcess(
+    cmd=[
+        "ros2",
+        "launch",
+        "foxglove_bridge",
+        "foxglove_bridge_launch.xml",
+        "use_compression:=true",
+    ],
+    output="log",
 )
 
-ArgumentGaitCommandFile = launch.actions.DeclareLaunchArgument(
-    name='gaitCommandFile',
-    default_value=get_package_share_directory(
-        'ocs2_legged_robot') + '/config/command/gait.info'
+active_orthrus_controller = ExecuteProcess(
+    cmd=['ros2', 'control', 'load_controller', '--set-state', 'active','orthrus_controller'],
+    output='screen'
 )
 
-def get_orthrus_control(package, executable, name):
-
-    return launch_ros.actions.Node(
-        package=package,  # 替换为你的包名
-        executable=executable,  # 替换为你的可执行文件名
-        name=name,
-        parameters=[{'taskFile': launch.substitutions.LaunchConfiguration('taskFile')},
-                    {'referenceFile': launch.substitutions.LaunchConfiguration('referenceFile')},
-                    {'urdfFile': launch.substitutions.LaunchConfiguration('urdfFile')},
-                    {'gaitCommandFile': launch.substitutions.LaunchConfiguration('gaitCommandFile')},
-                    ],
-    )
-
-def get_orthrus_real(package,executable,name):
-    return launch_ros.actions.Node(
-        package=package,  # 替换为你的包名
-        executable=executable,  # 替换为你的可执行文件名
-        name=name,
-    )
 
 def generate_launch_description():
-
-    orthrus_ctrl_node = get_orthrus_control('orthrus_controllers', 'orthrus_controllers','orthrus_ctrl_node')
-    orthrus_real_node = get_orthrus_real('orthrus_real', 'orthrus_real','orthrus_real_node')
-
     return launch.LaunchDescription(
         [
-            ArgumentDescriptionName,
-            ArgumentMultiplot,
-            ArgumentTaskFile,
-            ArgumentReferenceFile,
-            ArgumentUrdfFile,
-            ArgumentGaitCommandFile,
-            orthrus_real_node,
-            orthrus_ctrl_node,
+            RegisterEventHandler(
+                event_handler=OnProcessExit(
+                    target_action=control_node,
+                    on_exit=[active_orthrus_controller],
+                )
+            ),
+            
+            node_robot_state_publisher,
+            control_node,
+            #foxglove,
         ]
     )

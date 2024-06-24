@@ -215,13 +215,9 @@
     </joint>
   </xacro:macro>
 
-  <xacro:macro name="ros2_FOOT_joint" params="prefix">
-    <joint name="${prefix}_FOOT">
-    </joint>
-  </xacro:macro>
+  <xacro:macro name="orthrus_ros2_control" params="prefix name">
 
-  <xacro:macro name="orthrus_ros2_control" params="prefix">
-    <ros2_control name="GazeboSystem" type="system">
+    <ros2_control name="${name}" type="system">
       <xacro:if value="${prefix == 'gazebo'}">
         <hardware>
           <plugin>gazebo_ros2_control/GazeboSystem</plugin>
@@ -229,29 +225,25 @@
       </xacro:if>
       <xacro:if value="${prefix == 'real'}">
         <hardware>
-          <plugin>"orthrus_control/OrthrusSystemHardware</plugin>
+          <plugin>orthrus_control/OrthrusSystemHardware</plugin>
         </hardware>
       </xacro:if>
 
       <xacro:ros2_HAA_joint prefix="RF"/>
       <xacro:ros2_HFE_joint prefix="RF"/>
       <xacro:ros2_KFE_joint prefix="RF"/>
-      <xacro:ros2_FOOT_joint prefix="RF"/>
 
       <xacro:ros2_HAA_joint prefix="LF"/>
       <xacro:ros2_HFE_joint prefix="LF"/>
       <xacro:ros2_KFE_joint prefix="LF"/>
-      <xacro:ros2_FOOT_joint prefix="LF"/>
 
       <xacro:ros2_HAA_joint prefix="RH"/>
       <xacro:ros2_HFE_joint prefix="RH"/>
       <xacro:ros2_KFE_joint prefix="RH"/>
-      <xacro:ros2_FOOT_joint prefix="RH"/>
 
       <xacro:ros2_HAA_joint prefix="LH"/>
       <xacro:ros2_HFE_joint prefix="LH"/>
       <xacro:ros2_KFE_joint prefix="LH"/>
-      <xacro:ros2_FOOT_joint prefix="LH"/>
 
       <sensor name="imu_sensor">
         <state_interface name="orientation.x"/>
