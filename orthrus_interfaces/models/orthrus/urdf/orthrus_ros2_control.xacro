@@ -1,0 +1,3 @@
+<robot name="orthrus_ros2_control">
+    <xacro:include filename="orthrus_base.xacro"/>
+</robot>

@@ -29,7 +29,7 @@ def generate_launch_description():
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
             PathJoinSubstitution(
-                [simulation_description_path, "models", "orthrus", "urdf", "orthrus.urdf.xacro"]
+                [simulation_description_path, "models", "orthrus", "urdf", "orthrus_gazebo.urdf.xacro"]
             ),
         ]
     )

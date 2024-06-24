@@ -61,13 +61,10 @@ install(
 )
 
 install(
-  DIRECTORY  description/ros2_control description/urdf  description/launch description/rviz
+  DIRECTORY config/
   DESTINATION share/orthrus_control
 )
-install(
-  DIRECTORY bringup/launch bringup/config
-  DESTINATION share/orthrus_control
-)
+
 install(TARGETS orthrus_control
   EXPORT export_orthrus_control
   ARCHIVE DESTINATION lib

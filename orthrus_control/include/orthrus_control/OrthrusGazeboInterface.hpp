@@ -58,9 +58,11 @@ namespace orthrus_control
             const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
     private:
-        std::vector<double> hw_velocities_;
-        std::vector<double> hw_commands_;
         std::vector<double> hw_positions_;
+        std::vector<double> hw_velocities_;
+        std::vector<double> hw_effort_;
+        
+        std::vector<double> hw_commands_;
 
         std::shared_ptr<rclcpp::Node> node_;
         // subscribe crawler feed back

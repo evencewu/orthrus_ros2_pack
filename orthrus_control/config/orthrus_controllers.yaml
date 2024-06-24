@@ -4,9 +4,5 @@ controller_manager:
 
     orthrus_controller:
       type: orthrus_controller/OrthrusController
-
-
     
-
-
 

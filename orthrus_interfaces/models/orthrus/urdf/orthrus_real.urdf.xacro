@@ -27,6 +27,8 @@
   <xacro:KFE prefix="RH"/>
   <xacro:FOOT prefix="RH"/>
 
+  <xacro:orthrus_ros2_control prefix="real"/>
+
   <gazebo reference="base">
     <sensor name="imu_sensor" type="imu">
       <always_on>1</always_on>
