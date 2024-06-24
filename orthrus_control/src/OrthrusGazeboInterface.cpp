@@ -155,7 +155,7 @@ namespace orthrus_control
         const rclcpp_lifecycle::State & /*previous_state*/)
     {
         char phy[] = "enp2s0";
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "Ethercat start%s\n", phy);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "Ethercat start %s\n", phy);
 
         Ethercat.EcatStart(phy);
 
