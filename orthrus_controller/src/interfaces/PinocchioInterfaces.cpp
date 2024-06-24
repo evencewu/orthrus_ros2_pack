@@ -89,7 +89,6 @@ namespace orthrus_controller
             ss << "  Frame type: " << frame.type << std::endl;
         }
 
-        
         for (int joint_id = 1; joint_id < 14; joint_id++)
         {
             ss << joint_id << " "<< model_.names[joint_id] << std::endl;

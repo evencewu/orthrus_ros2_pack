@@ -156,7 +156,7 @@ namespace orthrus_control
     {
 
         // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusSystemHardware"), "Activating ...please wait...");
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "Activating ...please wait...");
         // END: This part here is for exemplary purposes - Please do not copy to your production code
 
         // set some default values
