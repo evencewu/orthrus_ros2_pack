@@ -24,10 +24,10 @@
 
 #include "orthrus_control/visibility_control.h"
 
-#include "orthrus_ethercat/ethercat/EcatBase.hpp"
-#include "orthrus_ethercat/ethercat/TypeDef.hpp"
-#include "orthrus_ethercat/assembly/Leg.hpp"
-#include "orthrus_ethercat/assembly/Imu.hpp"
+#include "orthrus_control/ethercat/EcatBase.hpp"
+#include "orthrus_control/ethercat/TypeDef.hpp"
+#include "orthrus_control/assembly/Leg.hpp"
+#include "orthrus_control/assembly/Imu.hpp"
 
 
 namespace orthrus_control
@@ -64,7 +64,7 @@ namespace orthrus_control
             const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
     private:
-        orthrus_ethercat::EcatBase Ethercat = orthrus_ethercat::EcatBase(2);
+        EcatBase Ethercat = EcatBase(2);
         
         std::vector<double> hw_positions_;
         std::vector<double> hw_velocities_;

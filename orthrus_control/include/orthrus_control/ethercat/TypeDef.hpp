@@ -8,7 +8,7 @@
 #define USE_SSC
 // #define USE_SOES
 
-namespace orthrus_ethercat
+namespace orthrus_control
 {
     /// @brief Standard can packet
     typedef struct can_pack

@@ -2,9 +2,9 @@
 
 #include <inttypes.h>
 
-#include "orthrus_ethercat/ethercat/TypeDef.hpp"
+#include "orthrus_control/ethercat/TypeDef.hpp"
 
-namespace orthrus_ethercat
+namespace orthrus_control
 {
     class Encoder
     {

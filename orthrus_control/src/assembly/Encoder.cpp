@@ -1,8 +1,8 @@
-#include "orthrus_ethercat/assembly/Encoder.hpp"
+#include "orthrus_control/assembly/Encoder.hpp"
 
 #include <cstring>
 
-namespace orthrus_ethercat
+namespace orthrus_control
 {
     void Encoder::Init(uint8_t device_id)
     {

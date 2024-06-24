@@ -1,6 +1,6 @@
-#include "orthrus_ethercat/assembly/Motor.hpp"
+#include "orthrus_control/assembly/Motor.hpp"
 
-namespace orthrus_ethercat
+namespace orthrus_control
 {
     void Motor::Init(uint8_t leg_id, uint8_t motor_id)
     {
