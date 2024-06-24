@@ -24,6 +24,10 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 
 file(GLOB_RECURSE MAIN_SOURCES "src/assembly/*.cpp" "src/ethercat/*.cpp")
 
+ament_auto_add_library(${PROJECT_NAME} SHARED 
+  ${MAIN_SOURCES}
+)
+
 ament_auto_add_executable(orthrus_ethercat_test
   src/test/ethercat_test.cpp
   ${MAIN_SOURCES}
@@ -48,6 +52,11 @@ endif()
 #############
 ## Install ##
 #############
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
 
 ament_auto_package(
   INSTALL_TO_SHARE

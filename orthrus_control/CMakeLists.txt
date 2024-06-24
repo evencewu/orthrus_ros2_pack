@@ -16,7 +16,6 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp_lifecycle
   realtime_tools
   std_msgs
-  orthrus_ethercat
 )
 
 # find dependencies
@@ -29,16 +28,18 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
-
 include_directories(
 include/orthrus_control
 )
+
+file(GLOB_RECURSE MAIN_SOURCES "src/assembly/*.cpp" "src/ethercat/*.cpp")
 
 ## COMPILE
 add_library(
   orthrus_control
   SHARED
   src/OrthrusGazeboInterface.cpp
+  ${MAIN_SOURCES}
 )
 target_compile_features(orthrus_control PUBLIC cxx_std_17)
 

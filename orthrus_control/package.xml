@@ -17,6 +17,7 @@
   <depend>realtime_tools</depend>
 
   <depend>orthrus_ethercat</depend>
+  <depend>soem_ros2</depend>
 
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>thruster_pid_controller</exec_depend>
