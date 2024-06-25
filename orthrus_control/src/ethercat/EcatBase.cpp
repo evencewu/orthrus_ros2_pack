@@ -20,24 +20,26 @@ namespace orthrus_control
     /// @param ifname Network port name
     void EcatBase::EcatStart(char *ifname)
     {
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"), "\033[32m Ethercat start %s \033[0m \n", ifname);
+
         int chk;
         if (ec_init(ifname))
         {
             // ec_DCtime = 1000;
-            printf("ec_init on %s succeeded.\n", ifname);
+            RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m ec_init on %s succeeded. \033[0m\n", ifname);
             if (ec_config_init(FALSE) > 0)
             {
-                printf("%d slaves found and configured.\n", ec_slavecount);
+                RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m %d slaves found and configured.\033[0m \n", ec_slavecount);
 
                 ec_config_map(&IOmap);
 
-                printf("Slaves mapped, state to SAFE_OP.\n");
+                RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m Slaves mapped, state to SAFE_OP.\033[0m \n");
                 /* wait for all slaves to reach SAFE_OP state */
                 ec_statecheck(0, EC_STATE_SAFE_OP, EC_TIMEOUTSTATE * 6);
 
                 ec_configdc();
 
-                printf("Request operational state for all slaves\n");
+                RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m Request operational state for all slaves\033[0m \n");
 
                 expectedWKC = (ec_group[0].outputsWKC * 2) + ec_group[0].inputsWKC;
                 ec_slave[0].state = EC_STATE_OPERATIONAL;
@@ -59,12 +61,12 @@ namespace orthrus_control
             }
             else
             {
-                printf("No slaves found!\n");
+                RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m No slaves found!\033[0m \n");
             }
         }
         else
         {
-            printf("No socket connection on %s\nExcecute as root\n", ifname);
+            RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m No socket connection on %s\nExcecute as root\033[0m \n", ifname);
         }
     }
 
@@ -104,13 +106,13 @@ namespace orthrus_control
         else
         {
             int i = 0;
-            printf("Not all slaves reached operational state.\n");
+            RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m Not all slaves reached operational state.\033[0m \n");
             ec_readstate();
             for (i = 1; i <= ec_slavecount; i++)
             {
                 if (ec_slave[i].state != EC_STATE_OPERATIONAL)
                 {
-                    printf("Slave %d State=0x%2.2x StatusCode=0x%4.4x : %s\n",
+                    RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m Slave %d State=0x%2.2x StatusCode=0x%4.4x : %s\033[0m \n",
                            i, ec_slave[i].state, ec_slave[i].ALstatuscode, ec_ALstatuscode2string(ec_slave[i].ALstatuscode));
                 }
             }

@@ -39,7 +39,11 @@ namespace orthrus_control
     hardware_interface::CallbackReturn OrthrusSystemHardware::on_init(
         const hardware_interface::HardwareInfo &info)
     {
+        char phy[] = "enp2s0";
+        Ethercat.EcatStart(phy);
+
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware on init");
+        
         // 错误检查
         if (
             hardware_interface::SystemInterface::on_init(info) !=
@@ -154,13 +158,8 @@ namespace orthrus_control
     hardware_interface::CallbackReturn OrthrusSystemHardware::on_activate(
         const rclcpp_lifecycle::State & /*previous_state*/)
     {
-        char phy[] = "enp2s0";
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "Ethercat start %s\n", phy);
-
-        Ethercat.EcatStart(phy);
-
         // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "Activating ...please wait...");
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m Activating ...please wait...\033[0m");
         // END: This part here is for exemplary purposes - Please do not copy to your production code
 
         // set some default values
@@ -176,7 +175,7 @@ namespace orthrus_control
             }
         }
         subscriber_is_active_ = true;
-
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m Finish activate\033[0m");
         return hardware_interface::CallbackReturn::SUCCESS;
     }
 
@@ -185,7 +184,7 @@ namespace orthrus_control
     {
         Ethercat.EcatStop();
 
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusSystemHardware"), "Successfully deactivated!");
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m Successfully deactivated! \033[0m");
 
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -193,6 +192,10 @@ namespace orthrus_control
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::read(
         const rclcpp::Time & /*time*/, const rclcpp::Duration &period)
     {
+        Ethercat.packet_tx[0].power = 0x01;
+        Ethercat.packet_tx[1].power = 0x01;
+        Ethercat.EcatSyncMsg();
+
         for (std::size_t i = 0; i < hw_positions_.size(); i++)
         {
             hw_positions_[i] = 0.0;

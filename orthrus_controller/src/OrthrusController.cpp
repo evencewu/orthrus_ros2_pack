@@ -122,7 +122,7 @@ namespace orthrus_controller
     RCLCPP_INFO(logger, "Init legged_mpc");
     legged_mpc_->Init(orthrus_interfaces_, pinocchio_interfaces_);
     RCLCPP_INFO(logger, "Init over");
-    RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
+    //RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
     RCLCPP_INFO(logger, "Configure over...");
 
     return controller_interface::CallbackReturn::SUCCESS;

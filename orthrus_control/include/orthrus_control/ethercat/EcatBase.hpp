@@ -7,6 +7,8 @@
 #include "soem_ros2/soem.h"
 #include "orthrus_control/ethercat/TypeDef.hpp"
 
+#include "rclcpp/rclcpp.hpp"
+
 #define EC_VER1
 
 namespace orthrus_control
