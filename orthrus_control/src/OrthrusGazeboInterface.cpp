@@ -1,23 +1,5 @@
-/**
- *****************************Copyright (c) 2023  ZJU****************************
- * @file      : diff_test_system.cpp
- * @brief     : 差速小车硬件接口
- * @history   :
- *  Version     Date            Author          Note
- *  V1.0.0    2023-07-18       Hao Lion        1. <note>
- *******************************************************************************
- * @verbatim :
- *==============================================================================
- *
- *
- *==============================================================================
- * @endverbatim :
- *****************************Copyright (c) 2023  ZJU****************************
- */
-
 #include "orthrus_control/OrthrusGazeboInterface.hpp"
 
-#include <chrono>
 #include <cmath>
 #include <cstddef>
 #include <limits>
@@ -31,7 +13,6 @@ namespace
 {
     constexpr auto DEFAULT_COMMAND_TOPIC = "diff_test_cmd";
     constexpr auto DEFAULT_STATE_TOPIC = "diff_test_cmd";
-
 } // namespace
 
 namespace orthrus_control
@@ -39,9 +20,8 @@ namespace orthrus_control
     hardware_interface::CallbackReturn OrthrusSystemHardware::on_init(
         const hardware_interface::HardwareInfo &info)
     {
-
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware on init");
-        
+
         // 错误检查
         if (
             hardware_interface::SystemInterface::on_init(info) !=
@@ -58,7 +38,6 @@ namespace orthrus_control
 
         for (const hardware_interface::ComponentInfo &joint : info_.joints)
         {
-
             // DiffBotSystem has exactly two states and one command interface on each joint
             if (joint.command_interfaces.size() != 1)
             {
@@ -156,9 +135,6 @@ namespace orthrus_control
     hardware_interface::CallbackReturn OrthrusSystemHardware::on_activate(
         const rclcpp_lifecycle::State & /*previous_state*/)
     {
-        char phy[] = "enp2s0";
-        Ethercat.EcatStart(phy);
-
         // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m Activating ...please wait...\033[0m");
         // END: This part here is for exemplary purposes - Please do not copy to your production code
@@ -175,6 +151,7 @@ namespace orthrus_control
                 hw_commands_[i] = 0;
             }
         }
+
         subscriber_is_active_ = true;
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m Finish activate\033[0m");
         return hardware_interface::CallbackReturn::SUCCESS;
@@ -193,14 +170,50 @@ namespace orthrus_control
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::read(
         const rclcpp::Time & /*time*/, const rclcpp::Duration &period)
     {
-        Ethercat.packet_tx[0].power = 0x01;
-        Ethercat.packet_tx[1].power = 0x01;
-        Ethercat.EcatSyncMsg();
+        // if(!Ethercat.EcatSyncMsg())
+        //{
+        //      return hardware_interface::return_type::ERROR;
+        // }
+        if (ethercat_prepare_flag_ == false)
+        {
+            time_last_ethercat_ = std::chrono::high_resolution_clock::now();
+            char phy[] = "enp2s0";
+            bool ecat_flag = false;
+            ecat_flag = Ethercat.EcatStart(phy);
+            if (ecat_flag)
+            {
+                bool sync_flag = false;
+                Ethercat.packet_tx[0].power = 0x01;
+                Ethercat.packet_tx[1].power = 0x01;
+
+                sync_flag = Ethercat.EcatSyncMsg();
+                if (sync_flag)
+                {
+                    ethercat_prepare_flag_ = true;
+                }
+            }
+        }
 
         for (std::size_t i = 0; i < hw_positions_.size(); i++)
         {
             hw_positions_[i] = 0.0;
             hw_velocities_[i] = 0.0;
+        }
+
+        Ethercat.packet_tx[0].power = 0x01;
+        Ethercat.packet_tx[1].power = 0x01;
+
+        ethercat_prepare_flag_ = Ethercat.EcatSyncMsg();
+
+        time_now_ = std::chrono::high_resolution_clock::now();
+
+        if (ethercat_prepare_flag_ != true)
+        {
+            std::chrono::duration<double> duration = time_now_ - time_last_ethercat_;
+            if (duration.count() >= 4)
+            {
+                Ethercat.EcatStop();
+            }
         }
 
         return hardware_interface::return_type::OK;
@@ -209,10 +222,8 @@ namespace orthrus_control
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::write(
         const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
     {
-
         return hardware_interface::return_type::OK;
     }
-
 }
 
 #include "pluginlib/class_list_macros.hpp"

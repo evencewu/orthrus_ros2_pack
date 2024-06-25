@@ -18,7 +18,7 @@ namespace orthrus_control
 
     /// @brief Start your ecat port
     /// @param ifname Network port name
-    void EcatBase::EcatStart(char *ifname)
+    bool EcatBase::EcatStart(char *ifname)
     {
         RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"), "\033[32m Ethercat start %s \033[0m \n", ifname);
 
@@ -58,22 +58,26 @@ namespace orthrus_control
                     ec_receive_processdata(EC_TIMEOUTRET);
                     ec_statecheck(0, EC_STATE_OPERATIONAL, EC_TIMEOUTRET);
                 } while (chk-- && (ec_slave[0].state != EC_STATE_OPERATIONAL));
+
+                return true;
             }
             else
             {
                 RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m No slaves found!\033[0m \n");
+                return false;
             }
         }
         else
         {
             RCLCPP_INFO(rclcpp::get_logger("OrthrusEthercat"),"\033[32m No socket connection on %s\nExcecute as root\033[0m \n", ifname);
+            return false;
         }
     }
 
     /// @brief Data sending and receiving, calling in a loop
     /// @param output_data Pointer to the output data
     /// @param input_data  Pointer to the input data
-    void EcatBase::EcatSyncMsg()
+    bool EcatBase::EcatSyncMsg()
     {
         bool state_flag = true;
         for (int slave = 1; slave <= slave_num; slave++)
@@ -102,6 +106,7 @@ namespace orthrus_control
                     memcpy(&packet_rx[slave - 1], ec_slave[slave].inputs, pdo_input_byte);
                 }
             }
+            return true;
         }
         else
         {
@@ -116,6 +121,7 @@ namespace orthrus_control
                            i, ec_slave[i].state, ec_slave[i].ALstatuscode, ec_ALstatuscode2string(ec_slave[i].ALstatuscode));
                 }
             }
+            return false;
         }
         osal_usleep(750);
     }

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <thread>
+#include <chrono>
 
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
@@ -28,7 +29,6 @@
 #include "orthrus_control/ethercat/TypeDef.hpp"
 #include "orthrus_control/assembly/Leg.hpp"
 #include "orthrus_control/assembly/Imu.hpp"
-
 
 namespace orthrus_control
 {
@@ -64,13 +64,22 @@ namespace orthrus_control
             const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
     private:
-        EcatBase Ethercat = EcatBase(2);
+        // ethercat
+        bool ethercat_prepare_flag_ = false;
         
+        std::chrono::time_point<std::chrono::high_resolution_clock> time_last_ethercat_;
+        std::chrono::time_point<std::chrono::high_resolution_clock> time_now_;
+        double duration_;
+
+        rclcpp::TimerBase::SharedPtr activation_timer_;
+
+        EcatBase Ethercat = EcatBase(2);
+
         std::vector<double> hw_positions_;
         std::vector<double> hw_velocities_;
         std::vector<double> hw_effort_;
         std::vector<double> hw_sensor_states_;
-        
+
         std::vector<double> hw_commands_;
 
         std::shared_ptr<rclcpp::Node> node_;

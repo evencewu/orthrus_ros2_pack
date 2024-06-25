@@ -19,8 +19,8 @@ namespace orthrus_control
         EcatBase(int _slave_num);
         ~EcatBase();
 
-        void EcatStart(char *ifname);
-        void EcatSyncMsg();
+        bool EcatStart(char *ifname);
+        bool EcatSyncMsg();
         void EcatStop();
 
         Ecat_Outputs_Pack packet_tx[128];
