@@ -66,9 +66,10 @@ namespace orthrus_control
         }
     }
 
-    void Imu::Init(uint8_t device_id)
+    void Imu::Init(uint8_t device_id,bool if_with_acc)
     {
         device_id_ = device_id;
+        if_with_acc_ = if_with_acc;
     }
 
     void Imu::Analyze(Ecat_Inputs_Pack *pack)

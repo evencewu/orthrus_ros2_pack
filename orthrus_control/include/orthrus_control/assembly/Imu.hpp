@@ -22,7 +22,7 @@ namespace orthrus_control
     class Imu
     {
     public:
-        void Init(uint8_t device_id);
+        void Init(uint8_t device_id, bool if_with_acc);
         void Analyze(Ecat_Inputs_Pack *pack);
 
         static void IfUseMag(bool flag, can_pack can);
@@ -34,13 +34,17 @@ namespace orthrus_control
 
         Eigen::Quaterniond correction_matrix_;
 
-        Eigen::Quaterniond gyro_;          // Raw gyro data
-        Eigen::Quaterniond unified_gyro_;  // Correction direction
-        Eigen::Quaterniond standard_gyro_; // Correction yaw
+        Eigen::Quaterniond gyro_; // 四元数角度
+        Eigen::Vector3d acc_;     // 加速度
 
-        Eigen::Vector3d euler_;
+        Eigen::Quaterniond unified_gyro_;  // 转换后的坐标系
+        Eigen::Quaterniond standard_gyro_; // 对齐yaw后的坐标系
+
+        Eigen::Vector3d euler_; // 欧拉角表示
 
     private:
+        bool if_with_acc_;
+
         union
         {
             float f_data;
