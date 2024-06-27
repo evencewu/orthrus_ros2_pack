@@ -209,9 +209,9 @@ namespace orthrus_control
         hw_positions_[2] = leg[1].motor[2].Pos_ / 9.1;
 
         hw_positions_[3] = -leg[0].motor[0].Pos_ / 9.1;
-        hw_positions_[3] = body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL) + M_PI;
+        hw_positions_[3] = body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL);
         hw_positions_[4] = leg[0].motor[1].Pos_ / 9.1;
-        hw_positions_[4] = (body_imu.euler_(ROLL) - leg[0].imu.euler_(PITCH)) + M_PI - theta2 * M_PI / 180;
+        hw_positions_[4] = (body_imu.euler_(ROLL) - leg[0].imu.euler_(PITCH)) - theta2 * M_PI / 180;
         hw_positions_[5] = leg[0].motor[2].Pos_ / 9.1;
 
         hw_positions_[6] = -leg[3].motor[0].Pos_ / 9.1;
