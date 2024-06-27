@@ -22,10 +22,10 @@ namespace orthrus_control
     {
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware on init");
         // hardware init
-        leg[0].Init(IMU1, USART1);
-        leg[1].Init(IMU2, USART2);
-        leg[2].Init(IMU4, USART3);
-        leg[3].Init(IMU3, USART6);
+        leg[0].Init(IMU2, USART1);
+        leg[1].Init(IMU1, USART2);
+        leg[2].Init(IMU3, USART3);
+        leg[3].Init(IMU4, USART6);
         body_imu.Init(IMU5, TRUE);
         // 错误检查
 
@@ -202,11 +202,31 @@ namespace orthrus_control
 
         // ros2 control 交换数据
 
-        for (std::size_t i = 0; i < hw_positions_.size(); i++)
-        {
-            hw_positions_[i] = leg[i / 3].motor[i % 3].Pos_ / 9.1;
-            hw_velocities_[i] = 0.0;
-        }
+        hw_positions_[0] = -leg[1].motor[0].Pos_ / 9.1;
+        hw_positions_[0] = (body_imu.euler_(PITCH) - leg[1].imu.euler_(ROLL));
+        hw_positions_[1] = leg[1].motor[1].Pos_ / 9.1;
+        hw_positions_[1] = (body_imu.euler_(ROLL) - leg[1].imu.euler_(PITCH)) + theta2 * M_PI / 180;
+        hw_positions_[2] = leg[1].motor[2].Pos_ / 9.1;
+
+        hw_positions_[3] = -leg[0].motor[0].Pos_ / 9.1;
+        hw_positions_[3] = body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL) + M_PI;
+        hw_positions_[4] = leg[0].motor[1].Pos_ / 9.1;
+        hw_positions_[4] = (body_imu.euler_(ROLL) - leg[0].imu.euler_(PITCH)) + M_PI - theta2 * M_PI / 180;
+        hw_positions_[5] = leg[0].motor[2].Pos_ / 9.1;
+
+        hw_positions_[6] = -leg[3].motor[0].Pos_ / 9.1;
+        hw_positions_[6] = -(body_imu.euler_(PITCH) - leg[3].imu.euler_(ROLL));
+        hw_positions_[7] = leg[3].motor[1].Pos_ / 9.1;
+        hw_positions_[7] = (body_imu.euler_(ROLL) - leg[3].imu.euler_(PITCH)) + theta2 * M_PI / 180;
+        hw_positions_[8] = leg[3].motor[2].Pos_ / 9.1;
+
+        hw_positions_[9] = -leg[2].motor[0].Pos_ / 9.1;
+        hw_positions_[9] = body_imu.euler_(PITCH) - leg[2].imu.euler_(ROLL);
+        hw_positions_[10] = leg[2].motor[1].Pos_ / 9.1;
+        hw_positions_[10] = body_imu.euler_(ROLL) - leg[2].imu.euler_(PITCH) - theta2 * M_PI / 180;
+        hw_positions_[11] = leg[2].motor[2].Pos_ / 9.1;
+
+        // imu
 
         hw_sensor_states_[4] = body_imu.angle_speed_[0];
         hw_sensor_states_[5] = body_imu.angle_speed_[0];
@@ -239,11 +259,12 @@ namespace orthrus_control
             std::chrono::duration<double> duration = time_now_ - time_last_ethercat_;
             if (duration.count() >= 4)
             {
+                SafeStop();
                 Ethercat.EcatStop();
             }
         }
 
-        Log();
+        // Log();
 
         return hardware_interface::return_type::OK;
     }
@@ -251,6 +272,23 @@ namespace orthrus_control
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::write(
         const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
     {
+
+        if (motorcan_send_flag_ < 6)
+        {
+            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
+            motorcan_send_flag_++;
+        }
+        else if (motorcan_send_flag_ < 11 && motorcan_send_flag_ >= 6)
+        {
+            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 10);
+            motorcan_send_flag_++;
+        }
+        else
+        {
+            leg[3].motor[2].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 10);
+            motorcan_send_flag_ = 0;
+        }
+
         leg[0].Analyze(&Ethercat.packet_rx[0]);
         leg[1].Analyze(&Ethercat.packet_rx[0]);
         leg[2].Analyze(&Ethercat.packet_rx[1]);
@@ -262,11 +300,11 @@ namespace orthrus_control
 
     void OrthrusSystemHardware::UnifiedSensorData()
     {
-        body_imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[0].imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[1].imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[2].imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[3].imu.CorrectionMatrixSet(-M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+        body_imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+        leg[0].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+        leg[1].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+        leg[2].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
+        leg[3].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
 
         body_imu.Correction(body_imu.euler_(YAW));
         leg[0].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
@@ -277,24 +315,66 @@ namespace orthrus_control
 
     void OrthrusSystemHardware::Log()
     {
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu5 %lf %lf %lf  \033[0m",body_imu.acc_[0],body_imu.acc_[1],body_imu.acc_[2]);
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu5 %lf %lf %lf  \033[0m",body_imu.angle_speed_[0],body_imu.angle_speed_[1],body_imu.angle_speed_[2]);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\n motor1 %lf %lf %lf %lf \n motor2 %lf %lf %lf %lf ",
+        //             body_imu.euler_(PITCH),
+        //             body_imu.euler_(PITCH),
+        //             body_imu.euler_(ROLL),
+        //             body_imu.euler_(ROLL),
+        //             leg[0].imu.euler_(PITCH),
+        //             leg[0].imu.euler_(PITCH),
+        //             leg[0].imu.euler_(ROLL),
+        //             leg[0].imu.euler_(ROLL));
+
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\n motor1 %lf %lf %lf %lf \n motor2 %lf %lf %lf %lf ",
+                    body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL),
+                    body_imu.euler_(PITCH) - leg[1].imu.euler_(ROLL),
+                    body_imu.euler_(PITCH) - leg[2].imu.euler_(ROLL),
+                    body_imu.euler_(PITCH) - leg[3].imu.euler_(ROLL),
+                    body_imu.euler_(ROLL) - leg[0].imu.euler_(PITCH),
+                    body_imu.euler_(ROLL) - leg[1].imu.euler_(PITCH),
+                    body_imu.euler_(ROLL) - leg[2].imu.euler_(PITCH),
+                    body_imu.euler_(ROLL) - leg[3].imu.euler_(PITCH));
+
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu5 %lf %lf %lf  \033[0m", body_imu.acc_[0], body_imu.acc_[1], body_imu.acc_[2]);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu5 %lf %lf %lf  \033[0m", body_imu.angle_speed_[0], body_imu.angle_speed_[1], body_imu.angle_speed_[2]);
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu5 %lf %lf %lf %lf \033[0m", body_imu.gyro_.w(), body_imu.gyro_.x(), body_imu.gyro_.y(), body_imu.gyro_.z());
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu5 %lf %lf %lf %lf \033[0m", body_imu.unified_gyro_.w(), body_imu.unified_gyro_.x(), body_imu.unified_gyro_.y(), body_imu.unified_gyro_.z());
 
         // all imu
 
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu1 %lf %lf %lf %lf \033[0m",leg[0].imu.gyro_.w(),leg[0].imu.gyro_.x(),leg[0].imu.gyro_.y(),leg[0].imu.gyro_.z());
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu2 %lf %lf %lf %lf \033[0m",leg[1].imu.gyro_.w(),leg[1].imu.gyro_.x(),leg[1].imu.gyro_.y(),leg[1].imu.gyro_.z());
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu3 %lf %lf %lf %lf \033[0m",leg[2].imu.gyro_.w(),leg[2].imu.gyro_.x(),leg[2].imu.gyro_.y(),leg[2].imu.gyro_.z());
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu4 %lf %lf %lf %lf \033[0m",leg[3].imu.gyro_.w(),leg[3].imu.gyro_.x(),leg[3].imu.gyro_.y(),leg[3].imu.gyro_.z());
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu1 %lf %lf %lf %lf \033[0m", leg[0].imu.gyro_.w(), leg[0].imu.gyro_.x(), leg[0].imu.gyro_.y(), leg[0].imu.gyro_.z());
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu2 %lf %lf %lf %lf \033[0m", leg[1].imu.gyro_.w(), leg[1].imu.gyro_.x(), leg[1].imu.gyro_.y(), leg[1].imu.gyro_.z());
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu3 %lf %lf %lf %lf \033[0m", leg[2].imu.gyro_.w(), leg[2].imu.gyro_.x(), leg[2].imu.gyro_.y(), leg[2].imu.gyro_.z());
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m imu4 %lf %lf %lf %lf \033[0m", leg[3].imu.gyro_.w(), leg[3].imu.gyro_.x(), leg[3].imu.gyro_.y(), leg[3].imu.gyro_.z());
 
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
 
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m stdid %d %d \033[0m", Ethercat.packet_rx[0].can.StdId, Ethercat.packet_rx[1].can.StdId);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m stdid %d %d \033[0m", Ethercat.packet_rx[0].can.StdId, Ethercat.packet_rx[1].can.StdId);
+    }
+
+    void OrthrusSystemHardware::SafeStop()
+    {
+        for (int i = 0; i <= 20; i++)
+        {
+            for (int j = 0; j < 12; j++)
+            {
+                if (j > 5)
+                {
+                    leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 0);
+                    Ethercat.EcatSyncMsg();
+                }
+                else
+                {
+                    leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
+                    Ethercat.EcatSyncMsg();
+                }
+            }
+        }
+
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "motor stop!");
     }
 }
 

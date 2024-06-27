@@ -64,6 +64,8 @@ namespace orthrus_control
             const rclcpp::Time &time, const rclcpp::Duration &period) override;
 
     private:
+        double theta1 = 18.82;
+        double theta2 = 14.6;
         // ethercat
         bool ethercat_prepare_flag_ = false;
         std::chrono::time_point<std::chrono::high_resolution_clock> time_last_ethercat_;
@@ -76,9 +78,12 @@ namespace orthrus_control
         Leg leg[4];
         Imu body_imu;
 
+        int motorcan_send_flag_ =0;
+
         //
         void UnifiedSensorData();
         void Log();
+        void SafeStop();
 
         //
         std::vector<double> hw_positions_;
