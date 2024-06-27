@@ -71,6 +71,9 @@ namespace orthrus_controller
     struct RobotCmd
     {
         Eigen::VectorXd effort;
+
+        bool if_enable_power;
+        bool if_enable_calibration;
     };
 
     struct OrthrusInterfaces

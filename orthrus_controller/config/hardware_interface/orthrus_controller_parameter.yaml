@@ -52,6 +52,23 @@ orthrus_controller:
       description: "imu data type name of robot",
     }
 
+  flag_names:
+    {
+      type: string_array,
+      default_value: [flag],
+      description: "Joint name of legged robot",
+    }
+  flag_data_types:
+    {
+      type: string_array,
+      default_value:
+        [
+          enable_power,
+          calibration_position
+        ],
+      description: "imu data type name of robot",
+    }
+
   package_name:
     {
       type: string,

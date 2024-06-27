@@ -112,18 +112,31 @@ namespace orthrus_controller
             const std::vector<std::string> &imu_names,
             std::vector<ImuHandle> &registered_handles);
 
+        struct FlagHandle
+        {
+            std::reference_wrapper<hardware_interface::LoanedCommandInterface> enable_power;
+            std::reference_wrapper<hardware_interface::LoanedCommandInterface> calibration_position;
+        };
+
+        std::vector<FlagHandle> flag_handles_;
+
+        controller_interface::CallbackReturn configure_flag(
+            const std::vector<std::string> &flag_data_types,
+            const std::vector<std::string> &flag_names,
+            std::vector<FlagHandle> &registered_handles);
+
         // parma
-        
+
         std::shared_ptr<orthrus_controller::ParamListener> param_listener_;
         orthrus_controller::Params params_;
 
         // 足式里程计
 
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
-        std::shared_ptr<OrthrusVisualization> visualization_;     // 可视化
+        std::shared_ptr<OrthrusVisualization> visualization_;       // 可视化
         std::shared_ptr<PinocchioInterfaces> pinocchio_interfaces_; // Pinocchio接口
-        std::shared_ptr<LeggedMpc> legged_mpc_;   // MPC控制器
-        std::shared_ptr<LeggedOdom> legged_odom_; // 里程计
+        std::shared_ptr<LeggedMpc> legged_mpc_;                     // MPC控制器
+        std::shared_ptr<LeggedOdom> legged_odom_;                   // 里程计
         std::shared_ptr<JoyInterface> joy_interface_;
 
         // LeggedOdomState
@@ -143,8 +156,6 @@ namespace orthrus_controller
             realtime_odometry_transform_publisher_ = nullptr;
 
         // Parameters from ROS for orthrus_controller
-        
-        
 
         // received command
         bool subscriber_is_active_ = false;

@@ -74,11 +74,11 @@ namespace orthrus_control
 
         EcatBase Ethercat = EcatBase(2);
 
-        //hardware interface
+        // hardware interface
         Leg leg[4];
         Imu body_imu;
 
-        int motorcan_send_flag_ =0;
+        int motorcan_send_flag_ = 0;
 
         //
         void UnifiedSensorData();
@@ -92,6 +92,7 @@ namespace orthrus_control
         std::vector<double> hw_sensor_states_;
 
         std::vector<double> hw_commands_;
+        std::unordered_map<std::string, double> gpio_commands_;
 
         std::shared_ptr<rclcpp::Node> node_;
         // subscribe crawler feed back
@@ -102,5 +103,4 @@ namespace orthrus_control
         std::shared_ptr<realtime_tools::RealtimePublisher<std_msgs::msg::Float64MultiArray>> realtime_cmd_publisher_ = nullptr;
         std::shared_ptr<rclcpp::Publisher<std_msgs::msg::Float64MultiArray>> cmd_publisher = nullptr;
     };
-
 }

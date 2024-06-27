@@ -87,6 +87,9 @@ namespace orthrus_controller
     conf_names.push_back("imu_sensor/orientation.y");
     conf_names.push_back("imu_sensor/orientation.z");
 
+    conf_names.push_back("flag/enable_power");
+    conf_names.push_back("flag/calibration_position");
+
     return {interface_configuration_type::INDIVIDUAL, conf_names};
   }
 
@@ -122,7 +125,7 @@ namespace orthrus_controller
     RCLCPP_INFO(logger, "Init legged_mpc");
     legged_mpc_->Init(orthrus_interfaces_, pinocchio_interfaces_);
     RCLCPP_INFO(logger, "Init over");
-    //RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
+    // RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
     RCLCPP_INFO(logger, "Configure over...");
 
     return controller_interface::CallbackReturn::SUCCESS;
@@ -133,6 +136,7 @@ namespace orthrus_controller
   {
     configure_joint(params_.leg_joint_names, joint_handles_);
     configure_imu(params_.imu_data_types, params_.imu_names, imu_handles_);
+    configure_flag(params_.flag_data_types, params_.flag_names, flag_handles_);
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
@@ -224,7 +228,7 @@ namespace orthrus_controller
     orthrus_interfaces_->robot_state.body_imu.orientation.w() = imu_handles_[0].orientation[0].get().get_value();
     orthrus_interfaces_->robot_state.body_imu.orientation.x() = imu_handles_[0].orientation[1].get().get_value();
     orthrus_interfaces_->robot_state.body_imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
-    orthrus_interfaces_->robot_state.body_imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();    
+    orthrus_interfaces_->robot_state.body_imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
 
     //----------------------------------------
     legged_odom_->Update(now_time_, duration);
@@ -232,19 +236,34 @@ namespace orthrus_controller
     legged_mpc_->Update(now_time_, duration);
     visualization_->Update(now_time_);
 
-    if (orthrus_interfaces_->robot_target.if_enable)
-    {
+    orthrus_interfaces_->robot_cmd.if_enable_power = true;
+    //----------------------------------------
+    //if (orthrus_interfaces_->robot_target.if_enable)
+    //{
       for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
       {
         joint_handles_[joint_number].cmd_effort.get().set_value(orthrus_interfaces_->robot_cmd.effort[joint_number]);
       }
+
+    joint_handles_[0].cmd_effort.get().set_value(1)
+    joint_handles_[1].cmd_effort.get().set_value(1)
+    joint_handles_[2].cmd_effort.get().set_value(1)
+    //}
+    //else
+    //{
+    //  for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
+    //  {
+    //    joint_handles_[joint_number].cmd_effort.get().set_value(0.0);
+    //  }
+    //}
+
+    if (orthrus_interfaces_->robot_cmd.if_enable_power)
+    {
+      flag_handles_[0].enable_power.get().set_value(1.0);
     }
     else
     {
-      for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
-      {
-        joint_handles_[joint_number].cmd_effort.get().set_value(0.0);
-      }
+      flag_handles_[0].enable_power.get().set_value(0.0);
     }
 
     return controller_interface::return_type::OK;
@@ -387,6 +406,47 @@ namespace orthrus_controller
     }
 
     return controller_interface::CallbackReturn::SUCCESS;
+  }
+
+  controller_interface::CallbackReturn OrthrusController::configure_flag(
+      const std::vector<std::string> &flag_data_types,
+      const std::vector<std::string> &flag_names,
+      std::vector<FlagHandle> &registered_handles)
+  {
+    auto logger = get_node()->get_logger();
+
+    for (const auto &flag_name : flag_names)
+    {
+      const auto enable_power_command_handle = std::find_if(
+          command_interfaces_.begin(), command_interfaces_.end(),
+          [&flag_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == flag_name &&
+                   interface.get_interface_name() == "enable_power";
+          });
+
+      if (enable_power_command_handle == command_interfaces_.end())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor command handle for %s", flag_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
+
+      const auto calibration_position_handle = std::find_if(
+          command_interfaces_.begin(), command_interfaces_.end(),
+          [&flag_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == flag_name &&
+                   interface.get_interface_name() == "calibration_position";
+          });
+
+      if (calibration_position_handle == command_interfaces_.end())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor command handle for %s", flag_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
+
+      registered_handles.emplace_back(FlagHandle{std::ref(*enable_power_command_handle), std::ref(*calibration_position_handle)});
+    }
   }
 
   bool OrthrusController::reset()

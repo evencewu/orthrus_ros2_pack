@@ -100,6 +100,14 @@ namespace orthrus_control
             }
         }
 
+        for (const auto &gpio : info.gpios)
+        {
+            for (const auto &cmd_iface : gpio.command_interfaces)
+            {
+                gpio_commands_[cmd_iface.name] = std::numeric_limits<double>::quiet_NaN();
+            }
+        }
+
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware init finish");
         return hardware_interface::CallbackReturn::SUCCESS;
     }
@@ -129,10 +137,16 @@ namespace orthrus_control
     std::vector<hardware_interface::CommandInterface> OrthrusSystemHardware::export_command_interfaces()
     {
         std::vector<hardware_interface::CommandInterface> command_interfaces;
+
         for (auto i = 0u; i < info_.joints.size(); i++)
         {
             command_interfaces.emplace_back(hardware_interface::CommandInterface(
                 info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_commands_[i]));
+        }
+
+        for (auto &gpio_command : gpio_commands_)
+        {
+            command_interfaces.emplace_back("flag", gpio_command.first, &gpio_command.second);
         }
 
         return command_interfaces;
@@ -153,8 +167,9 @@ namespace orthrus_control
                 hw_positions_[i] = 0;
                 hw_velocities_[i] = 0;
                 hw_effort_[i] = 0;
-
                 hw_commands_[i] = 0;
+                gpio_commands_["enable_power"] = 0;
+                gpio_commands_["calibration_position"] = 0;
             }
         }
 
@@ -189,8 +204,6 @@ namespace orthrus_control
             if (ecat_flag)
             {
                 bool sync_flag = false;
-                Ethercat.packet_tx[0].power = 0x01;
-                Ethercat.packet_tx[1].power = 0x01;
 
                 sync_flag = Ethercat.EcatSyncMsg();
                 if (sync_flag)
@@ -209,7 +222,7 @@ namespace orthrus_control
         hw_positions_[2] = leg[1].motor[2].Pos_ / 9.1;
 
         hw_positions_[3] = -leg[0].motor[0].Pos_ / 9.1;
-        hw_positions_[3] = body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL);
+        hw_positions_[3] = -(body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL));
         hw_positions_[4] = leg[0].motor[1].Pos_ / 9.1;
         hw_positions_[4] = (body_imu.euler_(ROLL) - leg[0].imu.euler_(PITCH)) - theta2 * M_PI / 180;
         hw_positions_[5] = leg[0].motor[2].Pos_ / 9.1;
@@ -240,10 +253,6 @@ namespace orthrus_control
         hw_sensor_states_[0] = body_imu.unified_gyro_.x();
         hw_sensor_states_[1] = body_imu.unified_gyro_.y();
         hw_sensor_states_[2] = body_imu.unified_gyro_.z();
-
-        //--------------
-        Ethercat.packet_tx[0].power = 0x01;
-        Ethercat.packet_tx[1].power = 0x01;
 
         // Imu::IfUseMag(FALSE, Ethercat.packet_rx[0].can);
         // Imu::IfUseMag(FALSE, Ethercat.packet_rx[1].can);
@@ -288,6 +297,23 @@ namespace orthrus_control
             leg[3].motor[2].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 10);
             motorcan_send_flag_ = 0;
         }
+
+        if (gpio_commands_["enable_power"])
+        {
+            Ethercat.packet_tx[0].power = 0x01;
+            Ethercat.packet_tx[1].power = 0x01;
+        }
+        else
+        {
+            Ethercat.packet_tx[0].power = 0x00;
+            Ethercat.packet_tx[1].power = 0x00;
+        }
+
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "enable_power %lf ", gpio_commands_["enable_power"]);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "calibration_position %lf ", gpio_commands_["calibration_position"]);
+
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "enable_power %lf %lf %lf", hw_commands_[0], hw_commands_[1], hw_commands_[2]);
+
 
         leg[0].Analyze(&Ethercat.packet_rx[0]);
         leg[1].Analyze(&Ethercat.packet_rx[0]);
@@ -357,6 +383,9 @@ namespace orthrus_control
 
     void OrthrusSystemHardware::SafeStop()
     {
+        Ethercat.packet_tx[0].power = 0x00;
+        Ethercat.packet_tx[1].power = 0x00;
+
         for (int i = 0; i <= 20; i++)
         {
             for (int j = 0; j < 12; j++)
