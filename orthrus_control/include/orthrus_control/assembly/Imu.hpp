@@ -36,6 +36,7 @@ namespace orthrus_control
 
         Eigen::Quaterniond gyro_; // 四元数角度
         Eigen::Vector3d acc_;     // 加速度
+        Eigen::Vector3d angle_speed_;
 
         Eigen::Quaterniond unified_gyro_;  // 转换后的坐标系
         Eigen::Quaterniond standard_gyro_; // 对齐yaw后的坐标系

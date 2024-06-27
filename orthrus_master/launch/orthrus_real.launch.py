@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, RegisterEventHandler
+from launch.actions import DeclareLaunchArgument, RegisterEventHandler,ExecuteProcess
 from launch.conditions import IfCondition
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import (
@@ -82,11 +82,18 @@ def generate_launch_description():
             )
         )
     )
+    
+    foxglove = ExecuteProcess(
+    cmd=['ros2', 'launch', 'foxglove_bridge', 'foxglove_bridge_launch.xml', 'use_compression:=true'],
+    output='log'
+)
+
         
     nodes = [
         control_node,
         robot_state_pub_node,
         robot_controller_spawner,
+        foxglove,
     ]
 
     return LaunchDescription(declared_arguments + nodes)

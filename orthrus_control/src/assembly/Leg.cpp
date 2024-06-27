@@ -13,7 +13,7 @@ namespace orthrus_control
 
     void Leg::Init(uint8_t imu_id, uint8_t leg_id)
     {
-        imu.Init(imu_id);
+        imu.Init(imu_id,false);
         angle.Init(imu_id);
         motor[0].Init(leg_id, 0);
         motor[1].Init(leg_id, 1);

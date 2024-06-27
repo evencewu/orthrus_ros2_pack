@@ -66,15 +66,21 @@ namespace orthrus_control
     private:
         // ethercat
         bool ethercat_prepare_flag_ = false;
-        
         std::chrono::time_point<std::chrono::high_resolution_clock> time_last_ethercat_;
         std::chrono::time_point<std::chrono::high_resolution_clock> time_now_;
         double duration_;
 
-        rclcpp::TimerBase::SharedPtr activation_timer_;
-
         EcatBase Ethercat = EcatBase(2);
 
+        //hardware interface
+        Leg leg[4];
+        Imu body_imu;
+
+        //
+        void UnifiedSensorData();
+        void Log();
+
+        //
         std::vector<double> hw_positions_;
         std::vector<double> hw_velocities_;
         std::vector<double> hw_effort_;

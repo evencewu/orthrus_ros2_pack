@@ -226,6 +226,19 @@ namespace orthrus_controller
     orthrus_interfaces_->robot_state.body_imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
     orthrus_interfaces_->robot_state.body_imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
 
+    RCLCPP_INFO(logger, "imu %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+    orthrus_interfaces_->robot_state.body_imu.angular_velocity[0],
+    orthrus_interfaces_->robot_state.body_imu.angular_velocity[1],
+    orthrus_interfaces_->robot_state.body_imu.angular_velocity[2],
+    orthrus_interfaces_->robot_state.body_imu.linear_acceleration[0],
+    orthrus_interfaces_->robot_state.body_imu.linear_acceleration[1],
+    orthrus_interfaces_->robot_state.body_imu.linear_acceleration[2],
+    orthrus_interfaces_->robot_state.body_imu.orientation.w(),
+    orthrus_interfaces_->robot_state.body_imu.orientation.x(),
+    orthrus_interfaces_->robot_state.body_imu.orientation.y(),
+    orthrus_interfaces_->robot_state.body_imu.orientation.z());
+    
+
     //----------------------------------------
     legged_odom_->Update(now_time_, duration);
     pinocchio_interfaces_->Update(time);

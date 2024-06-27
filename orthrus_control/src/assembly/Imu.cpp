@@ -7,7 +7,7 @@ namespace orthrus_control
 {
     void Imu::Correction(double standard_yaw)
     {
-        unified_gyro_ = gyro_*correction_matrix_;
+        unified_gyro_ = gyro_ * correction_matrix_;
 
         GetEuler(unified_gyro_);
 
@@ -20,35 +20,23 @@ namespace orthrus_control
     {
         euler_ = input_quaterniond.toRotationMatrix().eulerAngles(ROLL, PITCH, YAW);
     }
-
-    void Imu::RotatingCoordinates(double angle1, Eigen::Vector3d axis1,double angle2, Eigen::Vector3d axis2)
-    {
-        Eigen::AngleAxisd rotation1(angle1, axis1); // 绕y轴旋转90度
-        Eigen::Quaterniond q1(rotation1);
-
-        Eigen::AngleAxisd rotation2(angle2,axis2);
-        Eigen::Quaterniond q2(rotation2);
-
-        this->unified_gyro_ = this->gyro_ * q2 * q1;
-    }
-
-    void Imu::CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1,double angle2, Eigen::Vector3d axis2)
+    
+    void Imu::CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1, double angle2, Eigen::Vector3d axis2)
     {
         Eigen::AngleAxisd rotation1(angle1, axis1);
         Eigen::Quaterniond q1(rotation1);
 
-        Eigen::AngleAxisd rotation2(angle2,axis2);
+        Eigen::AngleAxisd rotation2(angle2, axis2);
         Eigen::Quaterniond q2(rotation2);
 
         correction_matrix_ = q2 * q1;
     }
 
-
     void Imu::IfUseMag(bool flag, can_pack can)
     {
         if (flag)
         {
-            can.StdId = 0x11;
+            can.StdId = 0x100;
             can.DLC = 0x04;
             can.Data[0] = 0;
             can.Data[1] = 0;
@@ -57,7 +45,7 @@ namespace orthrus_control
         }
         else
         {
-            can.StdId = 0x11;
+            can.StdId = 0x100;
             can.DLC = 0x04;
             can.Data[0] = 0;
             can.Data[1] = 0;
@@ -66,7 +54,7 @@ namespace orthrus_control
         }
     }
 
-    void Imu::Init(uint8_t device_id,bool if_with_acc)
+    void Imu::Init(uint8_t device_id, bool if_with_acc)
     {
         device_id_ = device_id;
         if_with_acc_ = if_with_acc;
@@ -89,6 +77,36 @@ namespace orthrus_control
 
             memcpy(data.uint_data, &(pack->can.Data[4]), 4);
             gyro_.z() = data.f_data;
+        }
+
+        if (if_with_acc_)
+        {
+            if (pack->can.StdId == device_id_ + 4)
+            {
+                memcpy(data.uint_data, &(pack->can.Data[0]), 4);
+                acc_[0] = data.f_data;
+
+                memcpy(data.uint_data, &(pack->can.Data[4]), 4);
+                acc_[1] = data.f_data;
+            }
+
+            if (pack->can.StdId == device_id_ + 5)
+            {
+                memcpy(data.uint_data, &(pack->can.Data[0]), 4);
+                acc_[2] = data.f_data;
+
+                memcpy(data.uint_data, &(pack->can.Data[4]), 4);
+                angle_speed_[0] = data.f_data;
+            }
+
+            if (pack->can.StdId == device_id_ + 6)
+            {
+                memcpy(data.uint_data, &(pack->can.Data[0]), 4);
+                angle_speed_[1] = data.f_data;
+
+                memcpy(data.uint_data, &(pack->can.Data[4]), 4);
+                angle_speed_[2] = data.f_data;
+            }
         }
     }
 }
