@@ -146,8 +146,11 @@ namespace orthrus_control
 
         for (auto &gpio_command : gpio_commands_)
         {
-            command_interfaces.emplace_back("flag", gpio_command.first, &gpio_command.second);
+            command_interfaces.emplace_back(hardware_interface::CommandInterface(
+                "flag", gpio_command.first, &gpio_command.second));
         }
+
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "motor stop!" );
 
         return command_interfaces;
     }
@@ -308,12 +311,6 @@ namespace orthrus_control
             Ethercat.packet_tx[0].power = 0x00;
             Ethercat.packet_tx[1].power = 0x00;
         }
-
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "enable_power %lf ", gpio_commands_["enable_power"]);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "calibration_position %lf ", gpio_commands_["calibration_position"]);
-
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "enable_power %lf %lf %lf", hw_commands_[0], hw_commands_[1], hw_commands_[2]);
-
 
         leg[0].Analyze(&Ethercat.packet_rx[0]);
         leg[1].Analyze(&Ethercat.packet_rx[0]);

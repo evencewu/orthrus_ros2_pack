@@ -21,7 +21,15 @@ namespace orthrus_controller
             orthrus_interfaces_->robot_target.if_enable = 1;
         }
 
-        // mtx_.unlock();
+        if (msg->start == 1)
+        {
+            orthrus_interfaces_->robot_cmd.if_enable_power = 1;
+        }
+
+        if (msg->back == 1)
+        {
+            orthrus_interfaces_->robot_cmd.if_enable_power = 0;
+        }
     }
 
     std::stringstream JoyInterface::GetJoyTarget()

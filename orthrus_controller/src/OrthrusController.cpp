@@ -63,6 +63,10 @@ namespace orthrus_controller
     {
       conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
     }
+
+    conf_names.push_back("flag/enable_power");
+    conf_names.push_back("flag/calibration_position");
+
     return {interface_configuration_type::INDIVIDUAL, conf_names};
   }
 
@@ -86,9 +90,6 @@ namespace orthrus_controller
     conf_names.push_back("imu_sensor/orientation.x");
     conf_names.push_back("imu_sensor/orientation.y");
     conf_names.push_back("imu_sensor/orientation.z");
-
-    conf_names.push_back("flag/enable_power");
-    conf_names.push_back("flag/calibration_position");
 
     return {interface_configuration_type::INDIVIDUAL, conf_names};
   }
@@ -236,20 +237,19 @@ namespace orthrus_controller
     legged_mpc_->Update(now_time_, duration);
     visualization_->Update(now_time_);
 
-    orthrus_interfaces_->robot_cmd.if_enable_power = true;
     //----------------------------------------
-    //if (orthrus_interfaces_->robot_target.if_enable)
+    // if (orthrus_interfaces_->robot_target.if_enable)
     //{
-      for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
-      {
-        joint_handles_[joint_number].cmd_effort.get().set_value(orthrus_interfaces_->robot_cmd.effort[joint_number]);
-      }
+    for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
+    {
+      joint_handles_[joint_number].cmd_effort.get().set_value(orthrus_interfaces_->robot_cmd.effort[joint_number]);
+    }
 
-    joint_handles_[0].cmd_effort.get().set_value(1)
-    joint_handles_[1].cmd_effort.get().set_value(1)
-    joint_handles_[2].cmd_effort.get().set_value(1)
+    joint_handles_[0].cmd_effort.get().set_value(1);
+    joint_handles_[1].cmd_effort.get().set_value(1);
+    joint_handles_[2].cmd_effort.get().set_value(1);
     //}
-    //else
+    // else
     //{
     //  for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
     //  {

@@ -3,7 +3,7 @@
   xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:property name="meshes_folder" value="file:///$(find orthrus_interfaces)/models/orthrus/meshes" />
-  <xacro:property name="orthrus_config_path" value="file:///$(find orthrus_gazebo)/config/orthrus.yaml" />
+  <xacro:property name="orthrus_config_path" value="file:///$(find orthrus_control)/config/orthrus.yaml" />
 
   <xacro:include filename="orthrus_base.xacro"/>
 

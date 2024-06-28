@@ -89,9 +89,13 @@ namespace orthrus_control
         std::vector<double> hw_positions_;
         std::vector<double> hw_velocities_;
         std::vector<double> hw_effort_;
-        std::vector<double> hw_sensor_states_;
 
         std::vector<double> hw_commands_;
+
+        std::vector<double> hw_sensor_states_;
+
+        
+
         std::unordered_map<std::string, double> gpio_commands_;
 
         std::shared_ptr<rclcpp::Node> node_;
