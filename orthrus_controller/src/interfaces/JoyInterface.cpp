@@ -11,24 +11,38 @@ namespace orthrus_controller
     {
         // mtx_.lock();
 
-        if (msg->y == 1)
-        {
-            orthrus_interfaces_->robot_target.if_enable = 0;
-        }
-
-        if (msg->x == 1)
-        {
-            orthrus_interfaces_->robot_target.if_enable = 1;
-        }
-
+        // 菜单键组合键用于不常用组合键
         if (msg->start == 1)
         {
-            orthrus_interfaces_->robot_cmd.if_enable_power = 1;
-        }
+            if (msg->x == 1)
+            {
+                orthrus_interfaces_->robot_cmd.if_enable_power = 1;
+            }
+            else
+            {
+                orthrus_interfaces_->robot_cmd.if_enable_power = 0;
+            }
 
-        if (msg->back == 1)
+            if (msg->y == 1)
+            {
+                orthrus_interfaces_->robot_cmd.if_enable_calibration = 1;
+            }
+            else
+            {
+                orthrus_interfaces_->robot_cmd.if_enable_calibration = 0;
+            }
+        }
+        else
         {
-            orthrus_interfaces_->robot_cmd.if_enable_power = 0;
+            if (msg->y == 1)
+            {
+                orthrus_interfaces_->robot_target.if_enable = 0;
+            }
+
+            if (msg->x == 1)
+            {
+                orthrus_interfaces_->robot_target.if_enable = 1;
+            }
         }
     }
 
