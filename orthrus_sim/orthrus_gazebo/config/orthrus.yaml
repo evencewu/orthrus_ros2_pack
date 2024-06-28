@@ -5,6 +5,10 @@ controller_manager:
     orthrus_controller:
       type: orthrus_controller/OrthrusController
 
+orthrus_controller:
+  ros__parameters:
+    sim_or_real: "sim"
+
 
     
 

@@ -64,8 +64,11 @@ namespace orthrus_controller
       conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
     }
 
-    //conf_names.push_back("flag/enable_power");
-    //conf_names.push_back("flag/calibration_position");
+    if (params_.sim_or_real == "real")
+    {
+      conf_names.push_back("flag/enable_power");
+      conf_names.push_back("flag/calibration_position");
+    }
 
     return {interface_configuration_type::INDIVIDUAL, conf_names};
   }
@@ -137,7 +140,10 @@ namespace orthrus_controller
   {
     configure_joint(params_.leg_joint_names, joint_handles_);
     configure_imu(params_.imu_data_types, params_.imu_names, imu_handles_);
-    //configure_flag(params_.flag_data_types, params_.flag_names, flag_handles_);
+    if (params_.sim_or_real == "real")
+    {
+      configure_flag(params_.flag_data_types, params_.flag_names, flag_handles_);
+    }
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
@@ -254,14 +260,17 @@ namespace orthrus_controller
     //  }
     //}
 
-    //if (orthrus_interfaces_->robot_cmd.if_enable_power)
-    //{
-    //  flag_handles_[0].enable_power.get().set_value(1.0);
-    //}
-    //else
-    //{
-    //  flag_handles_[0].enable_power.get().set_value(0.0);
-    //}
+    if (params_.sim_or_real == "real")
+    {
+      if (orthrus_interfaces_->robot_cmd.if_enable_power)
+      {
+        flag_handles_[0].enable_power.get().set_value(1.0);
+      }
+      else
+      {
+        flag_handles_[0].enable_power.get().set_value(0.0);
+      }
+    }
 
     return controller_interface::return_type::OK;
   }
