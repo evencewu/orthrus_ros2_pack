@@ -11,11 +11,11 @@ namespace orthrus_control
 
     void Encoder::Analyze(Ecat_Inputs_Pack *pack)
     {
-        if (pack->can.StdId == device_id + 2)
+        if (pack->can.StdId == device_id + 3)
         {
-            memcpy(data.uint_data, &(pack->can.Data[4]), 4);
+            memcpy(data.uint_data, &(pack->can.Data[0]), 4);
 
-            Pos = data.f_data;
+            Pos_ = data.f_data;
         }
     }
 }

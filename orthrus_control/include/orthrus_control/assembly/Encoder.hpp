@@ -12,7 +12,7 @@ namespace orthrus_control
         void Init(uint8_t imu_id);
         void Analyze(Ecat_Inputs_Pack *pack);
 
-        float Pos; //角度
+        float Pos_; //角度
 
     private:
         union

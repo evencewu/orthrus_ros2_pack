@@ -18,12 +18,13 @@ namespace orthrus_controller
             {
                 orthrus_interfaces_->robot_cmd.if_enable_power = 1;
             }
-            else
+
+            if (msg->y == 1)
             {
                 orthrus_interfaces_->robot_cmd.if_enable_power = 0;
             }
 
-            if (msg->y == 1)
+            if (msg->b == 1)
             {
                 orthrus_interfaces_->robot_cmd.if_enable_calibration = 1;
             }

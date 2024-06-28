@@ -9,7 +9,7 @@ namespace orthrus_control
     {
         unified_gyro_ = gyro_ * correction_matrix_;
 
-        GetEuler(unified_gyro_.conjugate());
+        GetEuler(unified_gyro_);
 
         Eigen::Vector3d eulerAngles(euler_(ROLL), euler_(PITCH), standard_yaw);
 

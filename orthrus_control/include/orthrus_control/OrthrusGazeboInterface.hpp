@@ -82,8 +82,14 @@ namespace orthrus_control
 
         //
         void UnifiedSensorData();
+        
         void Log();
         void SafeStop();
+
+        //Calibration
+        void StartCalibrationEncoderPosition();
+        void StopCalibrationEncoderPosition();
+
 
         //
         std::vector<double> hw_positions_;
@@ -93,8 +99,6 @@ namespace orthrus_control
         std::vector<double> hw_commands_;
 
         std::vector<double> hw_sensor_states_;
-
-        
 
         std::unordered_map<std::string, double> gpio_commands_;
 
