@@ -214,11 +214,11 @@ namespace orthrus_controller
       orthrus_interfaces_->robot_state.joint.velocity[joint_number] = velocity;
       orthrus_interfaces_->robot_state.joint.effort[joint_number] = effort;
 
-      if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
-      {
-        RCLCPP_ERROR(logger, "Either the joint is invalid for index");
-        return controller_interface::return_type::ERROR;
-      }
+      //if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
+      //{
+      //  RCLCPP_ERROR(logger, "Either the joint is invalid for index");
+      //  return controller_interface::return_type::ERROR;
+      //}
     }
 
     // Update imu/odom data
@@ -269,6 +269,15 @@ namespace orthrus_controller
       else
       {
         flag_handles_[0].enable_power.get().set_value(0.0);
+      }
+
+      if (orthrus_interfaces_->robot_cmd.if_enable_calibration)
+      {
+        flag_handles_[0].calibration_position.get().set_value(1.0);
+      }
+      else
+      {
+        flag_handles_[0].calibration_position.get().set_value(0.0);
       }
     }
 
