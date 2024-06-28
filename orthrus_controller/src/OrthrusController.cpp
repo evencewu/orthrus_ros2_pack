@@ -64,8 +64,8 @@ namespace orthrus_controller
       conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
     }
 
-    conf_names.push_back("flag/enable_power");
-    conf_names.push_back("flag/calibration_position");
+    //conf_names.push_back("flag/enable_power");
+    //conf_names.push_back("flag/calibration_position");
 
     return {interface_configuration_type::INDIVIDUAL, conf_names};
   }
@@ -137,7 +137,7 @@ namespace orthrus_controller
   {
     configure_joint(params_.leg_joint_names, joint_handles_);
     configure_imu(params_.imu_data_types, params_.imu_names, imu_handles_);
-    configure_flag(params_.flag_data_types, params_.flag_names, flag_handles_);
+    //configure_flag(params_.flag_data_types, params_.flag_names, flag_handles_);
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
@@ -245,9 +245,6 @@ namespace orthrus_controller
       joint_handles_[joint_number].cmd_effort.get().set_value(orthrus_interfaces_->robot_cmd.effort[joint_number]);
     }
 
-    joint_handles_[0].cmd_effort.get().set_value(1);
-    joint_handles_[1].cmd_effort.get().set_value(1);
-    joint_handles_[2].cmd_effort.get().set_value(1);
     //}
     // else
     //{

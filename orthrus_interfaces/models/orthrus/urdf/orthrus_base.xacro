@@ -258,11 +258,13 @@
         <state_interface name="linear_acceleration.z"/>
       </sensor>
 
-      <gpio name="flag">
-        <command_interface name="enable_power"/>
-        <command_interface name="calibration_position"/>
-        <!-- Needed to know current state of the output -->
-      </gpio>
+      <xacro:if value="${prefix == 'real'}">
+        <gpio name="flag">
+          <command_interface name="enable_power"/>
+          <command_interface name="calibration_position"/>
+          <!-- Needed to know current state of the output -->
+        </gpio>
+      </xacro:if>
 
     </ros2_control>
   </xacro:macro>
