@@ -254,14 +254,14 @@ namespace orthrus_controller
     //  }
     //}
 
-    if (orthrus_interfaces_->robot_cmd.if_enable_power)
-    {
-      flag_handles_[0].enable_power.get().set_value(1.0);
-    }
-    else
-    {
-      flag_handles_[0].enable_power.get().set_value(0.0);
-    }
+    //if (orthrus_interfaces_->robot_cmd.if_enable_power)
+    //{
+    //  flag_handles_[0].enable_power.get().set_value(1.0);
+    //}
+    //else
+    //{
+    //  flag_handles_[0].enable_power.get().set_value(0.0);
+    //}
 
     return controller_interface::return_type::OK;
   }

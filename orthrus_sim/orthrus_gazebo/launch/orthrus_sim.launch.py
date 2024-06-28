@@ -10,16 +10,15 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, FindExecutable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration
-
+from launch.substitutions import LaunchConfiguration,ThisLaunchFileDir
 import xacro
 
 
 def generate_launch_description():
             
-    gzserver = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(get_package_share_directory('gazebo_ros'), 'launch/'), 'gzserver.launch.py']),
-    ),
+    gazebo = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/gzserver.launch.py']),
+             )
 
     pkg_dir = get_package_share_directory('orthrus_interfaces')
     simulation_description_path = os.path.join(pkg_dir)
@@ -65,13 +64,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        DeclareLaunchArgument('server', default_value='true',
-                              description='Set to "false" not to run gzserver.'),
-
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([os.path.join(get_package_share_directory('gazebo_ros'), 'launch/'), '/gzserver.launch.py']),
-            condition=IfCondition(LaunchConfiguration('server'))
-        ),
 
         RegisterEventHandler(
             event_handler=OnProcessExit(
@@ -81,6 +73,7 @@ def generate_launch_description():
         ),
         
         node_robot_state_publisher,
+        gazebo,
         spawn_entity,
         #controller_manager,
     ])
