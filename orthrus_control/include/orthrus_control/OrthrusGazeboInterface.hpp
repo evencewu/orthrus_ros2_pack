@@ -78,6 +78,10 @@ namespace orthrus_control
         Leg leg[4];
         Imu body_imu;
 
+        
+
+
+
         int motorcan_send_flag_ = 0;
 
         //
@@ -89,6 +93,9 @@ namespace orthrus_control
         //Calibration
         void StartCalibrationEncoderPosition();
         void StopCalibrationEncoderPosition();
+
+        void CalibrationPosition();
+        std::vector<double> dealta_real_position_;
 
 
         //
