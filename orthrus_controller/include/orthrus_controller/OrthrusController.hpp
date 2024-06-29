@@ -116,6 +116,7 @@ namespace orthrus_controller
         {
             std::reference_wrapper<hardware_interface::LoanedCommandInterface> enable_power;
             std::reference_wrapper<hardware_interface::LoanedCommandInterface> calibration_position;
+            std::reference_wrapper<hardware_interface::LoanedCommandInterface> calibration_encoder;
         };
 
         std::vector<FlagHandle> flag_handles_;

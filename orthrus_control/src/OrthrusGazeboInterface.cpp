@@ -173,6 +173,7 @@ namespace orthrus_control
                 hw_commands_[i] = 0;
                 gpio_commands_["enable_power"] = 0;
                 gpio_commands_["calibration_position"] = 0;
+                gpio_commands_["calibration_encoder"] = 0;
             }
         }
 
@@ -214,28 +215,37 @@ namespace orthrus_control
 
         // ros2 control 交换数据
 
+        hw_positions_[0] = -leg[1].motor[0].Pos_ / 9.1 - dealta_real_position_[1][0];
+        hw_positions_[1] = leg[1].motor[1].Pos_ / 9.1 - dealta_real_position_[1][1];
+        hw_positions_[2] = leg[1].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[1][2]; //
+
+        hw_positions_[3] = -leg[0].motor[0].Pos_ / 9.1 - dealta_real_position_[0][0];
+        hw_positions_[4] = leg[0].motor[1].Pos_ / 9.1 - dealta_real_position_[0][1];
+        hw_positions_[5] = leg[0].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[0][2];
+
+        hw_positions_[6] = -leg[3].motor[0].Pos_ / 9.1 - dealta_real_position_[3][0];
+        hw_positions_[7] = leg[3].motor[1].Pos_ / 9.1 - dealta_real_position_[3][1];
+        hw_positions_[8] = leg[3].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[3][2];
+
+        hw_positions_[9] = -leg[2].motor[0].Pos_ / 9.1 - dealta_real_position_[2][0];
+        hw_positions_[10] = leg[2].motor[1].Pos_ / 9.1 - dealta_real_position_[2][1];
+        hw_positions_[11] = leg[2].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[2][2];
+        
+        //
         hw_positions_[0] = -leg[1].motor[0].Pos_ / 9.1;
-        hw_positions_[0] = (body_imu.euler_(ROLL) - leg[1].imu.euler_(PITCH));
         hw_positions_[1] = leg[1].motor[1].Pos_ / 9.1;
-        hw_positions_[1] = (body_imu.euler_(PITCH) - leg[1].imu.euler_(ROLL)) + theta2 * M_PI / 180;
-        hw_positions_[2] = leg[1].motor[2].Pos_ / 9.1;
+        hw_positions_[2] = leg[1].motor[2].Pos_ / 9.1; //
 
         hw_positions_[3] = -leg[0].motor[0].Pos_ / 9.1;
-        hw_positions_[3] = -(body_imu.euler_(ROLL) - leg[0].imu.euler_(PITCH));
         hw_positions_[4] = leg[0].motor[1].Pos_ / 9.1;
-        hw_positions_[4] = (body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL)) - theta2 * M_PI / 180;
         hw_positions_[5] = leg[0].motor[2].Pos_ / 9.1;
 
         hw_positions_[6] = -leg[3].motor[0].Pos_ / 9.1;
-        hw_positions_[6] = -(body_imu.euler_(ROLL) - leg[3].imu.euler_(PITCH));
         hw_positions_[7] = leg[3].motor[1].Pos_ / 9.1;
-        hw_positions_[7] = (body_imu.euler_(PITCH) - leg[3].imu.euler_(ROLL)) + theta2 * M_PI / 180;
         hw_positions_[8] = leg[3].motor[2].Pos_ / 9.1;
 
         hw_positions_[9] = -leg[2].motor[0].Pos_ / 9.1;
-        hw_positions_[9] = body_imu.euler_(ROLL) - leg[2].imu.euler_(PITCH);
         hw_positions_[10] = leg[2].motor[1].Pos_ / 9.1;
-        hw_positions_[10] = body_imu.euler_(PITCH) - leg[2].imu.euler_(ROLL) - theta2 * M_PI / 180;
         hw_positions_[11] = leg[2].motor[2].Pos_ / 9.1;
 
         // imu
@@ -309,13 +319,20 @@ namespace orthrus_control
 
         if (gpio_commands_["calibration_position"])
         {
-            StartCalibrationEncoderPosition();
-            //CalibrationPosition();
+            CalibrationPosition();
         }
         else
         {
-            StopCalibrationEncoderPosition();
         }
+
+        //if (gpio_commands_["calibration_encoder"])
+        //{
+        //    StartCalibrationEncoderPosition();
+        //}
+        //else
+        //{
+        //    StopCalibrationEncoderPosition();
+        //}
 
         leg[0].Analyze(&Ethercat.packet_rx[1]);
         leg[1].Analyze(&Ethercat.packet_rx[1]);
@@ -409,31 +426,31 @@ namespace orthrus_control
 
         imu_pos_0 = (body_imu.euler_(ROLL) - leg[1].imu.euler_(PITCH));
         imu_pos_1 = (body_imu.euler_(PITCH) - leg[1].imu.euler_(ROLL)) + theta2 * M_PI / 180;
-        
-        dealta_real_position_[1] = leg[1].motor[0].Pos_ / 9.1 - imu_pos_0;
-        dealta_real_position_[1] = leg[1].motor[1].Pos_ / 9.1 - imu_pos_1;
-        dealta_real_position_[1] = leg[1].motor[2].Pos_ / 9.1 - leg[1].angle.Pos_;
+
+        dealta_real_position_[1][0] = -leg[1].motor[0].Pos_ / 9.1 - imu_pos_0;
+        dealta_real_position_[1][1] = leg[1].motor[1].Pos_ / 9.1 - imu_pos_1;
+        dealta_real_position_[1][2] = leg[1].motor[2].Pos_ / 9.1 - leg[1].angle.Pos_;
 
         imu_pos_0 = -(body_imu.euler_(ROLL) - leg[0].imu.euler_(PITCH));
         imu_pos_1 = (body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL)) - theta2 * M_PI / 180;
 
-        dealta_real_position_[0] = leg[0].motor[0].Pos_ / 9.1 - imu_pos_0;
-        dealta_real_position_[0] = leg[0].motor[1].Pos_ / 9.1 - imu_pos_1;
-        dealta_real_position_[0] = leg[0].motor[2].Pos_ / 9.1 - leg[0].angle.Pos_;
+        dealta_real_position_[0][0] = -leg[0].motor[0].Pos_ / 9.1 - imu_pos_0;
+        dealta_real_position_[0][1] = leg[0].motor[1].Pos_ / 9.1 - imu_pos_1;
+        dealta_real_position_[0][2] = leg[0].motor[2].Pos_ / 9.1 - leg[0].angle.Pos_;
 
         imu_pos_0 = -(body_imu.euler_(ROLL) - leg[3].imu.euler_(PITCH));
         imu_pos_1 = (body_imu.euler_(PITCH) - leg[3].imu.euler_(ROLL)) + theta2 * M_PI / 180;
 
-        dealta_real_position_[3] = leg[3].motor[0].Pos_ / 9.1 - imu_pos_0;
-        dealta_real_position_[3] = leg[3].motor[1].Pos_ / 9.1 - imu_pos_1;
-        dealta_real_position_[3] = leg[3].motor[2].Pos_ / 9.1 - leg[3].angle.Pos_;
+        dealta_real_position_[3][0] = -leg[3].motor[0].Pos_ / 9.1 - imu_pos_0;
+        dealta_real_position_[3][1] = leg[3].motor[1].Pos_ / 9.1 - imu_pos_1;
+        dealta_real_position_[3][2] = leg[3].motor[2].Pos_ / 9.1 - leg[3].angle.Pos_;
 
         imu_pos_0 = body_imu.euler_(ROLL) - leg[2].imu.euler_(PITCH);
         imu_pos_1 = body_imu.euler_(PITCH) - leg[2].imu.euler_(ROLL) - theta2 * M_PI / 180;
 
-        dealta_real_position_[2] = leg[2].motor[0].Pos_ / 9.1 - imu_pos_0;
-        dealta_real_position_[2] = leg[2].motor[1].Pos_ / 9.1 - imu_pos_1;
-        dealta_real_position_[2] = leg[2].motor[2].Pos_ / 9.1 - leg[2].angle.Pos_;
+        dealta_real_position_[2][0] = -leg[2].motor[0].Pos_ / 9.1 - imu_pos_0;
+        dealta_real_position_[2][1] = leg[2].motor[1].Pos_ / 9.1 - imu_pos_1;
+        dealta_real_position_[2][2] = leg[2].motor[2].Pos_ / 9.1 - leg[2].angle.Pos_; //
     }
 
     // for debug
@@ -480,12 +497,13 @@ namespace orthrus_control
         // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_);
         // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
 
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_);
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_);
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_);
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "-----------------------------------------------");
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
 
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf %lf\033[0m", leg[0].angle.Pos_, leg[1].angle.Pos_, leg[2].angle.Pos_, leg[3].angle.Pos_);
+        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf %lf\033[0m", leg[0].angle.Pos_, leg[1].angle.Pos_, leg[2].angle.Pos_, leg[3].angle.Pos_);
 
         // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m stdid %d %d \033[0m", Ethercat.packet_rx[0].can.StdId, Ethercat.packet_rx[1].can.StdId);
     }

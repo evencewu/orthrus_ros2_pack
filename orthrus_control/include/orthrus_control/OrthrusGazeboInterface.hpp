@@ -95,7 +95,7 @@ namespace orthrus_control
         void StopCalibrationEncoderPosition();
 
         void CalibrationPosition();
-        std::vector<double> dealta_real_position_;
+        double dealta_real_position_[4][3];
 
 
         //

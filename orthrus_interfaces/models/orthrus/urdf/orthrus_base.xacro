@@ -262,6 +262,7 @@
         <gpio name="flag">
           <command_interface name="enable_power"/>
           <command_interface name="calibration_position"/>
+          <command_interface name="calibration_encoder"/>
           <!-- Needed to know current state of the output -->
         </gpio>
       </xacro:if>

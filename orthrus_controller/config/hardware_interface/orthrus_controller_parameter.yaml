@@ -63,7 +63,8 @@ orthrus_controller:
       default_value:
         [
           enable_power,
-          calibration_position
+          calibration_position,
+          calibration_encoder
         ],
       description: "imu data type name of robot",
     }

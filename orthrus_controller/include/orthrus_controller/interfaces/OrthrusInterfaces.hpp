@@ -74,6 +74,7 @@ namespace orthrus_controller
 
         bool if_enable_power;
         bool if_enable_calibration;
+        bool if_enable_calibration_encoder;
     };
 
     struct OrthrusInterfaces

@@ -68,6 +68,7 @@ namespace orthrus_controller
     {
       conf_names.push_back("flag/enable_power");
       conf_names.push_back("flag/calibration_position");
+      conf_names.push_back("flag/calibration_encoder");
     }
 
     return {interface_configuration_type::INDIVIDUAL, conf_names};
@@ -214,11 +215,11 @@ namespace orthrus_controller
       orthrus_interfaces_->robot_state.joint.velocity[joint_number] = velocity;
       orthrus_interfaces_->robot_state.joint.effort[joint_number] = effort;
 
-      //if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
+      // if (std::isnan(position) || std::isnan(velocity) || std::isnan(effort))
       //{
-      //  RCLCPP_ERROR(logger, "Either the joint is invalid for index");
-      //  return controller_interface::return_type::ERROR;
-      //}
+      //   RCLCPP_ERROR(logger, "Either the joint is invalid for index");
+      //   return controller_interface::return_type::ERROR;
+      // }
     }
 
     // Update imu/odom data
@@ -278,6 +279,15 @@ namespace orthrus_controller
       else
       {
         flag_handles_[0].calibration_position.get().set_value(0.0);
+      }
+
+      if(orthrus_interfaces_->robot_cmd.if_enable_calibration_encoder)
+      {
+        flag_handles_[0].calibration_encoder.get().set_value(1.0);
+      }
+      else
+      {
+        flag_handles_[0].calibration_encoder.get().set_value(0.0);
       }
     }
 
@@ -446,6 +456,7 @@ namespace orthrus_controller
         return controller_interface::CallbackReturn::ERROR;
       }
 
+      //--
       const auto calibration_position_handle = std::find_if(
           command_interfaces_.begin(), command_interfaces_.end(),
           [&flag_name](const auto &interface)
@@ -460,7 +471,22 @@ namespace orthrus_controller
         return controller_interface::CallbackReturn::ERROR;
       }
 
-      registered_handles.emplace_back(FlagHandle{std::ref(*enable_power_command_handle), std::ref(*calibration_position_handle)});
+      //--
+      const auto calibration_encoder_handle = std::find_if(
+          command_interfaces_.begin(), command_interfaces_.end(),
+          [&flag_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == flag_name &&
+                   interface.get_interface_name() == "calibration_encoder";
+          });
+
+      if (calibration_encoder_handle == command_interfaces_.end())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor command handle for %s", flag_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
+
+      registered_handles.emplace_back(FlagHandle{std::ref(*enable_power_command_handle), std::ref(*calibration_position_handle), std::ref(*calibration_encoder_handle)});
     }
   }
 
