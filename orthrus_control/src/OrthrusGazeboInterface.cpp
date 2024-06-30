@@ -231,41 +231,28 @@ namespace orthrus_control
         hw_positions_[10] = leg[2].motor[1].Pos_ / 9.1 - dealta_real_position_[2][1];
         hw_positions_[11] = leg[2].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[2][2];
 
-        /*
-        hw_positions_[0] = -leg[1].motor[0].Pos_ / 9.1;
-        hw_positions_[1] = leg[1].motor[1].Pos_ / 9.1;
-        hw_positions_[2] = leg[1].motor[2].Pos_ / 9.1; //
-
-        hw_positions_[3] = -leg[0].motor[0].Pos_ / 9.1;
-        hw_positions_[4] = leg[0].motor[1].Pos_ / 9.1;
-        hw_positions_[5] = leg[0].motor[2].Pos_ / 9.1;
-
-        hw_positions_[6] = -leg[3].motor[0].Pos_ / 9.1;
-        hw_positions_[7] = leg[3].motor[1].Pos_ / 9.1;
-        hw_positions_[8] = leg[3].motor[2].Pos_ / 9.1;
-
-        hw_positions_[9] = -leg[2].motor[0].Pos_ / 9.
-        hw_positions_[10] = leg[2].motor[1].Pos_ / 9.1;
-        hw_positions_[11] = leg[2].motor[2].Pos_ / 9.1;
-        */
-
         // imu
 
-        hw_sensor_states_[4] = body_imu.angle_speed_[0];
-        hw_sensor_states_[5] = body_imu.angle_speed_[0];
-        hw_sensor_states_[6] = body_imu.angle_speed_[0];
+        Eigen::Quaterniond q_relative = body_imu.gyro_ * body_imu.gyro_.inverse();
 
-        hw_sensor_states_[7] = body_imu.acc_[0];
-        hw_sensor_states_[8] = body_imu.acc_[1];
-        hw_sensor_states_[9] = body_imu.acc_[2];
+        Eigen::Matrix3d rotation_matrix = q_relative.toRotationMatrix();
+
+        Eigen::Vector3d fix_angle_speed = rotation_matrix * body_imu.angle_speed_;
+
+        hw_sensor_states_[4] = fix_angle_speed[0];
+        hw_sensor_states_[5] = fix_angle_speed[1];
+        hw_sensor_states_[6] = fix_angle_speed[2];
+
+        Eigen::Vector3d fix_acc = otation_matrix * body_imu.acc_;
+
+        hw_sensor_states_[7] = fix_acc[0];
+        hw_sensor_states_[8] = fix_acc[1];
+        hw_sensor_states_[9] = fix_acc[2];
 
         hw_sensor_states_[3] = body_imu.unified_gyro_.w();
         hw_sensor_states_[0] = body_imu.unified_gyro_.x();
         hw_sensor_states_[1] = body_imu.unified_gyro_.y();
         hw_sensor_states_[2] = body_imu.unified_gyro_.z();
-
-        // Imu::IfUseMag(FALSE, Ethercat.packet_rx[0].can);
-        // Imu::IfUseMag(FALSE, Ethercat.packet_rx[1].can);
 
         ethercat_prepare_flag_ = Ethercat.EcatSyncMsg();
 
@@ -283,7 +270,7 @@ namespace orthrus_control
             }
         }
 
-        //Log();
+        // Log();
 
         return hardware_interface::return_type::OK;
     }
@@ -317,11 +304,10 @@ namespace orthrus_control
         }
 
         motorcan_send_flag_++;
-        if(motorcan_send_flag_ == 12)
+        if (motorcan_send_flag_ == 12)
         {
             motorcan_send_flag_ = 0;
         }
-        
 
         if (gpio_commands_["enable_power"])
         {
@@ -344,12 +330,12 @@ namespace orthrus_control
 
         // if (gpio_commands_["calibration_encoder"])
         //{
-        //     StartCalibrationEncoderPosition();
-        // }
+        //      StartCalibrationEncoderPosition();
+        //  }
         // else
         //{
-        //     StopCalibrationEncoderPosition();
-        // }
+        //      StopCalibrationEncoderPosition();
+        //  }
 
         leg[0].Analyze(&Ethercat.packet_rx[1]);
         leg[1].Analyze(&Ethercat.packet_rx[1]);
@@ -396,7 +382,6 @@ namespace orthrus_control
                 }
             }
         }
-    
 
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "motor stop!");
     }
@@ -516,20 +501,20 @@ namespace orthrus_control
         // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
 
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "-----------------------------------------------");
-        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_);
-        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_);
-        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_);
-        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
 
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", command_effort[0], command_effort[1], command_effort[2]);
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", command_effort[3], command_effort[4], command_effort[5]);
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", command_effort[6], command_effort[7], command_effort[8]);
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", command_effort[9], command_effort[10], command_effort[11]);
 
-        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[0][0], dealta_real_position_[0][1], dealta_real_position_[0][2]);
-        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[1][0], dealta_real_position_[1][1], dealta_real_position_[1][2]);
-        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[2][0], dealta_real_position_[2][1], dealta_real_position_[2][2]);
-        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[3][0], dealta_real_position_[3][1], dealta_real_position_[3][2]);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[0][0], dealta_real_position_[0][1], dealta_real_position_[0][2]);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[1][0], dealta_real_position_[1][1], dealta_real_position_[1][2]);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[2][0], dealta_real_position_[2][1], dealta_real_position_[2][2]);
+        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[3][0], dealta_real_position_[3][1], dealta_real_position_[3][2]);
 
         // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf %lf\033[0m", leg[0].angle.Pos_, leg[1].angle.Pos_, leg[2].angle.Pos_, leg[3].angle.Pos_);
 

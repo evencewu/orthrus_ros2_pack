@@ -123,7 +123,7 @@ namespace orthrus_controller
         // 加速度方向可视化
         marker = visualization_msgs::msg::Marker();
 
-        marker.header.frame_id = "body";
+        marker.header.frame_id = "base";
         marker.header.stamp = time;
         marker.ns = "acceleration";
         marker.id = 4;
