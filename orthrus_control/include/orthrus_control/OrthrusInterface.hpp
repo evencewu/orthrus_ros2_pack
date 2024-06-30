@@ -34,7 +34,6 @@
 #include "orthrus_control/assembly/Leg.hpp"
 #include "orthrus_control/assembly/Imu.hpp"
 
-
 namespace orthrus_control
 {
     class OrthrusSystemHardware : public hardware_interface::SystemInterface
@@ -90,17 +89,19 @@ namespace orthrus_control
 
         int motorcan_send_flag_ = 0;
 
-        //main
+        // main
         void Update();
-        void UpdateFlag();
-        void UpdateMotor();
 
         void Log();
+
+        // DataArrange
+        std::vector<std::vector<double>> PrepairMotorData();
+        std::vector<double> PrepairSensorData();
 
         // Ethercat
         void SafeStop();
 
-        //Calibration
+        // Calibration
         void UnifiedSensorData();
 
         void StartCalibrationEncoderPosition();
@@ -110,8 +111,8 @@ namespace orthrus_control
         std::vector<double> CompensationAngleError();
         double dealta_real_position_[4][3];
 
-
-        //
+        
+        // hardware
         std::vector<double> hw_positions_;
         std::vector<double> hw_velocities_;
         std::vector<double> hw_effort_;
@@ -121,6 +122,8 @@ namespace orthrus_control
         std::vector<double> hw_sensor_states_;
 
         std::unordered_map<std::string, double> gpio_commands_;
+
+
 
         std::shared_ptr<rclcpp::Node> node_;
         // subscribe crawler feed back

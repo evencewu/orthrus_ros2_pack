@@ -46,28 +46,28 @@ namespace orthrus_control
         double imu_pos_1;
 
         imu_pos_0 = (body_imu.euler_(ROLL) - leg[1].imu.euler_(PITCH));
-        imu_pos_1 = (body_imu.euler_(PITCH) - leg[1].imu.euler_(ROLL)) + theta2 * M_PI / 180;
+        imu_pos_1 = (body_imu.euler_(PITCH) - leg[1].imu.euler_(ROLL)) - theta2 * M_PI / 180;
 
         dealta_real_position_[1][0] = -leg[1].motor[0].Pos_ / 9.1 - imu_pos_0;
         dealta_real_position_[1][1] = leg[1].motor[1].Pos_ / 9.1 - imu_pos_1;
         dealta_real_position_[1][2] = leg[1].motor[2].Pos_ / 9.1 - leg[1].angle.Pos_;
 
         imu_pos_0 = -(body_imu.euler_(ROLL) - leg[0].imu.euler_(PITCH));
-        imu_pos_1 = (body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL)) - theta2 * M_PI / 180;
+        imu_pos_1 = (body_imu.euler_(PITCH) - leg[0].imu.euler_(ROLL)) + theta2 * M_PI / 180;
 
         dealta_real_position_[0][0] = -leg[0].motor[0].Pos_ / 9.1 - imu_pos_0;
         dealta_real_position_[0][1] = leg[0].motor[1].Pos_ / 9.1 - imu_pos_1;
         dealta_real_position_[0][2] = leg[0].motor[2].Pos_ / 9.1 - leg[0].angle.Pos_;
 
         imu_pos_0 = -(body_imu.euler_(ROLL) - leg[3].imu.euler_(PITCH));
-        imu_pos_1 = (body_imu.euler_(PITCH) - leg[3].imu.euler_(ROLL)) + theta2 * M_PI / 180;
+        imu_pos_1 = (body_imu.euler_(PITCH) - leg[3].imu.euler_(ROLL)) - theta2 * M_PI / 180;
 
         dealta_real_position_[3][0] = -leg[3].motor[0].Pos_ / 9.1 - imu_pos_0;
         dealta_real_position_[3][1] = leg[3].motor[1].Pos_ / 9.1 - imu_pos_1;
         dealta_real_position_[3][2] = leg[3].motor[2].Pos_ / 9.1 - leg[3].angle.Pos_;
 
         imu_pos_0 = body_imu.euler_(ROLL) - leg[2].imu.euler_(PITCH);
-        imu_pos_1 = body_imu.euler_(PITCH) - leg[2].imu.euler_(ROLL) - theta2 * M_PI / 180;
+        imu_pos_1 = body_imu.euler_(PITCH) - leg[2].imu.euler_(ROLL) + theta2 * M_PI / 180;
 
         dealta_real_position_[2][0] = -leg[2].motor[0].Pos_ / 9.1 - imu_pos_0;
         dealta_real_position_[2][1] = leg[2].motor[1].Pos_ / 9.1 - imu_pos_1;
@@ -78,18 +78,18 @@ namespace orthrus_control
     {
         std::vector<double> positions(12, 0.0);
 
-        positions[0] = -leg[1].motor[0].Pos_ / 9.1 - dealta_real_position_[1][0];
-        positions[1] = leg[1].motor[1].Pos_ / 9.1 - dealta_real_position_[1][1];
-        positions[2] = leg[1].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[1][2];
-        positions[3] = -leg[0].motor[0].Pos_ / 9.1 - dealta_real_position_[0][0];
-        positions[4] = leg[0].motor[1].Pos_ / 9.1 - dealta_real_position_[0][1];
-        positions[5] = leg[0].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[0][2];
-        positions[6] = -leg[3].motor[0].Pos_ / 9.1 - dealta_real_position_[3][0];
-        positions[7] = leg[3].motor[1].Pos_ / 9.1 - dealta_real_position_[3][1];
-        positions[8] = leg[3].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[3][2];
-        positions[9] = -leg[2].motor[0].Pos_ / 9.1 - dealta_real_position_[2][0];
-        positions[10] = leg[2].motor[1].Pos_ / 9.1 - dealta_real_position_[2][1];
-        positions[11] = leg[2].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[2][2];
+        positions[0] = -leg[0].motor[0].Pos_ / 9.1 - dealta_real_position_[1][0];
+        positions[1] = leg[0].motor[1].Pos_ / 9.1 - dealta_real_position_[1][1];
+        positions[2] = leg[0].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[0][2];
+        positions[3] = -leg[1].motor[0].Pos_ / 9.1 - dealta_real_position_[0][0];
+        positions[4] = leg[1].motor[1].Pos_ / 9.1 - dealta_real_position_[0][1];
+        positions[5] = leg[1].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[1][2];
+        positions[6] = -leg[2].motor[0].Pos_ / 9.1 - dealta_real_position_[3][0];
+        positions[7] = leg[2].motor[1].Pos_ / 9.1 - dealta_real_position_[3][1];
+        positions[8] = leg[2].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[2][2];
+        positions[9] = -leg[3].motor[0].Pos_ / 9.1 - dealta_real_position_[2][0];
+        positions[10] = leg[3].motor[1].Pos_ / 9.1 - dealta_real_position_[2][1];
+        positions[11] = leg[3].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[3][2];
 
         return positions;
     }

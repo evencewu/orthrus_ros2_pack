@@ -6,12 +6,19 @@ namespace orthrus_control
         const hardware_interface::HardwareInfo &info)
     {
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware on init");
+
+        // leg_map_["LF"] = 0;
+        // leg_map_["LH"] = 1;
+        // leg_map_["RF"] = 2;
+        // leg_map_["RH"] = 3;
+
         // hardware init
-        leg[0].Init(IMU2, USART1);
-        leg[1].Init(IMU1, USART2);
-        leg[2].Init(IMU3, USART3);
-        leg[3].Init(IMU4, USART6);
-        body_imu.Init(IMU5, TRUE);
+        leg[0].Init(IMU1, USART6, 1);
+        leg[1].Init(IMU2, USART1, 1);
+        leg[2].Init(IMU4, USART6, 0);
+        leg[3].Init(IMU3, USART1, 0);
+
+        body_imu.Init(IMU5, 1);
         // 错误检查
 
         if (
@@ -198,54 +205,14 @@ namespace orthrus_control
             }
         }
 
-        // ros2 control 交换数据
-
-        
-        hw_positions_[0] = -leg[1].motor[0].Pos_ / 9.1 - dealta_real_position_[1][0];
-        hw_positions_[1] = leg[1].motor[1].Pos_ / 9.1 - dealta_real_position_[1][1];
-        hw_positions_[2] = leg[1].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[1][2]; //
-
-        hw_positions_[3] = -leg[0].motor[0].Pos_ / 9.1 - dealta_real_position_[0][0];
-        hw_positions_[4] = leg[0].motor[1].Pos_ / 9.1 - dealta_real_position_[0][1];
-        hw_positions_[5] = leg[0].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[0][2];
-
-        hw_positions_[6] = -leg[3].motor[0].Pos_ / 9.1 - dealta_real_position_[3][0];
-        hw_positions_[7] = leg[3].motor[1].Pos_ / 9.1 - dealta_real_position_[3][1];
-        hw_positions_[8] = leg[3].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[3][2];
-
-        hw_positions_[9] = -leg[2].motor[0].Pos_ / 9.1 - dealta_real_position_[2][0];
-        hw_positions_[10] = leg[2].motor[1].Pos_ / 9.1 - dealta_real_position_[2][1];
-        hw_positions_[11] = leg[2].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[2][2];
-        
-
-        //hw_positions_ = CompensationAngleError();
-
-        // imu  
-
-        Eigen::Quaterniond q_relative = body_imu.gyro_ * body_imu.gyro_.inverse();
-
-        Eigen::Matrix3d rotation_matrix = q_relative.toRotationMatrix();
-
-        Eigen::Vector3d fix_angle_speed = rotation_matrix * body_imu.angle_speed_;
-
-        hw_sensor_states_[4] = fix_angle_speed[0];
-        hw_sensor_states_[5] = fix_angle_speed[1];
-        hw_sensor_states_[6] = fix_angle_speed[2];
-
-        Eigen::Vector3d fix_acc = rotation_matrix * body_imu.acc_;
-
-        hw_sensor_states_[7] = fix_acc[0];
-        hw_sensor_states_[8] = fix_acc[1];
-        hw_sensor_states_[9] = fix_acc[2];
-
-        hw_sensor_states_[3] = body_imu.unified_gyro_.w();
-        hw_sensor_states_[0] = body_imu.unified_gyro_.x();
-        hw_sensor_states_[1] = body_imu.unified_gyro_.y();
-        hw_sensor_states_[2] = body_imu.unified_gyro_.z();
-
+        // imu
         ethercat_prepare_flag_ = Ethercat.EcatSyncMsg();
 
-        UnifiedSensorData();
+        auto motordata = PrepairMotorData();
+        hw_positions_ = motordata[0];
+        hw_velocities_ = motordata[1];
+        hw_effort_ = motordata[2];
+        hw_sensor_states_ = PrepairSensorData();
 
         time_now_ = std::chrono::high_resolution_clock::now();
 
@@ -267,36 +234,9 @@ namespace orthrus_control
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::write(
         const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
     {
-        command_effort[0] = hw_commands_[3];
-        command_effort[1] = hw_commands_[4];
-        command_effort[2] = hw_commands_[5];
-
-        command_effort[3] = hw_commands_[0];
-        command_effort[4] = hw_commands_[1];
-        command_effort[5] = hw_commands_[2];
-
-        command_effort[6] = hw_commands_[9];
-        command_effort[7] = hw_commands_[10];
-        command_effort[8] = hw_commands_[11];
-
-        command_effort[9] = hw_commands_[6];
-        command_effort[10] = hw_commands_[7];
-        command_effort[11] = hw_commands_[8];
-
-        if (motorcan_send_flag_ < 6)
+        for (int motor_num = 0; motor_num < 12; motor_num++)
         {
-            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, command_effort[motorcan_send_flag_], 0, 10);
-        }
-        else
-        {
-            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, command_effort[motorcan_send_flag_], 0, 10);
-        }
-
-        motorcan_send_flag_++;
-
-        if (motorcan_send_flag_ == 12)
-        {
-            motorcan_send_flag_ = 0;
+            command_effort[motor_num] = hw_commands_[motor_num];
         }
 
         Update();
@@ -306,6 +246,18 @@ namespace orthrus_control
 
     void OrthrusSystemHardware::Update()
     {
+        if (motorcan_send_flag_ < 12)
+        {
+            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[leg[motorcan_send_flag_ / 3].slave_num_], 0, 0, 0, command_effort[motorcan_send_flag_], 0, 10);
+        }
+
+        motorcan_send_flag_++;
+
+        if (motorcan_send_flag_ == 12)
+        {
+            motorcan_send_flag_ = 0;
+        }
+
         if (gpio_commands_["enable_power"])
         {
             Ethercat.packet_tx[0].power = 0x01;
@@ -323,7 +275,6 @@ namespace orthrus_control
         }
         else
         {
-
         }
 
         // if (gpio_commands_["calibration_encoder"])
@@ -334,12 +285,12 @@ namespace orthrus_control
         //{
         //      StopCalibrationEncoderPosition();
         //  }
+        for (int leg_num = 0; leg_num < 4; leg_num++)
+        {
+            leg[leg_num].Analyze(&Ethercat.packet_rx[leg[leg_num].slave_num_]);
+        }
 
-        leg[0].Analyze(&Ethercat.packet_rx[1]);
-        leg[1].Analyze(&Ethercat.packet_rx[1]);
-        leg[2].Analyze(&Ethercat.packet_rx[0]);
-        leg[3].Analyze(&Ethercat.packet_rx[0]);
-        body_imu.Analyze(&Ethercat.packet_rx[1]);
+        body_imu.Analyze(&Ethercat.packet_rx[body_imu.slave_num_]);
     }
 }
 

@@ -5,6 +5,19 @@
 
 namespace orthrus_control
 {
+    void Imu::Init(uint8_t device_id)
+    {
+        device_id_ = device_id;
+        if_with_acc_ = false;
+    }
+
+    void Imu::Init(uint8_t device_id, int slave_num)
+    {
+        device_id_ = device_id;
+        if_with_acc_ = true;
+        slave_num_ = slave_num;
+    }
+
     void Imu::Correction(double standard_yaw)
     {
         unified_gyro_ = gyro_ * correction_matrix_;
@@ -20,7 +33,7 @@ namespace orthrus_control
     {
         euler_ = input_quaterniond.toRotationMatrix().eulerAngles(ROLL, PITCH, YAW);
     }
-    
+
     void Imu::CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1, double angle2, Eigen::Vector3d axis2)
     {
         Eigen::AngleAxisd rotation1(angle1, axis1);
@@ -52,12 +65,6 @@ namespace orthrus_control
             can.Data[2] = 0;
             can.Data[3] = 0;
         }
-    }
-
-    void Imu::Init(uint8_t device_id, bool if_with_acc)
-    {
-        device_id_ = device_id;
-        if_with_acc_ = if_with_acc;
     }
 
     void Imu::Analyze(Ecat_Inputs_Pack *pack)

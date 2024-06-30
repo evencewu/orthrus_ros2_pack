@@ -10,20 +10,20 @@
 #include <cstdio>
 
 #define USART1 0
-#define USART2 1
-#define USART3 2
-#define USART6 3
+#define USART6 1
 
 namespace orthrus_control
 {
     class Leg
     {
     public:
-        void Init(uint8_t imu_id, uint8_t usart_id);
+        void Init(uint8_t imu_id, uint8_t usart_id, int slave_num);
         void Analyze(Ecat_Inputs_Pack *pack);
 
         Imu imu;
         Encoder angle;
         Motor motor[3];
+
+        int slave_num_;
     };
 }

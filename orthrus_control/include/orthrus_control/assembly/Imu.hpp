@@ -22,7 +22,9 @@ namespace orthrus_control
     class Imu
     {
     public:
-        void Init(uint8_t device_id, bool if_with_acc);
+        void Init(uint8_t device_id);
+        void Init(uint8_t device_id, int slave_num);
+        
         void Analyze(Ecat_Inputs_Pack *pack);
 
         static void IfUseMag(bool flag, can_pack can);
@@ -43,6 +45,7 @@ namespace orthrus_control
 
         Eigen::Vector3d euler_; // 欧拉角表示
 
+        int slave_num_;
     private:
         bool if_with_acc_;
 

@@ -11,16 +11,8 @@ namespace orthrus_control
         {
             for (int j = 0; j < 12; j++)
             {
-                if (j > 5)
-                {
-                    leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 0);
+                    leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[leg[j / 3].slave_num_], 0, 0, 0, 0, 0, 0);
                     Ethercat.EcatSyncMsg();
-                }
-                else
-                {
-                    leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
-                    Ethercat.EcatSyncMsg();
-                }
             }
         }
 
