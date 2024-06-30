@@ -245,21 +245,20 @@ namespace orthrus_controller
     visualization_->Update(now_time_);
 
     //----------------------------------------
-    // if (orthrus_interfaces_->robot_target.if_enable)
-    //{
-    for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
+    if (orthrus_interfaces_->robot_target.if_enable)
     {
-      joint_handles_[joint_number].cmd_effort.get().set_value(orthrus_interfaces_->robot_cmd.effort[joint_number]);
+      for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
+      {
+        joint_handles_[joint_number].cmd_effort.get().set_value(orthrus_interfaces_->robot_cmd.effort[joint_number]);
+      }
     }
-
-    //}
-    // else
-    //{
-    //  for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
-    //  {
-    //    joint_handles_[joint_number].cmd_effort.get().set_value(0.0);
-    //  }
-    //}
+    else
+    {
+      for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
+      {
+        joint_handles_[joint_number].cmd_effort.get().set_value(0.0);
+      }
+    }
 
     if (params_.sim_or_real == "real")
     {
@@ -281,7 +280,7 @@ namespace orthrus_controller
         flag_handles_[0].calibration_position.get().set_value(0.0);
       }
 
-      if(orthrus_interfaces_->robot_cmd.if_enable_calibration_encoder)
+      if (orthrus_interfaces_->robot_cmd.if_enable_calibration_encoder)
       {
         flag_handles_[0].calibration_encoder.get().set_value(1.0);
       }

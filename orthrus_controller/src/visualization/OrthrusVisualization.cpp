@@ -39,9 +39,9 @@ namespace orthrus_controller
         tf_stamped.header.frame_id = "odom";
         tf_stamped.child_frame_id = "base";
 
-        //tf_stamped.transform.translation.x = orthrus_interfaces_->odom_state.position[0];
-        //tf_stamped.transform.translation.y = orthrus_interfaces_->odom_state.position[1];
-        //tf_stamped.transform.translation.z = orthrus_interfaces_->odom_state.position[2];
+        // tf_stamped.transform.translation.x = orthrus_interfaces_->odom_state.position[0];
+        // tf_stamped.transform.translation.y = orthrus_interfaces_->odom_state.position[1];
+        // tf_stamped.transform.translation.z = orthrus_interfaces_->odom_state.position[2];
 
         tf_stamped.transform.translation.x = 0.0;
         tf_stamped.transform.translation.y = 0.0;
@@ -72,10 +72,10 @@ namespace orthrus_controller
             tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.imu.orientation.y();
             tf_stamped.transform.rotation.z = orthrus_interfaces_->odom_state.imu.orientation.z();
 
-            //tf_stamped.transform.rotation.w = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.w();
-            //tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.x();
-            //tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.y();
-            //tf_stamped.transform.rotation.z = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.z();
+            // tf_stamped.transform.rotation.w = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.w();
+            // tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.x();
+            // tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.y();
+            // tf_stamped.transform.rotation.z = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.z();
             odom_msg_.transforms.push_back(tf_stamped);
         }
     }
@@ -84,9 +84,12 @@ namespace orthrus_controller
     {
         markerarray_msg_.markers.clear();
 
+        visualization_msgs::msg::Marker marker;
+
+        // 足尖力分配可视化
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
-            visualization_msgs::msg::Marker marker;
+            marker = visualization_msgs::msg::Marker();
 
             marker.header.frame_id = foot_names_[foot_num] + "_link";
             marker.header.stamp = time;
@@ -99,9 +102,9 @@ namespace orthrus_controller
             marker.points[0].x = 0.0;
             marker.points[0].y = 0.0;
             marker.points[0].z = 0.0;
-            marker.points[1].x = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[0] / 100;
-            marker.points[1].y = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[1] / 100;
-            marker.points[1].z = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[2] / 100;
+            marker.points[1].x = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[0] / 10;
+            marker.points[1].y = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[1] / 10;
+            marker.points[1].z = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[2] / 10;
 
             // 设置箭头的缩放（箭头的大小）
             marker.scale.x = 0.01; // 箭头的长度
@@ -116,6 +119,37 @@ namespace orthrus_controller
 
             markerarray_msg_.markers.push_back(marker);
         }
+
+        // 加速度方向可视化
+        marker = visualization_msgs::msg::Marker();
+
+        marker.header.frame_id = "body";
+        marker.header.stamp = time;
+        marker.ns = "acceleration";
+        marker.id = 4;
+        marker.type = visualization_msgs::msg::Marker::ARROW;
+        marker.action = visualization_msgs::msg::Marker::ADD;
+
+        marker.points.resize(2);
+        marker.points[0].x = 0.0;
+        marker.points[0].y = 0.0;
+        marker.points[0].z = 0.0;
+        marker.points[1].x = orthrus_interfaces_->odom_state.imu_acceleration[0] / 10;
+        marker.points[1].y = orthrus_interfaces_->odom_state.imu_acceleration[1] / 10;
+        marker.points[1].z = orthrus_interfaces_->odom_state.imu_acceleration[2] / 10;
+
+        // 设置箭头的缩放（箭头的大小）
+        marker.scale.x = 0.01; // 箭头的长度
+        marker.scale.y = 0.01; // 箭头的宽度
+        marker.scale.z = 0.01; // 箭头的高度
+
+        // 设置箭头的颜色
+        marker.color.r = 1.0;
+        marker.color.g = 0.0;
+        marker.color.b = 0.0;
+        marker.color.a = 1.0;
+
+        markerarray_msg_.markers.push_back(marker);
 
         marker_publisher_->publish(markerarray_msg_);
     }

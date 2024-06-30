@@ -27,15 +27,26 @@ namespace orthrus_controller
     {
         double dt;
 
+        // 总里程计数据
         Eigen::Vector3d acceleration = Eigen::Vector3d::Zero();
         Eigen::Vector3d position = Eigen::Vector3d::Zero();
         Eigen::Vector3d velocity = Eigen::Vector3d::Zero();
 
-        Eigen::Vector3d gravity;
-
-        // 欧拉角
         Eigen::Vector3d euler;
         Eigen::Vector3d angular_velocity;
+
+        // 足端里程计估计
+        Eigen::Vector3d foot_acceleration = Eigen::Vector3d::Zero();
+        Eigen::Vector3d foot_position = Eigen::Vector3d::Zero();
+        Eigen::Vector3d foot_velocity = Eigen::Vector3d::Zero();
+
+        // imu估计
+        Eigen::Vector3d imu_acceleration = Eigen::Vector3d::Zero();
+        Eigen::Vector3d imu_position = Eigen::Vector3d::Zero();
+        Eigen::Vector3d imu_velocity = Eigen::Vector3d::Zero();
+
+        // 重力项
+        Eigen::Vector3d gravity;
 
         ImuState imu;
         ImuState imu_last;

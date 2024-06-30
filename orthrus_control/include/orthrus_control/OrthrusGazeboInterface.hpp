@@ -77,10 +77,7 @@ namespace orthrus_control
         // hardware interface
         Leg leg[4];
         Imu body_imu;
-
-        
-
-
+        double command_effort[12];
 
         int motorcan_send_flag_ = 0;
 

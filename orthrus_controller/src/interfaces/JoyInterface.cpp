@@ -41,18 +41,20 @@ namespace orthrus_controller
             {
                 orthrus_interfaces_->robot_cmd.if_enable_calibration_encoder = 0;
             }
-        }
-        else
-        {
-            if (msg->y == 1)
-            {
-                orthrus_interfaces_->robot_target.if_enable = 0;
-            }
 
-            if (msg->x == 1)
+            if (msg->lb == 1)
             {
                 orthrus_interfaces_->robot_target.if_enable = 1;
             }
+
+            if (msg->rb == 1)
+            {
+                orthrus_interfaces_->robot_target.if_enable = 0;
+            }
+        }
+        else
+        {
+
         }
     }
 

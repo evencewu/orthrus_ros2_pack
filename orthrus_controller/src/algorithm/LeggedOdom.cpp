@@ -20,13 +20,13 @@ namespace orthrus_controller
 
         double dt = orthrus_interfaces_->odom_state.dt;
 
-        orthrus_interfaces_->odom_state.acceleration = orthrus_interfaces_->odom_state.imu.orientation * orthrus_interfaces_->odom_state.imu.linear_acceleration + orthrus_interfaces_->odom_state.gravity;
+        orthrus_interfaces_->odom_state.imu_acceleration = orthrus_interfaces_->odom_state.imu.orientation * orthrus_interfaces_->odom_state.imu.linear_acceleration + orthrus_interfaces_->odom_state.gravity;
 
         // 积分得到速度
-        orthrus_interfaces_->odom_state.velocity += orthrus_interfaces_->odom_state.acceleration * dt;
+        orthrus_interfaces_->odom_state.imu_velocity += orthrus_interfaces_->odom_state.imu_acceleration * dt;
 
         // 积分得到位置
-        orthrus_interfaces_->odom_state.position += orthrus_interfaces_->odom_state.velocity * dt;
+        orthrus_interfaces_->odom_state.imu_position += orthrus_interfaces_->odom_state.imu_velocity * dt;
     }
 
     Eigen::Vector3d LeggedOdom::Quaternion2Euler(Eigen::Quaterniond quat)

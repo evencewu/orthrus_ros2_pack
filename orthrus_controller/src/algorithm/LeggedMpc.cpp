@@ -15,7 +15,7 @@ namespace orthrus_controller
 
         // 直接赋值初始化
         GetBodyForcePD();
-        orthrus_interfaces_->robot_target.target_body_force << 0, 0, 200, 0, 0, 0;
+        orthrus_interfaces_->robot_target.target_body_force << 0, 0, 10, 0, 0, 0;
 
         std::vector<bool> gait = orthrus_interfaces_->robot_target.gait_sequence[orthrus_interfaces_->robot_target.gait_num];
 

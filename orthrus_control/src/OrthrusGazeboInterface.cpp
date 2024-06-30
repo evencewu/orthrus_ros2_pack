@@ -283,7 +283,7 @@ namespace orthrus_control
             }
         }
 
-        Log();
+        //Log();
 
         return hardware_interface::return_type::OK;
     }
@@ -291,21 +291,37 @@ namespace orthrus_control
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::write(
         const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
     {
+        command_effort[0] = hw_commands_[3];
+        command_effort[1] = hw_commands_[4];
+        command_effort[2] = hw_commands_[5];
+
+        command_effort[3] = hw_commands_[0];
+        command_effort[4] = hw_commands_[1];
+        command_effort[5] = hw_commands_[2];
+
+        command_effort[6] = hw_commands_[9];
+        command_effort[7] = hw_commands_[10];
+        command_effort[8] = hw_commands_[11];
+
+        command_effort[9] = hw_commands_[6];
+        command_effort[10] = hw_commands_[7];
+        command_effort[11] = hw_commands_[8];
+
         if (motorcan_send_flag_ < 6)
         {
-            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 10);
-            motorcan_send_flag_++;
-        }
-        else if (motorcan_send_flag_ < 11 && motorcan_send_flag_ >= 6)
-        {
-            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 10);
-            motorcan_send_flag_++;
+            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, command_effort[motorcan_send_flag_], 0, 10);
         }
         else
         {
-            leg[3].motor[2].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 10);
+            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, command_effort[motorcan_send_flag_], 0, 10);
+        }
+
+        motorcan_send_flag_++;
+        if(motorcan_send_flag_ == 12)
+        {
             motorcan_send_flag_ = 0;
         }
+        
 
         if (gpio_commands_["enable_power"])
         {
@@ -380,6 +396,7 @@ namespace orthrus_control
                 }
             }
         }
+    
 
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "motor stop!");
     }
@@ -499,15 +516,20 @@ namespace orthrus_control
         // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
 
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "-----------------------------------------------");
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
+        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[0].motor[0].Pos_, leg[0].motor[1].Pos_, leg[0].motor[2].Pos_);
+        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[1].motor[0].Pos_, leg[1].motor[1].Pos_, leg[1].motor[2].Pos_);
+        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[2].motor[0].Pos_, leg[2].motor[1].Pos_, leg[2].motor[2].Pos_);
+        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", leg[3].motor[0].Pos_, leg[3].motor[1].Pos_, leg[3].motor[2].Pos_);
 
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[0][0], dealta_real_position_[0][1], dealta_real_position_[0][2]);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[1][0], dealta_real_position_[1][1], dealta_real_position_[1][2]);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[2][0], dealta_real_position_[2][1], dealta_real_position_[2][2]);
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[3][0], dealta_real_position_[3][1], dealta_real_position_[3][2]);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", command_effort[0], command_effort[1], command_effort[2]);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", command_effort[3], command_effort[4], command_effort[5]);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", command_effort[6], command_effort[7], command_effort[8]);
+        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", command_effort[9], command_effort[10], command_effort[11]);
+
+        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[0][0], dealta_real_position_[0][1], dealta_real_position_[0][2]);
+        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[1][0], dealta_real_position_[1][1], dealta_real_position_[1][2]);
+        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[2][0], dealta_real_position_[2][1], dealta_real_position_[2][2]);
+        //RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf  \033[0m", dealta_real_position_[3][0], dealta_real_position_[3][1], dealta_real_position_[3][2]);
 
         // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m motor  %lf %lf %lf %lf\033[0m", leg[0].angle.Pos_, leg[1].angle.Pos_, leg[2].angle.Pos_, leg[3].angle.Pos_);
 
