@@ -18,12 +18,14 @@
 
   <depend>orthrus_ethercat</depend>
   <depend>soem_ros2</depend>
+  <depend>tf2</depend>
 
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>thruster_pid_controller</exec_depend>
   <exec_depend>ros2controlcli</exec_depend>
   <exec_depend>ros2launch</exec_depend>
   <exec_depend>xacro</exec_depend>
+  
 
   <export>
     <build_type>ament_cmake</build_type>

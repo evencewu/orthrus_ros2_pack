@@ -17,6 +17,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   realtime_tools
   std_msgs
   soem_ros2
+  tf2
 )
 
 # find dependencies
