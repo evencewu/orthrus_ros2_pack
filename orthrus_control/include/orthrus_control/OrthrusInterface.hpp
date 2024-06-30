@@ -5,6 +5,10 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <cmath>
+#include <cstddef>
+#include <limits>
+
 
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/hardware_info.hpp"
@@ -29,6 +33,9 @@
 #include "orthrus_control/ethercat/TypeDef.hpp"
 #include "orthrus_control/assembly/Leg.hpp"
 #include "orthrus_control/assembly/Imu.hpp"
+
+#include "hardware_interface/types/hardware_interface_type_values.hpp"
+#include "rclcpp/rclcpp.hpp"
 
 namespace orthrus_control
 {

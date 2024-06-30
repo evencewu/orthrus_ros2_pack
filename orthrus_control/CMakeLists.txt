@@ -33,13 +33,13 @@ include_directories(
 include/orthrus_control
 )
 
-file(GLOB_RECURSE MAIN_SOURCES "src/assembly/*.cpp" "src/ethercat/*.cpp")
+file(GLOB_RECURSE MAIN_SOURCES "src/assembly/*.cpp" "src/ethercat/*.cpp" "src/calibration/*.cpp")
 
 ## COMPILE
 add_library(
   orthrus_control
   SHARED
-  src/OrthrusGazeboInterface.cpp
+  src/OrthrusInterface.cpp
   ${MAIN_SOURCES}
 )
 target_compile_features(orthrus_control PUBLIC cxx_std_17)

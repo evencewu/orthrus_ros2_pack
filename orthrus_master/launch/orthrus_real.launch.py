@@ -84,7 +84,12 @@ def generate_launch_description():
     )
     
     foxglove = ExecuteProcess(
-    cmd=['ros2', 'launch', 'foxglove_bridge', 'foxglove_bridge_launch.xml', 'use_compression:=true'],
+    cmd=['ros2', 
+         'launch', 
+         'foxglove_bridge', 
+         'foxglove_bridge_launch.xml', 
+         'use_compression:=true',
+         'topic_whitelist:=["/tf", "/tf_static","/visualization_marker","/joint_states"]'],
     output='log'
 )
 

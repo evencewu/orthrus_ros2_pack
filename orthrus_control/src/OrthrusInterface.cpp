@@ -1,13 +1,6 @@
-#include "orthrus_control/OrthrusGazeboInterface.hpp"
+#include "orthrus_control/OrthrusInterface.hpp"
 
-#include <cmath>
-#include <cstddef>
-#include <limits>
-#include <memory>
-#include <vector>
 
-#include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "rclcpp/rclcpp.hpp"
 
 namespace
 {
@@ -243,7 +236,7 @@ namespace orthrus_control
         hw_sensor_states_[5] = fix_angle_speed[1];
         hw_sensor_states_[6] = fix_angle_speed[2];
 
-        Eigen::Vector3d fix_acc = otation_matrix * body_imu.acc_;
+        Eigen::Vector3d fix_acc = rotation_matrix * body_imu.acc_;
 
         hw_sensor_states_[7] = fix_acc[0];
         hw_sensor_states_[8] = fix_acc[1];
@@ -346,20 +339,7 @@ namespace orthrus_control
         return hardware_interface::return_type::OK;
     }
 
-    void OrthrusSystemHardware::UnifiedSensorData()
-    {
-        body_imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[0].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[1].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[2].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[3].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-
-        body_imu.Correction(body_imu.euler_(YAW));
-        leg[0].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
-        leg[1].imu.Correction(body_imu.euler_(YAW) + M_PI / 2);
-        leg[2].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
-        leg[3].imu.Correction(body_imu.euler_(YAW) + M_PI / 2);
-    }
+    
 
     void OrthrusSystemHardware::SafeStop()
     {
@@ -384,42 +364,6 @@ namespace orthrus_control
         }
 
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "motor stop!");
-    }
-
-    void OrthrusSystemHardware::StartCalibrationEncoderPosition()
-    {
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "Start Calibration");
-        Ethercat.packet_tx[0].can.StdId = 0x100;
-        Ethercat.packet_tx[0].can.DLC = 0x04;
-        Ethercat.packet_tx[0].can.Data[0] = 0; // 磁力计校准
-        Ethercat.packet_tx[0].can.Data[1] = 1; // pos零点
-        Ethercat.packet_tx[0].can.Data[2] = 0; // 静止校准
-        Ethercat.packet_tx[0].can.Data[3] = 0; // enable磁力计
-
-        Ethercat.packet_tx[1].can.StdId = 0x100;
-        Ethercat.packet_tx[1].can.DLC = 0x04;
-        Ethercat.packet_tx[1].can.Data[0] = 0; // 磁力计校准
-        Ethercat.packet_tx[1].can.Data[1] = 1; // pos零点
-        Ethercat.packet_tx[1].can.Data[2] = 0; // 静止校准
-        Ethercat.packet_tx[1].can.Data[3] = 0; // enable磁力计
-    }
-
-    void OrthrusSystemHardware::StopCalibrationEncoderPosition()
-    {
-        // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "Stop Calibration");
-        Ethercat.packet_tx[0].can.StdId = 0x100;
-        Ethercat.packet_tx[0].can.DLC = 0x04;
-        Ethercat.packet_tx[0].can.Data[0] = 0; // 磁力计校准
-        Ethercat.packet_tx[0].can.Data[1] = 0; // pos零点
-        Ethercat.packet_tx[0].can.Data[2] = 0; // 静止校准
-        Ethercat.packet_tx[0].can.Data[3] = 0; // enable磁力计
-
-        Ethercat.packet_tx[1].can.StdId = 0x100;
-        Ethercat.packet_tx[1].can.DLC = 0x04;
-        Ethercat.packet_tx[1].can.Data[0] = 0; // 磁力计校准
-        Ethercat.packet_tx[1].can.Data[1] = 0; // pos零点
-        Ethercat.packet_tx[1].can.Data[2] = 0; // 静止校准
-        Ethercat.packet_tx[1].can.Data[3] = 0; // enable磁力计
     }
 
     void OrthrusSystemHardware::CalibrationPosition()
