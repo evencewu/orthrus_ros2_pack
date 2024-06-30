@@ -25,9 +25,9 @@ namespace orthrus_control
             leg_imu_publisher_ = node->template create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
         }
 
-        void Init(std::shared_ptr<OrthrusControlVariable> variable);
+        void Init(std::shared_ptr<OrthrusControlVariable> variable_ptr);
 
-        void Update(std::vector<double>);
+        void Update(rclcpp::Time time);
 
     private:
         std::shared_ptr<OrthrusControlVariable> variable_;

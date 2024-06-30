@@ -27,6 +27,7 @@ namespace orthrus_control
 
     struct LegVariable
     {
+        MotorVariable motor[3];
         LegImuVariable leg_imu;
     };
 

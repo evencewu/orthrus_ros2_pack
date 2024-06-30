@@ -7,11 +7,6 @@ namespace orthrus_control
     {
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware on init");
 
-        // leg_map_["LF"] = 0;
-        // leg_map_["LH"] = 1;
-        // leg_map_["RF"] = 2;
-        // leg_map_["RH"] = 3;
-
         // hardware init
         leg[0].Init(IMU1, USART6, 1);
         leg[1].Init(IMU2, USART1, 1);
@@ -19,6 +14,9 @@ namespace orthrus_control
         leg[3].Init(IMU3, USART1, 0);
 
         body_imu.Init(IMU5, 1);
+
+        variable_ = std::make_shared<OrthrusControlVariable>();
+
         // 错误检查
 
         if (
