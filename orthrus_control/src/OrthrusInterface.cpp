@@ -1,13 +1,5 @@
 #include "orthrus_control/OrthrusInterface.hpp"
-
-
-
-namespace
-{
-    constexpr auto DEFAULT_COMMAND_TOPIC = "diff_test_cmd";
-    constexpr auto DEFAULT_STATE_TOPIC = "diff_test_cmd";
-} // namespace
-
+#include "hardware_interface/types/hardware_interface_type_values.hpp"
 namespace orthrus_control
 {
     hardware_interface::CallbackReturn OrthrusSystemHardware::on_init(
