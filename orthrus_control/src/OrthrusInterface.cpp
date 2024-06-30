@@ -218,8 +218,6 @@ namespace orthrus_control
 
         time_now_ = std::chrono::high_resolution_clock::now();
 
-        calibration_visualization->Update(time);
-
         if (ethercat_prepare_flag_ != true)
         {
             std::chrono::duration<double> duration = time_now_ - time_last_ethercat_;
@@ -243,6 +241,8 @@ namespace orthrus_control
             command_effort[motor_num] = hw_commands_[motor_num];
         }
 
+        calibration_visualization->Update(time);
+        
         Update();
 
         return hardware_interface::return_type::OK;
