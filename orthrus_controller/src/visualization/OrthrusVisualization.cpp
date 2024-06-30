@@ -134,9 +134,9 @@ namespace orthrus_controller
         marker.points[0].x = 0.0;
         marker.points[0].y = 0.0;
         marker.points[0].z = 0.0;
-        marker.points[1].x = orthrus_interfaces_->odom_state.imu_acceleration[0] / 10;
-        marker.points[1].y = orthrus_interfaces_->odom_state.imu_acceleration[1] / 10;
-        marker.points[1].z = orthrus_interfaces_->odom_state.imu_acceleration[2] / 10;
+        marker.points[1].x = orthrus_interfaces_->odom_state.imu.linear_acceleration[0] / 10;
+        marker.points[1].y = orthrus_interfaces_->odom_state.imu.linear_acceleration[1] / 10;
+        marker.points[1].z = orthrus_interfaces_->odom_state.imu.linear_acceleration[2] / 10;
 
         // 设置箭头的缩放（箭头的大小）
         marker.scale.x = 0.01; // 箭头的长度

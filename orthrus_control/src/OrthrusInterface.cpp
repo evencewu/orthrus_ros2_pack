@@ -200,6 +200,7 @@ namespace orthrus_control
 
         // ros2 control 交换数据
 
+        
         hw_positions_[0] = -leg[1].motor[0].Pos_ / 9.1 - dealta_real_position_[1][0];
         hw_positions_[1] = leg[1].motor[1].Pos_ / 9.1 - dealta_real_position_[1][1];
         hw_positions_[2] = leg[1].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[1][2]; //
@@ -215,8 +216,11 @@ namespace orthrus_control
         hw_positions_[9] = -leg[2].motor[0].Pos_ / 9.1 - dealta_real_position_[2][0];
         hw_positions_[10] = leg[2].motor[1].Pos_ / 9.1 - dealta_real_position_[2][1];
         hw_positions_[11] = leg[2].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[2][2];
+        
 
-        // imu
+        //hw_positions_ = CompensationAngleError();
+
+        // imu  
 
         Eigen::Quaterniond q_relative = body_imu.gyro_ * body_imu.gyro_.inverse();
 
@@ -289,11 +293,19 @@ namespace orthrus_control
         }
 
         motorcan_send_flag_++;
+
         if (motorcan_send_flag_ == 12)
         {
             motorcan_send_flag_ = 0;
         }
 
+        Update();
+
+        return hardware_interface::return_type::OK;
+    }
+
+    void OrthrusSystemHardware::Update()
+    {
         if (gpio_commands_["enable_power"])
         {
             Ethercat.packet_tx[0].power = 0x01;
@@ -311,6 +323,7 @@ namespace orthrus_control
         }
         else
         {
+
         }
 
         // if (gpio_commands_["calibration_encoder"])
@@ -327,33 +340,6 @@ namespace orthrus_control
         leg[2].Analyze(&Ethercat.packet_rx[0]);
         leg[3].Analyze(&Ethercat.packet_rx[0]);
         body_imu.Analyze(&Ethercat.packet_rx[1]);
-
-        return hardware_interface::return_type::OK;
-    }
-
-    void OrthrusSystemHardware::SafeStop()
-    {
-        Ethercat.packet_tx[0].power = 0x00;
-        Ethercat.packet_tx[1].power = 0x00;
-
-        for (int i = 0; i <= 20; i++)
-        {
-            for (int j = 0; j < 12; j++)
-            {
-                if (j > 5)
-                {
-                    leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[1], 0, 0, 0, 0, 0, 0);
-                    Ethercat.EcatSyncMsg();
-                }
-                else
-                {
-                    leg[j / 3].motor[j % 3].SetOutput(&Ethercat.packet_tx[0], 0, 0, 0, 0, 0, 0);
-                    Ethercat.EcatSyncMsg();
-                }
-            }
-        }
-
-        RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "motor stop!");
     }
 
     // for debug

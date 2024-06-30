@@ -2,22 +2,6 @@
 
 namespace orthrus_control
 {
-    /// @brief 转换imu姿态
-    void OrthrusSystemHardware::UnifiedSensorData()
-    {
-        body_imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[0].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[1].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[2].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-        leg[3].imu.CorrectionMatrixSet(M_PI / 2, Eigen::Vector3d(0.0, 1.0, 0.0), -M_PI / 2, Eigen::Vector3d(0.0, 0.0, 1.0));
-
-        body_imu.Correction(body_imu.euler_(YAW));
-        leg[0].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
-        leg[1].imu.Correction(body_imu.euler_(YAW) + M_PI / 2);
-        leg[2].imu.Correction(body_imu.euler_(YAW) - M_PI / 2);
-        leg[3].imu.Correction(body_imu.euler_(YAW) + M_PI / 2);
-    }
-
     /// @brief 通过发送Can消息开启编码器校准
     void OrthrusSystemHardware::StartCalibrationEncoderPosition()
     {
@@ -88,5 +72,25 @@ namespace orthrus_control
         dealta_real_position_[2][0] = -leg[2].motor[0].Pos_ / 9.1 - imu_pos_0;
         dealta_real_position_[2][1] = leg[2].motor[1].Pos_ / 9.1 - imu_pos_1;
         dealta_real_position_[2][2] = leg[2].motor[2].Pos_ / 9.1 - leg[2].angle.Pos_; //
+    }
+
+    std::vector<double> OrthrusSystemHardware::CompensationAngleError()
+    {
+        std::vector<double> positions(12, 0.0);
+
+        positions[0] = -leg[1].motor[0].Pos_ / 9.1 - dealta_real_position_[1][0];
+        positions[1] = leg[1].motor[1].Pos_ / 9.1 - dealta_real_position_[1][1];
+        positions[2] = leg[1].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[1][2];
+        positions[3] = -leg[0].motor[0].Pos_ / 9.1 - dealta_real_position_[0][0];
+        positions[4] = leg[0].motor[1].Pos_ / 9.1 - dealta_real_position_[0][1];
+        positions[5] = leg[0].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[0][2];
+        positions[6] = -leg[3].motor[0].Pos_ / 9.1 - dealta_real_position_[3][0];
+        positions[7] = leg[3].motor[1].Pos_ / 9.1 - dealta_real_position_[3][1];
+        positions[8] = leg[3].motor[2].Pos_ / 9.1 + (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[3][2];
+        positions[9] = -leg[2].motor[0].Pos_ / 9.1 - dealta_real_position_[2][0];
+        positions[10] = leg[2].motor[1].Pos_ / 9.1 - dealta_real_position_[2][1];
+        positions[11] = leg[2].motor[2].Pos_ / 9.1 - (30 * M_PI / 180 - theta1 * M_PI / 180) - dealta_real_position_[2][2];
+
+        return positions;
     }
 }

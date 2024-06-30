@@ -85,21 +85,29 @@ namespace orthrus_control
 
         Leg leg[4];
         Imu body_imu;
+
         double command_effort[12];
 
         int motorcan_send_flag_ = 0;
 
-        //
-        void UnifiedSensorData();
-        
+        //main
+        void Update();
+        void UpdateFlag();
+        void UpdateMotor();
+
         void Log();
+
+        // Ethercat
         void SafeStop();
 
         //Calibration
+        void UnifiedSensorData();
+
         void StartCalibrationEncoderPosition();
         void StopCalibrationEncoderPosition();
 
         void CalibrationPosition();
+        std::vector<double> CompensationAngleError();
         double dealta_real_position_[4][3];
 
 
