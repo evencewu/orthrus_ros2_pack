@@ -87,7 +87,7 @@ namespace orthrus_control
         EcatBase Ethercat = EcatBase(2);
 
         // hardware interface
-        std::shared_ptr<OrthrusControlVariable> variable_;
+        std::shared_ptr<OrthrusControlVariable> assembly_;
 
         //Leg leg[4];
         //Imu body_imu;

@@ -7,14 +7,19 @@ namespace orthrus_control
     {
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware on init");
 
-        // hardware init
-        variable_ = std::make_shared<OrthrusControlVariable>();
+        this->node_ = std::make_shared<rclcpp::Node>("OrthrusHardware");
 
-        variable_->leg[0].Init(IMU1, USART6, 1);
-        variable_->leg[1].Init(IMU2, USART1, 1);
-        variable_->leg[2].Init(IMU4, USART6, 0);
-        variable_->leg[3].Init(IMU3, USART1, 0);
-        variable_->body_imu.Init(IMU5, 1);
+        // hardware init
+        assembly_ = std::make_shared<OrthrusControlVariable>();
+
+        assembly_->leg[0].Init(IMU1, USART6, 1);
+        assembly_->leg[1].Init(IMU2, USART1, 1);
+        assembly_->leg[2].Init(IMU4, USART6, 0);
+        assembly_->leg[3].Init(IMU3, USART1, 0);
+        assembly_->body_imu.Init(IMU5, 1);
+
+        calibration_visualization = std::make_shared<CalibrationVisualization>(this->node_);
+        calibration_visualization->Init(assembly_);
 
         // 错误检查
 
@@ -150,9 +155,7 @@ namespace orthrus_control
 
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m Activating ...please wait...\033[0m");
 
-        this->node_ = std::make_shared<rclcpp::Node>("OrthrusHardware");
 
-        calibration_visualization = std::make_shared<CalibrationVisualization>(this->node_);
 
         // set some default values
         for (auto i = 0u; i < hw_positions_.size(); i++)
@@ -185,7 +188,7 @@ namespace orthrus_control
     }
 
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::read(
-        const rclcpp::Time & /*time*/, const rclcpp::Duration &period)
+        const rclcpp::Time & time, const rclcpp::Duration &period)
     {
         if (ethercat_prepare_flag_ == false)
         {
@@ -215,6 +218,8 @@ namespace orthrus_control
 
         time_now_ = std::chrono::high_resolution_clock::now();
 
+        calibration_visualization->Update(time);
+
         if (ethercat_prepare_flag_ != true)
         {
             std::chrono::duration<double> duration = time_now_ - time_last_ethercat_;
@@ -231,7 +236,7 @@ namespace orthrus_control
     }
 
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::write(
-        const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+        const rclcpp::Time & time, const rclcpp::Duration & period)
     {
         for (int motor_num = 0; motor_num < 12; motor_num++)
         {
@@ -247,7 +252,7 @@ namespace orthrus_control
     {
         if (motorcan_send_flag_ < 12)
         {
-            variable_->leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[variable_->leg[motorcan_send_flag_ / 3].slave_num_], 0, 0, 0, command_effort[motorcan_send_flag_], 0, 10);
+            assembly_->leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[assembly_->leg[motorcan_send_flag_ / 3].slave_num_], 0, 0, 0, command_effort[motorcan_send_flag_], 0, 10);
         }
 
         motorcan_send_flag_++;
@@ -286,10 +291,10 @@ namespace orthrus_control
         //  }
         for (int leg_num = 0; leg_num < 4; leg_num++)
         {
-            variable_->leg[leg_num].Analyze(&Ethercat.packet_rx[variable_->leg[leg_num].slave_num_]);
+            assembly_->leg[leg_num].Analyze(&Ethercat.packet_rx[assembly_->leg[leg_num].slave_num_]);
         }
 
-        variable_->body_imu.Analyze(&Ethercat.packet_rx[variable_->body_imu.slave_num_]);
+        assembly_->body_imu.Analyze(&Ethercat.packet_rx[assembly_->body_imu.slave_num_]);
     }
 }
 
