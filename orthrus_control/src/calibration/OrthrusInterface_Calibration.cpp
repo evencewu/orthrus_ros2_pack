@@ -78,14 +78,6 @@ namespace orthrus_control
     {
         std::vector<double> positions(12, 0.0);
 
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                positions[i*4 + j] = -leg[i].motor[j].Pos_ / 9.1 - dealta_real_position_[i][j];
-            }
-        }
-
         return positions;
     }
 }

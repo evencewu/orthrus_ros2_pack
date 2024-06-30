@@ -20,7 +20,7 @@ namespace orthrus_control
 
     std::vector<double> OrthrusSystemHardware::PrepairSensorData()
     {
-        std::vector<double> data(10,0.0);
+        std::vector<double> data(10, 0.0);
 
         UnifiedSensorData();
 
@@ -50,28 +50,20 @@ namespace orthrus_control
 
     std::vector<std::vector<double>> OrthrusSystemHardware::PrepairMotorData()
     {
-        std::vector<double> position_data(12,0.0);
-        std::vector<double> velocities_data(12,0.0);
-        std::vector<double> acceleration_data(12,0.0);
+        std::vector<double> position_data(12, 0.0);
+        std::vector<double> velocities_data(12, 0.0);
+        std::vector<double> acceleration_data(12, 0.0);
 
-        position_data[0] = -leg[0].motor[0].Pos_ / 9.1 - dealta_real_position_[0][0];
-        position_data[1] = leg[0].motor[1].Pos_ / 9.1 - dealta_real_position_[0][1];
-        position_data[2] = leg[0].motor[2].Pos_ / 9.1 - dealta_real_position_[0][2]; //
+        for (int i = 0; i < 4; i++)
+        {
 
-        position_data[3] = -leg[1].motor[0].Pos_ / 9.1 - dealta_real_position_[1][0];
-        position_data[4] = leg[1].motor[1].Pos_ / 9.1 - dealta_real_position_[1][1];
-        position_data[5] = leg[1].motor[2].Pos_ / 9.1 - dealta_real_position_[1][2];
+            position_data[i * 3 + 0] = -leg[i].motor[0].Pos_ / 9.1 - dealta_real_position_[i][0];
+            position_data[i * 3 + 1] = leg[i].motor[1].Pos_ / 9.1 - dealta_real_position_[i][1];
+            position_data[i * 3 + 2] = leg[i].motor[2].Pos_ / 9.1 - dealta_real_position_[i][2];
+        }
 
-        position_data[6] = -leg[2].motor[0].Pos_ / 9.1 - dealta_real_position_[2][0];
-        position_data[7] = leg[2].motor[1].Pos_ / 9.1 - dealta_real_position_[2][1];
-        position_data[8] = leg[2].motor[2].Pos_ / 9.1 - dealta_real_position_[2][2];
-
-        position_data[9] = -leg[3].motor[0].Pos_ / 9.1 - dealta_real_position_[3][0];
-        position_data[10] = leg[3].motor[1].Pos_ / 9.1 - dealta_real_position_[3][1];
-        position_data[11] = leg[3].motor[2].Pos_ / 9.1 - dealta_real_position_[3][2];
-
-        //velocities_data[0] = -leg[1].motor[0].W_;
-        //acceleration_data[0] = leg[1].motor[0].Acc_;
+        // velocities_data[0] = -leg[1].motor[0].W_;
+        // acceleration_data[0] = leg[1].motor[0].Acc_;
 
         std::vector<std::vector<double>> data = {position_data, velocities_data, acceleration_data};
         return data;

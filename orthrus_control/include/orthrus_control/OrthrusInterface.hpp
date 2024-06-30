@@ -123,9 +123,6 @@ namespace orthrus_control
 
         std::unordered_map<std::string, double> gpio_commands_;
 
-
-
-        std::shared_ptr<rclcpp::Node> node_;
         // subscribe crawler feed back
         bool subscriber_is_active_ = false;
         rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr fb_subscriber_ = nullptr;
