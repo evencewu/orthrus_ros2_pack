@@ -29,6 +29,8 @@
 #include "orthrus_control/OrthrusControlVariable.hpp"
 #include "orthrus_control/visibility_control.h"
 
+#include "orthrus_control/calibration/CalibrationVisualization.hpp"
+
 #include "orthrus_control/ethercat/EcatBase.hpp"
 #include "orthrus_control/ethercat/TypeDef.hpp"
 #include "orthrus_control/assembly/Leg.hpp"
@@ -70,6 +72,12 @@ namespace orthrus_control
     private:
         double theta1 = 18.82;
         double theta2 = 14.6;
+
+        // CalibrationVisualization
+        std::shared_ptr<rclcpp::Node> node_;
+
+        std::shared_ptr<CalibrationVisualization> calibration_visualization;
+
         // ethercat
         bool ethercat_prepare_flag_ = false;
         std::chrono::time_point<std::chrono::high_resolution_clock> time_last_ethercat_;
@@ -79,11 +87,10 @@ namespace orthrus_control
         EcatBase Ethercat = EcatBase(2);
 
         // hardware interface
-
         std::shared_ptr<OrthrusControlVariable> variable_;
 
-        Leg leg[4];
-        Imu body_imu;
+        //Leg leg[4];
+        //Imu body_imu;
 
         double command_effort[12];
 
@@ -111,7 +118,6 @@ namespace orthrus_control
         std::vector<double> CompensationAngleError();
         double dealta_real_position_[4][3];
 
-        
         // hardware
         std::vector<double> hw_positions_;
         std::vector<double> hw_velocities_;

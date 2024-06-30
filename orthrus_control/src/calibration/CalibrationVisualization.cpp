@@ -17,17 +17,17 @@ namespace orthrus_control
 
         for (int i = 0; i < 4; i++)
         {
-            tf_stamped.header.frame_id = "odom";
+            tf_stamped.header.frame_id = "base";
             tf_stamped.child_frame_id = imu_names[i];
 
             tf_stamped.transform.translation.x = 0.0;
             tf_stamped.transform.translation.y = 0.0;
             tf_stamped.transform.translation.z = 0.0;
 
-            tf_stamped.transform.rotation.w = variable_->leg[i].leg_imu.attitude.w();
-            tf_stamped.transform.rotation.x = variable_->leg[i].leg_imu.attitude.x();
-            tf_stamped.transform.rotation.y = variable_->leg[i].leg_imu.attitude.y();
-            tf_stamped.transform.rotation.z = variable_->leg[i].leg_imu.attitude.z();
+            tf_stamped.transform.rotation.w = variable_->leg[i].imu.gyro_.w();
+            tf_stamped.transform.rotation.x = variable_->leg[i].imu.gyro_.x();
+            tf_stamped.transform.rotation.y = variable_->leg[i].imu.gyro_.y();
+            tf_stamped.transform.rotation.z = variable_->leg[i].imu.gyro_.z();
 
             leg_imu_msg_.transforms.push_back(tf_stamped);
 

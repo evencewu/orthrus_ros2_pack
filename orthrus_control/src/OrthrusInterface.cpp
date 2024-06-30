@@ -8,14 +8,13 @@ namespace orthrus_control
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "OrthrusHardware on init");
 
         // hardware init
-        leg[0].Init(IMU1, USART6, 1);
-        leg[1].Init(IMU2, USART1, 1);
-        leg[2].Init(IMU4, USART6, 0);
-        leg[3].Init(IMU3, USART1, 0);
-
-        body_imu.Init(IMU5, 1);
-
         variable_ = std::make_shared<OrthrusControlVariable>();
+
+        variable_->leg[0].Init(IMU1, USART6, 1);
+        variable_->leg[1].Init(IMU2, USART1, 1);
+        variable_->leg[2].Init(IMU4, USART6, 0);
+        variable_->leg[3].Init(IMU3, USART1, 0);
+        variable_->body_imu.Init(IMU5, 1);
 
         // 错误检查
 
@@ -148,9 +147,12 @@ namespace orthrus_control
     hardware_interface::CallbackReturn OrthrusSystemHardware::on_activate(
         const rclcpp_lifecycle::State & /*previous_state*/)
     {
-        // BEGIN: This part here is for exemplary purposes - Please do not copy to your production code
+
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m Activating ...please wait...\033[0m");
-        // END: This part here is for exemplary purposes - Please do not copy to your production code
+
+        this->node_ = std::make_shared<rclcpp::Node>("OrthrusHardware");
+
+        calibration_visualization = std::make_shared<CalibrationVisualization>(this->node_);
 
         // set some default values
         for (auto i = 0u; i < hw_positions_.size(); i++)
@@ -203,9 +205,8 @@ namespace orthrus_control
             }
         }
 
-        // imu
         ethercat_prepare_flag_ = Ethercat.EcatSyncMsg();
-
+        
         auto motordata = PrepairMotorData();
         hw_positions_ = motordata[0];
         hw_velocities_ = motordata[1];
@@ -246,7 +247,7 @@ namespace orthrus_control
     {
         if (motorcan_send_flag_ < 12)
         {
-            leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[leg[motorcan_send_flag_ / 3].slave_num_], 0, 0, 0, command_effort[motorcan_send_flag_], 0, 10);
+            variable_->leg[motorcan_send_flag_ / 3].motor[motorcan_send_flag_ % 3].SetOutput(&Ethercat.packet_tx[variable_->leg[motorcan_send_flag_ / 3].slave_num_], 0, 0, 0, command_effort[motorcan_send_flag_], 0, 10);
         }
 
         motorcan_send_flag_++;
@@ -285,10 +286,10 @@ namespace orthrus_control
         //  }
         for (int leg_num = 0; leg_num < 4; leg_num++)
         {
-            leg[leg_num].Analyze(&Ethercat.packet_rx[leg[leg_num].slave_num_]);
+            variable_->leg[leg_num].Analyze(&Ethercat.packet_rx[variable_->leg[leg_num].slave_num_]);
         }
 
-        body_imu.Analyze(&Ethercat.packet_rx[body_imu.slave_num_]);
+        variable_->body_imu.Analyze(&Ethercat.packet_rx[variable_->body_imu.slave_num_]);
     }
 }
 
