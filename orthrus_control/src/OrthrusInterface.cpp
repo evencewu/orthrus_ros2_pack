@@ -18,8 +18,8 @@ namespace orthrus_control
         assembly_->leg[3].Init(IMU3, USART1, 0);
         assembly_->body_imu.Init(IMU5, 1);
 
-        calibration_visualization = std::make_shared<CalibrationVisualization>(this->node_);
-        calibration_visualization->Init(assembly_);
+        //calibration_visualization = std::make_shared<CalibrationVisualization>(this->node_);
+        //calibration_visualization->Init(assembly_);
 
         // 错误检查
 
@@ -119,10 +119,13 @@ namespace orthrus_control
                 info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_effort_[i]));
         }
 
-        for (uint i = 0; i < info_.sensors[0].state_interfaces.size(); i++)
+        for (uint i = 0; i < 5; i++)
         {
-            state_interfaces.emplace_back(hardware_interface::StateInterface(
-                info_.sensors[0].name, info_.sensors[0].state_interfaces[i].name, &hw_sensor_states_[i]));
+            for (uint j = 0; j < info_.sensors[i].state_interfaces.size(); j++)
+            {
+                state_interfaces.emplace_back(hardware_interface::StateInterface(
+                    info_.sensors[i].name, info_.sensors[i].state_interfaces[j].name, &hw_sensor_states_[j]));
+            }
         }
 
         return state_interfaces;
@@ -155,8 +158,6 @@ namespace orthrus_control
 
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m Activating ...please wait...\033[0m");
 
-
-
         // set some default values
         for (auto i = 0u; i < hw_positions_.size(); i++)
         {
@@ -188,7 +189,7 @@ namespace orthrus_control
     }
 
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::read(
-        const rclcpp::Time & time, const rclcpp::Duration &period)
+        const rclcpp::Time &time, const rclcpp::Duration &period)
     {
         if (ethercat_prepare_flag_ == false)
         {
@@ -209,7 +210,7 @@ namespace orthrus_control
         }
 
         ethercat_prepare_flag_ = Ethercat.EcatSyncMsg();
-        
+
         auto motordata = PrepairMotorData();
         hw_positions_ = motordata[0];
         hw_velocities_ = motordata[1];
@@ -228,21 +229,21 @@ namespace orthrus_control
             }
         }
 
-        // Log();
+        Log();
 
         return hardware_interface::return_type::OK;
     }
 
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::write(
-        const rclcpp::Time & time, const rclcpp::Duration & period)
+        const rclcpp::Time &time, const rclcpp::Duration &period)
     {
         for (int motor_num = 0; motor_num < 12; motor_num++)
         {
             command_effort[motor_num] = hw_commands_[motor_num];
         }
 
-        calibration_visualization->Update(time);
-        
+        //calibration_visualization->Update(time);
+
         Update();
 
         return hardware_interface::return_type::OK;

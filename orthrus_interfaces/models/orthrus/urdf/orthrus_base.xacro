@@ -259,6 +259,33 @@
       </sensor>
 
       <xacro:if value="${prefix == 'real'}">
+        <sensor name="imu_lf">
+          <state_interface name="orientation.x"/>
+          <state_interface name="orientation.y"/>
+          <state_interface name="orientation.z"/>
+          <state_interface name="orientation.w"/>
+        </sensor>
+        <sensor name="imu_lh">
+          <state_interface name="orientation.x"/>
+          <state_interface name="orientation.y"/>
+          <state_interface name="orientation.z"/>
+          <state_interface name="orientation.w"/>
+        </sensor>
+        <sensor name="imu_rf">
+          <state_interface name="orientation.x"/>
+          <state_interface name="orientation.y"/>
+          <state_interface name="orientation.z"/>
+          <state_interface name="orientation.w"/>
+        </sensor>
+        <sensor name="imu_rh">
+          <state_interface name="orientation.x"/>
+          <state_interface name="orientation.y"/>
+          <state_interface name="orientation.z"/>
+          <state_interface name="orientation.w"/>
+        </sensor>
+      </xacro:if>
+
+      <xacro:if value="${prefix == 'real'}">
         <gpio name="flag">
           <command_interface name="enable_power"/>
           <command_interface name="calibration_position"/>
