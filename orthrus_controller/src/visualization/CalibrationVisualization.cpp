@@ -1,10 +1,10 @@
-#include "orthrus_control/calibration/CalibrationVisualization.hpp"
+#include "orthrus_controller/visualization/CalibrationVisualization.hpp"
 
-namespace orthrus_control
+namespace orthrus_controller
 {
-    void CalibrationVisualization::Init(std::shared_ptr<OrthrusControlVariable> assembly_ptr)
+    void CalibrationVisualization::Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr)
     {
-        assembly_ = assembly_ptr;
+        orthrus_interfaces_ = orthrus_interfaces_ptr;
     }
 
     void CalibrationVisualization::Update(rclcpp::Time time)

@@ -29,8 +29,6 @@
 #include "orthrus_control/OrthrusControlVariable.hpp"
 #include "orthrus_control/visibility_control.h"
 
-#include "orthrus_control/calibration/CalibrationVisualization.hpp"
-
 #include "orthrus_control/ethercat/EcatBase.hpp"
 #include "orthrus_control/ethercat/TypeDef.hpp"
 #include "orthrus_control/assembly/Leg.hpp"
@@ -75,8 +73,6 @@ namespace orthrus_control
 
         // CalibrationVisualization
         std::shared_ptr<rclcpp::Node> node_;
-
-        std::shared_ptr<CalibrationVisualization> calibration_visualization;
 
         // ethercat
         bool ethercat_prepare_flag_ = false;

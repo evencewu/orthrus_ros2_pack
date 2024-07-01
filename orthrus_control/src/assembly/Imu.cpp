@@ -20,12 +20,18 @@ namespace orthrus_control
 
     void Imu::Correction(double standard_yaw)
     {
-        unified_gyro_ = gyro_ * correction_matrix_;
+        original_gyro_.normalize();
+
+        unified_gyro_ = original_gyro_ * correction_matrix_;
+
+        Eigen::Matrix3d rotation_matrix = correction_matrix_.toRotationMatrix();
 
         GetEuler(unified_gyro_);
 
         Eigen::Vector3d eulerAngles(euler_(ROLL), euler_(PITCH), standard_yaw);
 
+        standard_acc_ = rotation_matrix.transpose() * original_acc_; // 
+        standard_angle_speed_ = rotation_matrix.transpose() * original_angle_speed_;//correction_matrix_ * 
         standard_gyro_ = Eigen::Quaterniond(Eigen::AngleAxisd(eulerAngles.z(), Eigen::Vector3d::UnitZ()) * Eigen::AngleAxisd(eulerAngles.y(), Eigen::Vector3d::UnitY()) * Eigen::AngleAxisd(eulerAngles.x(), Eigen::Vector3d::UnitX()));
     }
 
@@ -72,18 +78,18 @@ namespace orthrus_control
         if (pack->can.StdId == device_id_ + 1)
         {
             memcpy(data.uint_data, &(pack->can.Data[0]), 4);
-            gyro_.w() = data.f_data;
+            original_gyro_.w() = data.f_data;
 
             memcpy(data.uint_data, &(pack->can.Data[4]), 4);
-            gyro_.x() = data.f_data;
+            original_gyro_.x() = data.f_data;
         }
         if (pack->can.StdId == device_id_ + 2)
         {
             memcpy(data.uint_data, &(pack->can.Data[0]), 4);
-            gyro_.y() = data.f_data;
+            original_gyro_.y() = data.f_data;
 
             memcpy(data.uint_data, &(pack->can.Data[4]), 4);
-            gyro_.z() = data.f_data;
+            original_gyro_.z() = data.f_data;
         }
 
         if (if_with_acc_)
@@ -91,28 +97,28 @@ namespace orthrus_control
             if (pack->can.StdId == device_id_ + 4)
             {
                 memcpy(data.uint_data, &(pack->can.Data[0]), 4);
-                acc_[0] = data.f_data;
+                original_acc_[0] = data.f_data;
 
                 memcpy(data.uint_data, &(pack->can.Data[4]), 4);
-                acc_[1] = data.f_data;
+                original_acc_[1] = data.f_data;
             }
 
             if (pack->can.StdId == device_id_ + 5)
             {
                 memcpy(data.uint_data, &(pack->can.Data[0]), 4);
-                acc_[2] = data.f_data;
+                original_acc_[2] = data.f_data;
 
                 memcpy(data.uint_data, &(pack->can.Data[4]), 4);
-                angle_speed_[0] = data.f_data;
+                original_angle_speed_[0] = data.f_data;
             }
 
             if (pack->can.StdId == device_id_ + 6)
             {
                 memcpy(data.uint_data, &(pack->can.Data[0]), 4);
-                angle_speed_[1] = data.f_data;
+                original_angle_speed_[1] = data.f_data;
 
                 memcpy(data.uint_data, &(pack->can.Data[4]), 4);
-                angle_speed_[2] = data.f_data;
+                original_angle_speed_[2] = data.f_data;
             }
         }
     }

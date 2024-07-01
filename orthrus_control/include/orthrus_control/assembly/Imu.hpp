@@ -24,7 +24,7 @@ namespace orthrus_control
     public:
         void Init(uint8_t device_id);
         void Init(uint8_t device_id, int slave_num);
-        
+
         void Analyze(Ecat_Inputs_Pack *pack);
 
         static void IfUseMag(bool flag, can_pack can);
@@ -36,16 +36,20 @@ namespace orthrus_control
 
         Eigen::Quaterniond correction_matrix_;
 
-        Eigen::Quaterniond gyro_; // 四元数角度
-        Eigen::Vector3d acc_;     // 加速度
-        Eigen::Vector3d angle_speed_;
+        Eigen::Quaterniond original_gyro_; // 四元数角度
+        Eigen::Vector3d original_acc_;     // 加速度
+        Eigen::Vector3d original_angle_speed_;
 
-        Eigen::Quaterniond unified_gyro_;  // 转换后的坐标系
+        Eigen::Quaterniond unified_gyro_; // 转换后的坐标系
+
         Eigen::Quaterniond standard_gyro_; // 对齐yaw后的坐标系
+        Eigen::Vector3d standard_acc_;
+        Eigen::Vector3d standard_angle_speed_;
 
         Eigen::Vector3d euler_; // 欧拉角表示
 
         int slave_num_;
+
     private:
         bool if_with_acc_;
 

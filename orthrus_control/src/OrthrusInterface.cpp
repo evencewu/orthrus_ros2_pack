@@ -18,8 +18,8 @@ namespace orthrus_control
         assembly_->leg[3].Init(IMU3, USART1, 0);
         assembly_->body_imu.Init(IMU5, 1);
 
-        //calibration_visualization = std::make_shared<CalibrationVisualization>(this->node_);
-        //calibration_visualization->Init(assembly_);
+        // calibration_visualization = std::make_shared<CalibrationVisualization>(this->node_);
+        // calibration_visualization->Init(assembly_);
 
         // 错误检查
 
@@ -237,12 +237,31 @@ namespace orthrus_control
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::write(
         const rclcpp::Time &time, const rclcpp::Duration &period)
     {
-        for (int motor_num = 0; motor_num < 12; motor_num++)
-        {
-            command_effort[motor_num] = hw_commands_[motor_num];
-        }
+        //for (int motor_num = 0; motor_num < 12; motor_num++)
+        //{
+        //    if (motor_num % 3 == 0)
+        //    {
+        //        command_effort[motor_num] = hw_commands_[motor_num];
+        //    }
+        //}
 
-        //calibration_visualization->Update(time);
+        command_effort[0] = -hw_commands_[0];
+        command_effort[1] = hw_commands_[1];
+        command_effort[2] = hw_commands_[2];
+
+        command_effort[3] = -hw_commands_[3];
+        command_effort[4] = hw_commands_[4];
+        command_effort[5] = hw_commands_[5];
+
+        command_effort[6] = -hw_commands_[6];
+        command_effort[7] = hw_commands_[7];
+        command_effort[8] = hw_commands_[8];
+
+        command_effort[9] = -hw_commands_[9];
+        command_effort[10] = hw_commands_[10];
+        command_effort[11] = hw_commands_[11];
+
+        // calibration_visualization->Update(time);
 
         Update();
 
@@ -290,6 +309,7 @@ namespace orthrus_control
         //{
         //      StopCalibrationEncoderPosition();
         //  }
+
         for (int leg_num = 0; leg_num < 4; leg_num++)
         {
             assembly_->leg[leg_num].Analyze(&Ethercat.packet_rx[assembly_->leg[leg_num].slave_num_]);

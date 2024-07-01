@@ -91,7 +91,7 @@ def generate_launch_description():
          'use_compression:=true',
          'topic_whitelist:=["/tf", "/tf_static","/visualization_marker","/joint_states"]'],
     output='log'
-)
+    )
 
         
     nodes = [

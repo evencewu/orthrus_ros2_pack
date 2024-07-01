@@ -20,7 +20,9 @@ namespace orthrus_controller
 
         double dt = orthrus_interfaces_->odom_state.dt;
 
-        orthrus_interfaces_->odom_state.imu_acceleration = orthrus_interfaces_->odom_state.imu.orientation * orthrus_interfaces_->odom_state.imu.linear_acceleration;// + orthrus_interfaces_->odom_state.gravity;
+        Eigen::Matrix3d rotation_matrix = orthrus_interfaces_->odom_state.imu.orientation.toRotationMatrix();
+
+        orthrus_interfaces_->odom_state.imu_acceleration = orthrus_interfaces_->odom_state.imu.linear_acceleration; // + orthrus_interfaces_->odom_state.gravity;
 
         // 积分得到速度
         orthrus_interfaces_->odom_state.imu_velocity += orthrus_interfaces_->odom_state.imu_acceleration * dt;

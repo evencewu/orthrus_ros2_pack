@@ -40,9 +40,14 @@ def get_orthrus_gazebo_sim(package, executable):
 #foxglove = launch.actions.IncludeLaunchDescription(AnyLaunchDescriptionSource(xml_launch_file))
 
 foxglove = ExecuteProcess(
-    cmd=['ros2', 'launch', 'foxglove_bridge', 'foxglove_bridge_launch.xml', 'use_compression:=true'],
+    cmd=['ros2', 
+         'launch', 
+         'foxglove_bridge', 
+         'foxglove_bridge_launch.xml', 
+         'use_compression:=true',
+         'topic_whitelist:=["/tf", "/tf_static","/visualization_marker","/joint_states"]'],
     output='log'
-)
+    )
 
 #from launch_xml.launch_description_sources import XMLLaunchDescriptionSource
 

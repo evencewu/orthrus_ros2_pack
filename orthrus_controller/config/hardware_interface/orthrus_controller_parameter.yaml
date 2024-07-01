@@ -69,6 +69,25 @@ orthrus_controller:
       description: "imu data type name of robot",
     }
 
+  leg_imu_names:
+    {
+      type: string_array,
+      default_value: [imu_lf,imu_lh,imu_rf,imu_rh],
+      description: "Joint name of legged robot",
+    }
+  leg_imu_data_types:
+    {
+      type: string_array,
+      default_value:
+        [
+          orientation.w,
+          orientation.x,
+          orientation.y,
+          orientation.z,
+        ],
+      description: "imu data type name of robot",
+    }
+
   package_name:
     {
       type: string,

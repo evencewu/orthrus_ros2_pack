@@ -11,9 +11,7 @@
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
 
-#include "orthrus_control/OrthrusControlVariable.hpp"
-
-namespace orthrus_control
+namespace orthrus_controller
 {
     class CalibrationVisualization
     {
@@ -25,12 +23,12 @@ namespace orthrus_control
             leg_imu_publisher_ = node->template create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
         }
 
-        void Init(std::shared_ptr<OrthrusControlVariable> assembly_ptr);
+        void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
 
         void Update(rclcpp::Time time);
 
     private:
-        std::shared_ptr<OrthrusControlVariable> assembly_;
+        std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;                                                                                                              
 
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 

@@ -72,6 +72,30 @@ namespace orthrus_control
         dealta_real_position_[3][0] = -assembly_->leg[3].motor[0].Pos_ / 9.1 + imu_pos_0;
         dealta_real_position_[3][1] = assembly_->leg[3].motor[1].Pos_ / 9.1 - imu_pos_1;
         dealta_real_position_[3][2] = assembly_->leg[3].motor[2].Pos_ / 9.1 - assembly_->leg[3].angle.Pos_ + (30 * M_PI / 180 - theta1 * M_PI / 180);
+
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                // if (dealta_real_position_[i][j] > M_PI)
+                //{
+                //     dealta_real_position_[i][j] = dealta_real_position_[i][j] - 2 * M_PI;
+                // }
+                // else if (dealta_real_position_[i][j] < -M_PI)
+                //{
+                //     dealta_real_position_[i][j] = dealta_real_position_[i][j] + 2 * M_PI;
+                // }
+
+                if (dealta_real_position_[i][j] > M_PI)
+                {
+                    dealta_real_position_[i][j] = dealta_real_position_[i][j] - M_PI * 2;
+                }
+                else if (dealta_real_position_[i][j] < -M_PI)
+                {
+                    dealta_real_position_[i][j] = dealta_real_position_[i][j] + M_PI * 2;
+                }
+            }
+        }
     }
 
     std::vector<double> OrthrusSystemHardware::CompensationAngleError()

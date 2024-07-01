@@ -24,21 +24,13 @@ namespace orthrus_control
 
         UnifiedSensorData();
 
-        Eigen::Quaterniond q_relative = assembly_->body_imu.gyro_ * assembly_->body_imu.gyro_.inverse();
+        data[4] = assembly_->body_imu.standard_angle_speed_[0];
+        data[5] = assembly_->body_imu.standard_angle_speed_[1];
+        data[6] = assembly_->body_imu.standard_angle_speed_[2];
 
-        Eigen::Matrix3d rotation_matrix = q_relative.toRotationMatrix();
-
-        Eigen::Vector3d fix_angle_speed = rotation_matrix * assembly_->body_imu.angle_speed_;
-
-        data[4] = fix_angle_speed[0];
-        data[5] = fix_angle_speed[1];
-        data[6] = fix_angle_speed[2];
-
-        Eigen::Vector3d fix_acc = rotation_matrix * assembly_->body_imu.acc_;
-
-        data[7] = fix_acc[0];
-        data[8] = fix_acc[1];
-        data[9] = fix_acc[2];
+        data[7] = assembly_->body_imu.standard_acc_[0];
+        data[8] = assembly_->body_imu.standard_acc_[1];
+        data[9] = assembly_->body_imu.standard_acc_[2];
 
         data[3] = assembly_->body_imu.unified_gyro_.w();
         data[0] = assembly_->body_imu.unified_gyro_.x();

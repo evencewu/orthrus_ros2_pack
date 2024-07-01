@@ -49,6 +49,8 @@ namespace orthrus_controller
     joy_interface_ = std::make_shared<JoyInterface>(get_node());
     RCLCPP_INFO(logger, "Loading legged_mpc");
     legged_mpc_ = std::make_shared<LeggedMpc>(get_node());
+    RCLCPP_INFO(logger, "Loading safe_code");
+    safe_code_ = std::make_shared<SafeCode>();
 
     params_.package_path = ament_index_cpp::get_package_share_directory(params_.package_name);
     RCLCPP_INFO(logger, "finish [%s]-path: %s", params_.package_name.c_str(), params_.package_path.c_str());
@@ -95,6 +97,14 @@ namespace orthrus_controller
     conf_names.push_back("imu_sensor/orientation.y");
     conf_names.push_back("imu_sensor/orientation.z");
 
+    for (const auto &leg_imu_name : params_.leg_imu_names)
+    {
+      conf_names.push_back(leg_imu_name + "/" + "orientation.w");
+      conf_names.push_back(leg_imu_name + "/" + "orientation.x");
+      conf_names.push_back(leg_imu_name + "/" + "orientation.y");
+      conf_names.push_back(leg_imu_name + "/" + "orientation.z");
+    }
+
     return {interface_configuration_type::INDIVIDUAL, conf_names};
   }
 
@@ -129,6 +139,8 @@ namespace orthrus_controller
     joy_interface_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init legged_mpc");
     legged_mpc_->Init(orthrus_interfaces_, pinocchio_interfaces_);
+    RCLCPP_INFO(logger, "Init safe_code");
+    safe_code_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init over");
     // RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
     RCLCPP_INFO(logger, "Configure over...");
@@ -245,6 +257,12 @@ namespace orthrus_controller
     visualization_->Update(now_time_);
 
     //----------------------------------------
+
+    if (!safe_code_->PositionCheck())
+    {
+      RCLCPP_INFO(logger, "Joint position touch Limit");
+    }
+
     if (orthrus_interfaces_->robot_target.if_enable)
     {
       for (int joint_number = 0; joint_number < params_.leg_joint_num; joint_number++)
