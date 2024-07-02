@@ -132,7 +132,7 @@ namespace orthrus_control
             {
                 // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m i = %d j = %d \033[0m", i, j);
                 state_interfaces.emplace_back(hardware_interface::StateInterface(
-                    info_.sensors[i].name, info_.sensors[i].state_interfaces[j].name, &hw_leg_imu_sensor_states_[(i-1)*4 + j]));
+                    info_.sensors[i].name, info_.sensors[i].state_interfaces[j].name, &hw_leg_imu_sensor_states_[(i - 1) * 4 + j]));
             }
         }
 
@@ -234,13 +234,18 @@ namespace orthrus_control
         hw_positions_ = motordata[0];
         hw_velocities_ = motordata[1];
         hw_effort_ = motordata[2];
-        hw_sensor_states_ = PrepairSensorData();
 
-        for(int i = 0;i<16;i++)
+        // hw_sensor_states_ = PrepairSensorData();
+
+        for (int i = 0; i < 10; i++)
         {
-            hw_leg_imu_sensor_states_[i]=i+10;
+            hw_sensor_states_[i] = i;
         }
 
+        for (int i = 0; i < 16; i++)
+        {
+            hw_leg_imu_sensor_states_[i] = i + 10;
+        }
 
         time_now_ = std::chrono::high_resolution_clock::now();
 
