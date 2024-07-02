@@ -12,6 +12,7 @@ namespace orthrus_controller
         ModelVisualization(time);
         TfVisualization(time);
         MarkVisualization(time);
+        ImuVisualization(time);
     }
 
     void OrthrusVisualization::TfVisualization(rclcpp::Time time)

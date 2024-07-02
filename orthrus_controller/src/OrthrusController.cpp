@@ -273,7 +273,7 @@ namespace orthrus_controller
 
     /*
     RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf ", imu_handles_[0].angular_velocity[0].get().get_value(), imu_handles_[0].angular_velocity[1].get().get_value(), imu_handles_[0].angular_velocity[2].get().get_value(), imu_handles_[0].linear_acceleration[0].get().get_value(), imu_handles_[0].linear_acceleration[1].get().get_value(), imu_handles_[0].linear_acceleration[2].get().get_value(), imu_handles_[0].orientation[0].get().get_value(), imu_handles_[0].orientation[1].get().get_value(), imu_handles_[0].orientation[2].get().get_value(), imu_handles_[0].orientation[3].get().get_value());
-
+    */
 
     RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf ",
                 leg_imu_handles_[0].orientation[0].get().get_value(),
@@ -292,7 +292,7 @@ namespace orthrus_controller
                 leg_imu_handles_[3].orientation[1].get().get_value(),
                 leg_imu_handles_[3].orientation[2].get().get_value(),
                 leg_imu_handles_[3].orientation[3].get().get_value());
-    */
+    
 
     // Update imu/odom data
 
