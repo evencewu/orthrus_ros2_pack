@@ -235,12 +235,25 @@ namespace orthrus_control
         hw_velocities_ = motordata[1];
         hw_effort_ = motordata[2];
 
-        hw_sensor_states_ = PrepairSensorData();
+        PrepairSensorData();
 
-        for (int i = 0; i < 10; i++)
-        {
-            hw_sensor_states_[i] = i;
-        }
+        hw_sensor_states_[4] = assembly_->body_imu.standard_angle_speed_[0];
+        hw_sensor_states_[5] = assembly_->body_imu.standard_angle_speed_[1];
+        hw_sensor_states_[6] = assembly_->body_imu.standard_angle_speed_[2];
+
+        hw_sensor_states_[7] = assembly_->body_imu.standard_acc_[0];
+        hw_sensor_states_[8] = assembly_->body_imu.standard_acc_[1];
+        hw_sensor_states_[9] = assembly_->body_imu.standard_acc_[2];
+
+        hw_sensor_states_[3] = assembly_->body_imu.unified_gyro_.w();
+        hw_sensor_states_[0] = assembly_->body_imu.unified_gyro_.x();
+        hw_sensor_states_[1] = assembly_->body_imu.unified_gyro_.y();
+        hw_sensor_states_[2] = assembly_->body_imu.unified_gyro_.z();
+
+        //for (int i = 0; i < 10; i++)
+        //{
+        //    hw_sensor_states_[i] = i;
+        //}
 
         for (int i = 0; i < 16; i++)
         {

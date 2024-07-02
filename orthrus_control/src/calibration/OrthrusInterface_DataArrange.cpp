@@ -26,33 +26,18 @@ namespace orthrus_control
 
         UnifiedSensorData();
 
-        for (int i = 0; i < 10; i++)
-        {
-            data[i] = 1;
-        }
+        data[4] = assembly_->body_imu.standard_angle_speed_[0];
+        data[5] = assembly_->body_imu.standard_angle_speed_[1];
+        data[6] = assembly_->body_imu.standard_angle_speed_[2];
 
-        /*
-        data[20] = assembly_->body_imu.standard_angle_speed_[0];
-        data[21] = assembly_->body_imu.standard_angle_speed_[1];
-        data[22] = assembly_->body_imu.standard_angle_speed_[2];
+        data[7] = assembly_->body_imu.standard_acc_[0];
+        data[8] = assembly_->body_imu.standard_acc_[1];
+        data[9] = assembly_->body_imu.standard_acc_[2];
 
-        data[23] = assembly_->body_imu.standard_acc_[0];
-        data[24] = assembly_->body_imu.standard_acc_[1];
-        data[25] = assembly_->body_imu.standard_acc_[2];
-
-        data[19] = assembly_->body_imu.unified_gyro_.w();
-        data[16] = assembly_->body_imu.unified_gyro_.x();
-        data[17] = assembly_->body_imu.unified_gyro_.y();
-        data[18] = assembly_->body_imu.unified_gyro_.z();
-
-        for (int i = 0; i < 4; i++)
-        {
-            data[0 + i * 4] = assembly_->leg[i].imu.standard_gyro_.x();
-            data[1 + i * 4] = assembly_->leg[i].imu.standard_gyro_.y();
-            data[2 + i * 4] = assembly_->leg[i].imu.standard_gyro_.z();
-            data[3 + i * 4] = assembly_->leg[i].imu.standard_gyro_.w();
-        }
-        */
+        data[3] = assembly_->body_imu.unified_gyro_.w();
+        data[0] = assembly_->body_imu.unified_gyro_.x();
+        data[1] = assembly_->body_imu.unified_gyro_.y();
+        data[2] = assembly_->body_imu.unified_gyro_.z();
 
         return data;
     }
