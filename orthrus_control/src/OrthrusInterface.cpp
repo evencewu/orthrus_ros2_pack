@@ -235,7 +235,7 @@ namespace orthrus_control
         hw_velocities_ = motordata[1];
         hw_effort_ = motordata[2];
 
-        // hw_sensor_states_ = PrepairSensorData();
+        hw_sensor_states_ = PrepairSensorData();
 
         for (int i = 0; i < 10; i++)
         {
