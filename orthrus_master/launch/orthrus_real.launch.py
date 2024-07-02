@@ -89,7 +89,10 @@ def generate_launch_description():
          'foxglove_bridge', 
          'foxglove_bridge_launch.xml', 
          'use_compression:=true',
-         'topic_whitelist:=["/tf", "/tf_static","/visualization_marker","/joint_states"]'],
+         'topic_whitelist:=["/tf", "/tf_static","/orthrus/visualization_marker","/orthrus/body_imu"]',
+         'num_threads:=2',
+         'min_qos_depth:=20',
+         'max_qos_depth:=30'],
     output='log'
     )
 

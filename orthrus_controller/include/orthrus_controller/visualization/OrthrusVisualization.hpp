@@ -8,6 +8,8 @@
 #include <tf2_msgs/msg/tf_message.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <sensor_msgs/msg/imu.hpp>
 
 #include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
 
@@ -27,17 +29,24 @@ namespace orthrus_controller
             node_ = node;
 
             joint_state_publisher_ = node->template create_publisher<sensor_msgs::msg::JointState>("/joint_states", 10);
-            odom_publisher_ = node->template create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
-            marker_publisher_ = node->template create_publisher<visualization_msgs::msg::MarkerArray>("/visualization_marker", 10);
+            tf_publisher_ = node->template create_publisher<tf2_msgs::msg::TFMessage>("/tf", 10);
+            marker_publisher_ = node->template create_publisher<visualization_msgs::msg::MarkerArray>("/orthrus/visualization_marker", 10);
+            imu_publisher_ = node->template create_publisher<sensor_msgs::msg::Imu>("/orthrus/body_imu", 10);
         }
 
         void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
 
         void Update(rclcpp::Time time);
         void ModelVisualization(rclcpp::Time time);
-        void ImuVisualization(rclcpp::Time time);
-        void FootPointVisualization(rclcpp::Time time);
+
+        void TfVisualization(rclcpp::Time time);
+        void BodyTfVisualization(rclcpp::Time time);
+        void FootTfVisualization(rclcpp::Time time);
+
         void MarkVisualization(rclcpp::Time time);
+        void LegForceMarkVisualization(rclcpp::Time time);
+
+        void ImuVisualization(rclcpp::Time time);
 
     private:
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
@@ -52,10 +61,16 @@ namespace orthrus_controller
         rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher_;
         sensor_msgs::msg::JointState joint_state_msg_;
 
-        rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr odom_publisher_;
-        tf2_msgs::msg::TFMessage odom_msg_;
+        rclcpp::Publisher<tf2_msgs::msg::TFMessage>::SharedPtr tf_publisher_;
+        tf2_msgs::msg::TFMessage tf_msg_;
 
         rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_publisher_;
         visualization_msgs::msg::MarkerArray markerarray_msg_;
+
+        rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
+        nav_msgs::msg::Odometry odom_msg_;
+
+        rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_publisher_;
+        sensor_msgs::msg::Imu imu_msg_;
     };
 }

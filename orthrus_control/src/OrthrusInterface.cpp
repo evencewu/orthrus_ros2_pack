@@ -231,11 +231,12 @@ namespace orthrus_control
         ethercat_prepare_flag_ = Ethercat.EcatSyncMsg();
 
         auto motordata = PrepairMotorData();
+
+        PrepairSensorData();
+
         hw_positions_ = motordata[0];
         hw_velocities_ = motordata[1];
         hw_effort_ = motordata[2];
-
-        PrepairSensorData();
 
         hw_sensor_states_[4] = assembly_->body_imu.standard_angle_speed_[0];
         hw_sensor_states_[5] = assembly_->body_imu.standard_angle_speed_[1];
@@ -250,14 +251,20 @@ namespace orthrus_control
         hw_sensor_states_[1] = assembly_->body_imu.unified_gyro_.y();
         hw_sensor_states_[2] = assembly_->body_imu.unified_gyro_.z();
 
-        //for (int i = 0; i < 10; i++)
+        // for (int i = 0; i < 10; i++)
         //{
-        //    hw_sensor_states_[i] = i;
-        //}
+        //     hw_sensor_states_[i] = i;
+        // }
 
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 4; i++)
         {
-            hw_leg_imu_sensor_states_[i] = i + 10;
+            for (int j = 0; j < 4; j++)
+            {
+                hw_leg_imu_sensor_states_[i * 4] = assembly_->leg[i].imu.standard_gyro_.x();
+                hw_leg_imu_sensor_states_[i * 4 + 1] = assembly_->leg[i].imu.standard_gyro_.y();
+                hw_leg_imu_sensor_states_[i * 4 + 2] = assembly_->leg[i].imu.standard_gyro_.z();
+                hw_leg_imu_sensor_states_[i * 4 + 3] = assembly_->leg[i].imu.standard_gyro_.w();
+            }
         }
 
         time_now_ = std::chrono::high_resolution_clock::now();
@@ -332,14 +339,14 @@ namespace orthrus_control
         {
         }
 
-        // if (gpio_commands_["calibration_encoder"])
-        //{
-        //      StartCalibrationEncoderPosition();
-        //  }
-        // else
-        //{
-        //      StopCalibrationEncoderPosition();
-        //  }
+        if (gpio_commands_["calibration_encoder"])
+        {
+            StartCalibrationEncoderPosition();
+        }
+        else
+        {
+            StopCalibrationEncoderPosition();
+        }
 
         for (int leg_num = 0; leg_num < 4; leg_num++)
         {

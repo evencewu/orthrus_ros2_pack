@@ -23,7 +23,7 @@ namespace orthrus_controller
         VelocityPredict(time,duration);
 
         // 积分得到速度
-        orthrus_interfaces_->odom_state.imu_velocity += orthrus_interfaces_->odom_state.imu_acceleration * dt;
+        
 
         // 积分得到位置
         orthrus_interfaces_->odom_state.imu_position += orthrus_interfaces_->odom_state.imu_velocity * dt;
@@ -36,6 +36,8 @@ namespace orthrus_controller
         Eigen::Matrix3d rotation_matrix = orthrus_interfaces_->odom_state.imu.orientation.toRotationMatrix();
         // imu速度分量预测
         orthrus_interfaces_->odom_state.imu_acceleration = rotation_matrix * orthrus_interfaces_->odom_state.imu.linear_acceleration + orthrus_interfaces_->odom_state.gravity;
+
+        orthrus_interfaces_->odom_state.imu_velocity += orthrus_interfaces_->odom_state.imu_acceleration * dt;
     }
 
     Eigen::Vector3d LeggedOdom::Quaternion2Euler(Eigen::Quaterniond quat)
