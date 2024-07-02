@@ -88,17 +88,6 @@ namespace orthrus_controller
       conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_VELOCITY);
     }
 
-    conf_names.push_back("imu_sensor/angular_velocity.x");
-    conf_names.push_back("imu_sensor/angular_velocity.y");
-    conf_names.push_back("imu_sensor/angular_velocity.z");
-    conf_names.push_back("imu_sensor/linear_acceleration.x");
-    conf_names.push_back("imu_sensor/linear_acceleration.y");
-    conf_names.push_back("imu_sensor/linear_acceleration.z");
-    conf_names.push_back("imu_sensor/orientation.w");
-    conf_names.push_back("imu_sensor/orientation.x");
-    conf_names.push_back("imu_sensor/orientation.y");
-    conf_names.push_back("imu_sensor/orientation.z");
-
     if (params_.sim_or_real == "real")
     {
       for (const auto &leg_imu_name : params_.leg_imu_names)
@@ -109,6 +98,17 @@ namespace orthrus_controller
         conf_names.push_back(leg_imu_name + "/" + "orientation.z");
       }
     }
+
+    conf_names.push_back("imu_sensor/angular_velocity.x");
+    conf_names.push_back("imu_sensor/angular_velocity.y");
+    conf_names.push_back("imu_sensor/angular_velocity.z");
+    conf_names.push_back("imu_sensor/linear_acceleration.x");
+    conf_names.push_back("imu_sensor/linear_acceleration.y");
+    conf_names.push_back("imu_sensor/linear_acceleration.z");
+    conf_names.push_back("imu_sensor/orientation.w");
+    conf_names.push_back("imu_sensor/orientation.x");
+    conf_names.push_back("imu_sensor/orientation.y");
+    conf_names.push_back("imu_sensor/orientation.z");
 
     return {interface_configuration_type::INDIVIDUAL, conf_names};
   }
@@ -271,6 +271,28 @@ namespace orthrus_controller
       }
     }
 
+
+    RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf ", imu_handles_[0].angular_velocity[0].get().get_value(), imu_handles_[0].angular_velocity[1].get().get_value(), imu_handles_[0].angular_velocity[2].get().get_value(), imu_handles_[0].linear_acceleration[0].get().get_value(), imu_handles_[0].linear_acceleration[1].get().get_value(), imu_handles_[0].linear_acceleration[2].get().get_value(), imu_handles_[0].orientation[0].get().get_value(), imu_handles_[0].orientation[1].get().get_value(), imu_handles_[0].orientation[2].get().get_value(), imu_handles_[0].orientation[3].get().get_value());
+
+    
+    RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf ",
+                leg_imu_handles_[0].orientation[0].get().get_value(),
+                leg_imu_handles_[0].orientation[1].get().get_value(),
+                leg_imu_handles_[0].orientation[2].get().get_value(),
+                leg_imu_handles_[0].orientation[3].get().get_value(),
+                leg_imu_handles_[1].orientation[0].get().get_value(),
+                leg_imu_handles_[1].orientation[1].get().get_value(),
+                leg_imu_handles_[1].orientation[2].get().get_value(),
+                leg_imu_handles_[1].orientation[3].get().get_value(),
+                leg_imu_handles_[2].orientation[0].get().get_value(),
+                leg_imu_handles_[2].orientation[1].get().get_value(),
+                leg_imu_handles_[2].orientation[2].get().get_value(),
+                leg_imu_handles_[2].orientation[3].get().get_value(),
+                leg_imu_handles_[3].orientation[0].get().get_value(),
+                leg_imu_handles_[3].orientation[1].get().get_value(),
+                leg_imu_handles_[3].orientation[2].get().get_value(),
+                leg_imu_handles_[3].orientation[3].get().get_value());    
+
     // Update imu/odom data
 
     //----------------------------------------
@@ -278,7 +300,7 @@ namespace orthrus_controller
     pinocchio_interfaces_->Update(time);
     legged_mpc_->Update(now_time_, duration);
     visualization_->Update(now_time_);
-    
+
     if (params_.sim_or_real == "real")
     {
       calibration_visualization_->Update(now_time_);
@@ -456,6 +478,8 @@ namespace orthrus_controller
           return controller_interface::CallbackReturn::ERROR;
         }
 
+        RCLCPP_INFO(logger, "%s %s", imu_name.c_str(),imu_data_type.c_str());
+
         if (imu_data_type == "angular_velocity.x" || imu_data_type == "angular_velocity.y" || imu_data_type == "angular_velocity.z")
         {
           // RCLCPP_INFO(get_node()->get_logger(), "imu %lf", *imu_handle.get().get_value());
@@ -492,11 +516,10 @@ namespace orthrus_controller
     }
 
     registered_handles.reserve(leg_imu_names.size());
-
-    std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
-
+    
     for (const auto &leg_imu_name : leg_imu_names)
     {
+      std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
       for (const auto &leg_imu_data_type : leg_imu_data_types)
       {
         const auto imu_handle = std::find_if(
@@ -506,6 +529,8 @@ namespace orthrus_controller
               return interface.get_prefix_name() == leg_imu_name &&
                      interface.get_interface_name() == leg_imu_data_type;
             });
+
+        RCLCPP_INFO(logger, "%s %s", leg_imu_name.c_str(),leg_imu_data_type.c_str());
 
         if (leg_imu_data_type == "orientation.w" || leg_imu_data_type == "orientation.x" || leg_imu_data_type == "orientation.y" || leg_imu_data_type == "orientation.z")
         {

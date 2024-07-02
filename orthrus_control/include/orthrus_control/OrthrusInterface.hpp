@@ -102,7 +102,8 @@ namespace orthrus_control
         std::vector<double> PrepairSensorData();
 
         void BodyImufliter();
-        std::vector<Eigen::Quaterniond> BodyImufliter_;
+
+        double imufliter_list_[10];
 
         // Ethercat
         void SafeStop();
@@ -125,6 +126,8 @@ namespace orthrus_control
         std::vector<double> hw_commands_;
 
         std::vector<double> hw_sensor_states_;
+        
+        std::vector<double> hw_leg_imu_sensor_states_;
 
         std::unordered_map<std::string, double> gpio_commands_;
 

@@ -34,7 +34,8 @@ namespace orthrus_control
         hw_velocities_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
         hw_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
         hw_effort_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
-        hw_sensor_states_.resize(info_.sensors[0].state_interfaces.size(), std::numeric_limits<double>::quiet_NaN());
+        hw_sensor_states_.resize(10, std::numeric_limits<double>::quiet_NaN());
+        hw_leg_imu_sensor_states_.resize(16, std::numeric_limits<double>::quiet_NaN());
 
         for (const hardware_interface::ComponentInfo &joint : info_.joints)
         {
@@ -119,12 +120,19 @@ namespace orthrus_control
                 info_.joints[i].name, hardware_interface::HW_IF_EFFORT, &hw_effort_[i]));
         }
 
-        for (uint i = 0; i < 5; i++)
+        for (uint j = 0; j < info_.sensors[0].state_interfaces.size(); j++)
+        {
+            state_interfaces.emplace_back(hardware_interface::StateInterface(
+                info_.sensors[0].name, info_.sensors[0].state_interfaces[j].name, &hw_sensor_states_[j]));
+        }
+
+        for (uint i = 1; i < 5; i++)
         {
             for (uint j = 0; j < info_.sensors[i].state_interfaces.size(); j++)
             {
+                // RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m i = %d j = %d \033[0m", i, j);
                 state_interfaces.emplace_back(hardware_interface::StateInterface(
-                    info_.sensors[i].name, info_.sensors[i].state_interfaces[j].name, &hw_sensor_states_[j]));
+                    info_.sensors[i].name, info_.sensors[i].state_interfaces[j].name, &hw_leg_imu_sensor_states_[(i-1)*4 + j]));
             }
         }
 
@@ -167,11 +175,22 @@ namespace orthrus_control
                 hw_velocities_[i] = 0;
                 hw_effort_[i] = 0;
                 hw_commands_[i] = 0;
-                gpio_commands_["enable_power"] = 0;
-                gpio_commands_["calibration_position"] = 0;
-                gpio_commands_["calibration_encoder"] = 0;
             }
         }
+
+        for (auto i = 0u; i < hw_sensor_states_.size(); i++)
+        {
+            hw_sensor_states_[i] = 0;
+        }
+
+        for (auto i = 0u; i < hw_leg_imu_sensor_states_.size(); i++)
+        {
+            hw_leg_imu_sensor_states_[i] = 0;
+        }
+
+        gpio_commands_["enable_power"] = 0;
+        gpio_commands_["calibration_position"] = 0;
+        gpio_commands_["calibration_encoder"] = 0;
 
         subscriber_is_active_ = true;
         RCLCPP_INFO(rclcpp::get_logger("OrthrusHardware"), "\033[33m Finish activate\033[0m");
@@ -217,6 +236,12 @@ namespace orthrus_control
         hw_effort_ = motordata[2];
         hw_sensor_states_ = PrepairSensorData();
 
+        for(int i = 0;i<16;i++)
+        {
+            hw_leg_imu_sensor_states_[i]=i+10;
+        }
+
+
         time_now_ = std::chrono::high_resolution_clock::now();
 
         if (ethercat_prepare_flag_ != true)
@@ -229,7 +254,7 @@ namespace orthrus_control
             }
         }
 
-        //Log();
+        // Log();
 
         return hardware_interface::return_type::OK;
     }

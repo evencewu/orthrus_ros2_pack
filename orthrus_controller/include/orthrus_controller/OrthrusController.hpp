@@ -115,6 +115,18 @@ namespace orthrus_controller
             const std::vector<std::string> &imu_names,
             std::vector<ImuHandle> &registered_handles);
 
+        struct LegImuHandle
+        {
+            std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
+        };
+
+        std::vector<LegImuHandle> leg_imu_handles_;
+
+        controller_interface::CallbackReturn configure_leg_imu(
+            const std::vector<std::string> &flag_data_types,
+            const std::vector<std::string> &flag_names,
+            std::vector<LegImuHandle> &registered_handles);
+
         struct FlagHandle
         {
             std::reference_wrapper<hardware_interface::LoanedCommandInterface> enable_power;
@@ -128,19 +140,6 @@ namespace orthrus_controller
             const std::vector<std::string> &flag_data_types,
             const std::vector<std::string> &flag_names,
             std::vector<FlagHandle> &registered_handles);
-
-        struct LegImuHandle
-        {
-            std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
-        };
-
-        std::vector<LegImuHandle> leg_imu_handles_;
-
-        controller_interface::CallbackReturn configure_leg_imu(
-            const std::vector<std::string> &flag_data_types,
-            const std::vector<std::string> &flag_names,
-            std::vector<LegImuHandle> &registered_handles);
-
         // SafeCode
         std::shared_ptr<SafeCode> safe_code_;
 
