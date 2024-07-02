@@ -46,4 +46,9 @@ namespace orthrus_controller
         Eigen::Vector3d euler_angles = rotation_matrix.eulerAngles(2, 1, 0); // ZYX
         return euler_angles;
     }
+
+    void LeggedOdom::OdomEKF()
+    {
+
+    }
 }

@@ -41,5 +41,21 @@ namespace orthrus_controller
 
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
+
+        //EKF
+        struct EKF
+        {
+            Eigen::VectorXd x(5); //x_x x_y v_x v_y w_z Status vector
+
+            Eigen::VectorXd u(3); //a_x a_y w_z
+
+            Eigen::MatrixXd F = MatrixXd::Zero(5, 5); // Status transfer matrix
+            Eigen::MatrixXd G = MatrixXd::Zero(5, 3); // Status transfer matrix
+
+            std::vector<double> x;
+            std::vector<double> x;
+        }ekf;
+        
+
     };
 }
