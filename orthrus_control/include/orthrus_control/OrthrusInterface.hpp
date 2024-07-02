@@ -101,6 +101,9 @@ namespace orthrus_control
         std::vector<std::vector<double>> PrepairMotorData();
         std::vector<double> PrepairSensorData();
 
+        void BodyImufliter();
+        std::vector<Eigen::Quaterniond> BodyImufliter_;
+
         // Ethercat
         void SafeStop();
 

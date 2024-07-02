@@ -37,13 +37,13 @@ namespace orthrus_control
         data[1] = assembly_->body_imu.unified_gyro_.y();
         data[2] = assembly_->body_imu.unified_gyro_.z();
 
-        //for (int i = 0; i < 4; i++)
-        //{
-        //    data[10 + i * 4] = assembly_->leg[i].imu.standard_gyro_.x();
-        //    data[11 + i * 4] = assembly_->leg[i].imu.standard_gyro_.y();
-        //    data[12 + i * 4] = assembly_->leg[i].imu.standard_gyro_.z();
-        //    data[13 + i * 4] = assembly_->leg[i].imu.standard_gyro_.w();
-        //}
+        for (int i = 0; i < 4; i++)
+        {
+            data[10 + i * 4] = assembly_->leg[i].imu.standard_gyro_.x();
+            data[11 + i * 4] = assembly_->leg[i].imu.standard_gyro_.y();
+            data[12 + i * 4] = assembly_->leg[i].imu.standard_gyro_.z();
+            data[13 + i * 4] = assembly_->leg[i].imu.standard_gyro_.w();
+        }
 
         return data;
     }
@@ -67,5 +67,13 @@ namespace orthrus_control
 
         std::vector<std::vector<double>> data = {position_data, velocities_data, acceleration_data};
         return data;
+    }
+
+    double OrthrusSystemHardware::BodyImufliter()
+    {
+        assembly_->body_imu.unified_gyro_.w();
+        assembly_->body_imu.unified_gyro_.x();
+        assembly_->body_imu.unified_gyr_.y();
+        assembly_->body_imu.unified_gyro_.z();
     }
 }

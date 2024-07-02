@@ -146,7 +146,6 @@ namespace orthrus_controller
     legged_mpc_->Init(orthrus_interfaces_, pinocchio_interfaces_);
     RCLCPP_INFO(logger, "Init safe_code");
     safe_code_->Init(orthrus_interfaces_);
-    
     // RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
     RCLCPP_INFO(logger, "Init calibration_visualization");
     calibration_visualization_->Init(orthrus_interfaces_);
