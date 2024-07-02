@@ -67,6 +67,7 @@ ament_target_dependencies(test1 PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
 # generate lib
 add_library(orthrus_controller SHARED
   src/OrthrusController.cpp
+  src/visualization/CalibrationVisualization.cpp
   src/visualization/OrthrusVisualization.cpp
   src/interfaces/PinocchioInterfaces.cpp
   src/interfaces/JoyInterface.cpp

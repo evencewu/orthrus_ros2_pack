@@ -41,6 +41,8 @@ namespace orthrus_controller
     orthrus_interfaces_ = std::make_shared<OrthrusInterfaces>();
     RCLCPP_INFO(logger, "Loading visualization");
     visualization_ = std::make_shared<OrthrusVisualization>(get_node(), params_.leg_joint_names);
+    RCLCPP_INFO(logger, "Loading visualization");
+    calibration_visualization_ = std::make_shared<CalibrationVisualization>(get_node());
     RCLCPP_INFO(logger, "Loading pinocchio_interface");
     pinocchio_interfaces_ = std::make_shared<PinocchioInterfaces>(get_node());
     RCLCPP_INFO(logger, "Loading legged_odom");
@@ -97,12 +99,15 @@ namespace orthrus_controller
     conf_names.push_back("imu_sensor/orientation.y");
     conf_names.push_back("imu_sensor/orientation.z");
 
-    for (const auto &leg_imu_name : params_.leg_imu_names)
+    if (params_.sim_or_real == "real")
     {
-      conf_names.push_back(leg_imu_name + "/" + "orientation.w");
-      conf_names.push_back(leg_imu_name + "/" + "orientation.x");
-      conf_names.push_back(leg_imu_name + "/" + "orientation.y");
-      conf_names.push_back(leg_imu_name + "/" + "orientation.z");
+      for (const auto &leg_imu_name : params_.leg_imu_names)
+      {
+        conf_names.push_back(leg_imu_name + "/" + "orientation.w");
+        conf_names.push_back(leg_imu_name + "/" + "orientation.x");
+        conf_names.push_back(leg_imu_name + "/" + "orientation.y");
+        conf_names.push_back(leg_imu_name + "/" + "orientation.z");
+      }
     }
 
     return {interface_configuration_type::INDIVIDUAL, conf_names};
@@ -141,8 +146,12 @@ namespace orthrus_controller
     legged_mpc_->Init(orthrus_interfaces_, pinocchio_interfaces_);
     RCLCPP_INFO(logger, "Init safe_code");
     safe_code_->Init(orthrus_interfaces_);
-    RCLCPP_INFO(logger, "Init over");
+    
     // RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
+    RCLCPP_INFO(logger, "Init calibration_visualization");
+    calibration_visualization_->Init(orthrus_interfaces_);
+    RCLCPP_INFO(logger, "Init over");
+
     RCLCPP_INFO(logger, "Configure over...");
 
     return controller_interface::CallbackReturn::SUCCESS;
@@ -156,6 +165,7 @@ namespace orthrus_controller
     if (params_.sim_or_real == "real")
     {
       configure_flag(params_.flag_data_types, params_.flag_names, flag_handles_);
+      configure_leg_imu(params_.leg_imu_data_types, params_.leg_imu_names, leg_imu_handles_);
     }
     return controller_interface::CallbackReturn::SUCCESS;
   }
@@ -250,11 +260,30 @@ namespace orthrus_controller
     orthrus_interfaces_->robot_state.body_imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
     orthrus_interfaces_->robot_state.body_imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
 
+    // Update leg_imu data
+    if (params_.sim_or_real == "real")
+    {
+      for (int i = 0; i < 4; i++)
+      {
+        orthrus_interfaces_->robot_state.leg_imu[i].orientation.w() = leg_imu_handles_[i].orientation[0].get().get_value();
+        orthrus_interfaces_->robot_state.leg_imu[i].orientation.x() = leg_imu_handles_[i].orientation[1].get().get_value();
+        orthrus_interfaces_->robot_state.leg_imu[i].orientation.y() = leg_imu_handles_[i].orientation[2].get().get_value();
+        orthrus_interfaces_->robot_state.leg_imu[i].orientation.z() = leg_imu_handles_[i].orientation[3].get().get_value();
+      }
+    }
+
+    // Update imu/odom data
+
     //----------------------------------------
     legged_odom_->Update(now_time_, duration);
     pinocchio_interfaces_->Update(time);
     legged_mpc_->Update(now_time_, duration);
     visualization_->Update(now_time_);
+    
+    if (params_.sim_or_real == "real")
+    {
+      calibration_visualization_->Update(now_time_);
+    }
 
     //----------------------------------------
 
@@ -445,6 +474,46 @@ namespace orthrus_controller
         }
       }
       registered_handles.emplace_back(ImuHandle{angular_velocity, linear_acceleration, orientation});
+    }
+
+    return controller_interface::CallbackReturn::SUCCESS;
+  }
+
+  controller_interface::CallbackReturn OrthrusController::configure_leg_imu(
+      const std::vector<std::string> &leg_imu_data_types,
+      const std::vector<std::string> &leg_imu_names,
+      std::vector<LegImuHandle> &registered_handles)
+  {
+    auto logger = get_node()->get_logger();
+
+    if (leg_imu_names.empty())
+    {
+      RCLCPP_ERROR(logger, "No motor names specified");
+      return controller_interface::CallbackReturn::ERROR;
+    }
+
+    registered_handles.reserve(leg_imu_names.size());
+
+    std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
+
+    for (const auto &leg_imu_name : leg_imu_names)
+    {
+      for (const auto &leg_imu_data_type : leg_imu_data_types)
+      {
+        const auto imu_handle = std::find_if(
+            state_interfaces_.cbegin(), state_interfaces_.cend(),
+            [&leg_imu_name, &leg_imu_data_type](const auto &interface)
+            {
+              return interface.get_prefix_name() == leg_imu_name &&
+                     interface.get_interface_name() == leg_imu_data_type;
+            });
+
+        if (leg_imu_data_type == "orientation.w" || leg_imu_data_type == "orientation.x" || leg_imu_data_type == "orientation.y" || leg_imu_data_type == "orientation.z")
+        {
+          orientation.emplace_back(std::ref(*imu_handle));
+        }
+      }
+      registered_handles.emplace_back(LegImuHandle{orientation});
     }
 
     return controller_interface::CallbackReturn::SUCCESS;

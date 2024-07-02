@@ -229,7 +229,7 @@ namespace orthrus_control
             }
         }
 
-        Log();
+        //Log();
 
         return hardware_interface::return_type::OK;
     }
@@ -237,29 +237,17 @@ namespace orthrus_control
     hardware_interface::return_type orthrus_control::OrthrusSystemHardware::write(
         const rclcpp::Time &time, const rclcpp::Duration &period)
     {
-        //for (int motor_num = 0; motor_num < 12; motor_num++)
-        //{
-        //    if (motor_num % 3 == 0)
-        //    {
-        //        command_effort[motor_num] = hw_commands_[motor_num];
-        //    }
-        //}
-
-        command_effort[0] = -hw_commands_[0];
-        command_effort[1] = hw_commands_[1];
-        command_effort[2] = hw_commands_[2];
-
-        command_effort[3] = -hw_commands_[3];
-        command_effort[4] = hw_commands_[4];
-        command_effort[5] = hw_commands_[5];
-
-        command_effort[6] = -hw_commands_[6];
-        command_effort[7] = hw_commands_[7];
-        command_effort[8] = hw_commands_[8];
-
-        command_effort[9] = -hw_commands_[9];
-        command_effort[10] = hw_commands_[10];
-        command_effort[11] = hw_commands_[11];
+        for (int motor_num = 0; motor_num < 12; motor_num++)
+        {
+            if (motor_num % 3 == 0)
+            {
+                command_effort[motor_num] = -hw_commands_[motor_num];
+            }
+            else
+            {
+                command_effort[motor_num] = hw_commands_[motor_num];
+            }
+        }
 
         // calibration_visualization->Update(time);
 

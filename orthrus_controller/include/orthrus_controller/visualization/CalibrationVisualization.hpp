@@ -5,15 +5,16 @@
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <rclcpp_lifecycle/node_interfaces/lifecycle_node_interface.hpp>
 
-
 #include <tf2_msgs/msg/tf_message.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
+#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
+
 
 namespace orthrus_controller
 {
-    class CalibrationVisualization
+    class CalibrationVisualization : public std::enable_shared_from_this<CalibrationVisualization>
     {
     public:
         template <typename NodeType>

@@ -24,10 +24,10 @@ namespace orthrus_controller
             tf_stamped.transform.translation.y = 0.0;
             tf_stamped.transform.translation.z = 0.0;
 
-            tf_stamped.transform.rotation.w = assembly_->leg[i].imu.unified_gyro_.w();
-            tf_stamped.transform.rotation.x = assembly_->leg[i].imu.unified_gyro_.x();
-            tf_stamped.transform.rotation.y = assembly_->leg[i].imu.unified_gyro_.y();
-            tf_stamped.transform.rotation.z = assembly_->leg[i].imu.unified_gyro_.z();
+            tf_stamped.transform.rotation.w = orthrus_interfaces_->robot_state.leg_imu[i].orientation.w();
+            tf_stamped.transform.rotation.x = orthrus_interfaces_->robot_state.leg_imu[i].orientation.x();
+            tf_stamped.transform.rotation.y = orthrus_interfaces_->robot_state.leg_imu[i].orientation.y();
+            tf_stamped.transform.rotation.z = orthrus_interfaces_->robot_state.leg_imu[i].orientation.z();
 
             leg_imu_msg_.transforms.push_back(tf_stamped);
 

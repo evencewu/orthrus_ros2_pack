@@ -129,6 +129,17 @@ namespace orthrus_controller
             const std::vector<std::string> &flag_names,
             std::vector<FlagHandle> &registered_handles);
 
+        struct LegImuHandle
+        {
+            std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
+        };
+
+        std::vector<LegImuHandle> leg_imu_handles_;
+
+        controller_interface::CallbackReturn configure_leg_imu(
+            const std::vector<std::string> &flag_data_types,
+            const std::vector<std::string> &flag_names,
+            std::vector<LegImuHandle> &registered_handles);
 
         // SafeCode
         std::shared_ptr<SafeCode> safe_code_;
@@ -141,29 +152,16 @@ namespace orthrus_controller
         // 足式里程计
 
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
-        std::shared_ptr<OrthrusVisualization> visualization_;       // 可视化
-        std::shared_ptr<CalibrationVisualization> calibration_visualization_; 
+        std::shared_ptr<OrthrusVisualization> visualization_; // 可视化
+        std::shared_ptr<CalibrationVisualization> calibration_visualization_;
         std::shared_ptr<PinocchioInterfaces> pinocchio_interfaces_; // Pinocchio接口
         std::shared_ptr<LeggedMpc> legged_mpc_;                     // MPC控制器
-        //std::shared_ptr<LeggedZmp> legged_zmp_;
-        std::shared_ptr<LeggedOdom> legged_odom_;                   // 里程计
+        // std::shared_ptr<LeggedZmp> legged_zmp_;
+        std::shared_ptr<LeggedOdom> legged_odom_; // 里程计
         std::shared_ptr<JoyInterface> joy_interface_;
 
         // LeggedOdomState
         std::mutex mylock_;
-
-        // 里程计
-        // OdomStateetry odometry_;
-        // 发布里程计数据
-        std::shared_ptr<rclcpp::Publisher<nav_msgs::msg::Odometry>> odometry_publisher_ = nullptr;
-        std::shared_ptr<realtime_tools::RealtimePublisher<nav_msgs::msg::Odometry>>
-            realtime_odometry_publisher_ = nullptr;
-
-        // 发布坐标变化关系
-        std::shared_ptr<rclcpp::Publisher<tf2_msgs::msg::TFMessage>> odometry_transform_publisher_ =
-            nullptr;
-        std::shared_ptr<realtime_tools::RealtimePublisher<tf2_msgs::msg::TFMessage>>
-            realtime_odometry_transform_publisher_ = nullptr;
 
         // Parameters from ROS for orthrus_controller
 
