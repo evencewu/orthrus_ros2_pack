@@ -72,10 +72,6 @@ namespace orthrus_controller
             tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.imu.orientation.y();
             tf_stamped.transform.rotation.z = orthrus_interfaces_->odom_state.imu.orientation.z();
 
-            // tf_stamped.transform.rotation.w = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.w();
-            // tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.x();
-            // tf_stamped.transform.rotation.y = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.y();
-            // tf_stamped.transform.rotation.z = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.z();
             odom_msg_.transforms.push_back(tf_stamped);
         }
     }

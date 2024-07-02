@@ -271,10 +271,10 @@ namespace orthrus_controller
       }
     }
 
-
+    /*
     RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf ", imu_handles_[0].angular_velocity[0].get().get_value(), imu_handles_[0].angular_velocity[1].get().get_value(), imu_handles_[0].angular_velocity[2].get().get_value(), imu_handles_[0].linear_acceleration[0].get().get_value(), imu_handles_[0].linear_acceleration[1].get().get_value(), imu_handles_[0].linear_acceleration[2].get().get_value(), imu_handles_[0].orientation[0].get().get_value(), imu_handles_[0].orientation[1].get().get_value(), imu_handles_[0].orientation[2].get().get_value(), imu_handles_[0].orientation[3].get().get_value());
 
-    
+
     RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf ",
                 leg_imu_handles_[0].orientation[0].get().get_value(),
                 leg_imu_handles_[0].orientation[1].get().get_value(),
@@ -291,7 +291,8 @@ namespace orthrus_controller
                 leg_imu_handles_[3].orientation[0].get().get_value(),
                 leg_imu_handles_[3].orientation[1].get().get_value(),
                 leg_imu_handles_[3].orientation[2].get().get_value(),
-                leg_imu_handles_[3].orientation[3].get().get_value());    
+                leg_imu_handles_[3].orientation[3].get().get_value());
+    */
 
     // Update imu/odom data
 
@@ -478,7 +479,7 @@ namespace orthrus_controller
           return controller_interface::CallbackReturn::ERROR;
         }
 
-        RCLCPP_INFO(logger, "%s %s", imu_name.c_str(),imu_data_type.c_str());
+        RCLCPP_INFO(logger, "%s %s", imu_name.c_str(), imu_data_type.c_str());
 
         if (imu_data_type == "angular_velocity.x" || imu_data_type == "angular_velocity.y" || imu_data_type == "angular_velocity.z")
         {
@@ -516,7 +517,7 @@ namespace orthrus_controller
     }
 
     registered_handles.reserve(leg_imu_names.size());
-    
+
     for (const auto &leg_imu_name : leg_imu_names)
     {
       std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
@@ -530,7 +531,7 @@ namespace orthrus_controller
                      interface.get_interface_name() == leg_imu_data_type;
             });
 
-        RCLCPP_INFO(logger, "%s %s", leg_imu_name.c_str(),leg_imu_data_type.c_str());
+        RCLCPP_INFO(logger, "%s %s", leg_imu_name.c_str(), leg_imu_data_type.c_str());
 
         if (leg_imu_data_type == "orientation.w" || leg_imu_data_type == "orientation.x" || leg_imu_data_type == "orientation.y" || leg_imu_data_type == "orientation.z")
         {

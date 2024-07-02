@@ -32,10 +32,13 @@ namespace orthrus_controller
 
         void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
         void Update(rclcpp::Time time, rclcpp::Duration duration);
-        void calibration(rclcpp::Time time, rclcpp::Duration duration);
+        void Calibration(rclcpp::Time time, rclcpp::Duration duration);
 
         Eigen::Vector3d Quaternion2Euler(Eigen::Quaterniond quat);
     private:
+
+        void VelocityPredict(rclcpp::Time time, rclcpp::Duration duration);
+
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
     };
