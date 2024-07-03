@@ -102,9 +102,9 @@ namespace orthrus_controller
         marker.points[0].x = 0.0;
         marker.points[0].y = 0.0;
         marker.points[0].z = 0.0;
-        marker.points[1].x = orthrus_interfaces_->odom_state.imu_position[0] * 10;
-        marker.points[1].y = orthrus_interfaces_->odom_state.imu_position[1] * 10;
-        marker.points[1].z = orthrus_interfaces_->odom_state.imu_position[2] * 10;
+        marker.points[1].x = orthrus_interfaces_->odom_state.imu_position[0];
+        marker.points[1].y = orthrus_interfaces_->odom_state.imu_position[1];
+        marker.points[1].z = orthrus_interfaces_->odom_state.imu_position[2];
 
         // 设置箭头的缩放（箭头的大小）
         marker.scale.x = 0.01; // 箭头的长度
@@ -165,22 +165,24 @@ namespace orthrus_controller
 
     void OrthrusVisualization::ImuVisualization(rclcpp::Time time)
     {
+        auto *imu = &orthrus_interfaces_->odom_state.imu;
+
         imu_msg_.header.stamp = time;
         imu_msg_.header.frame_id = "odom";
 
         // 填充IMU数据
-        imu_msg_.orientation.x = orthrus_interfaces_->odom_state.imu.orientation.x();
-        imu_msg_.orientation.y = orthrus_interfaces_->odom_state.imu.orientation.y();
-        imu_msg_.orientation.z = orthrus_interfaces_->odom_state.imu.orientation.z();
-        imu_msg_.orientation.w = orthrus_interfaces_->odom_state.imu.orientation.w();
+        imu_msg_.orientation.x = imu->orientation.x();
+        imu_msg_.orientation.y = imu->orientation.y();
+        imu_msg_.orientation.z = imu->orientation.z();
+        imu_msg_.orientation.w = imu->orientation.w();
 
-        imu_msg_.angular_velocity.x = orthrus_interfaces_->odom_state.imu.angular_velocity[0];
-        imu_msg_.angular_velocity.y = orthrus_interfaces_->odom_state.imu.angular_velocity[1];
-        imu_msg_.angular_velocity.z = orthrus_interfaces_->odom_state.imu.angular_velocity[2];
+        imu_msg_.angular_velocity.x = imu->angular_velocity[0];
+        imu_msg_.angular_velocity.y = imu->angular_velocity[1];
+        imu_msg_.angular_velocity.z = imu->angular_velocity[2];
 
-        imu_msg_.linear_acceleration.x = orthrus_interfaces_->odom_state.imu.linear_acceleration[0];
-        imu_msg_.linear_acceleration.y = orthrus_interfaces_->odom_state.imu.linear_acceleration[1];
-        imu_msg_.linear_acceleration.z = orthrus_interfaces_->odom_state.imu.linear_acceleration[2];
+        imu_msg_.linear_acceleration.x = imu->linear_acceleration[0];
+        imu_msg_.linear_acceleration.y = imu->linear_acceleration[1];
+        imu_msg_.linear_acceleration.z = imu->linear_acceleration[2];
 
         imu_publisher_->publish(imu_msg_);
     }

@@ -298,7 +298,7 @@ namespace orthrus_controller
     
     test_1_++;
 
-    if(test_1_>= 0 && test_1_ < 10)
+    if(test_1_>= 0 && test_1_ < 30)
     {
       RCLCPP_INFO(logger,"OdomFilterLog: %s",legged_odom_->OdomFilterLog().str().c_str());
     }

@@ -29,7 +29,6 @@ namespace orthrus_controller
             node_ = node;
             RCLCPP_INFO(node->get_logger(), "Legged odom active.");
         }
-        
 
         void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
         void Update(rclcpp::Time time, rclcpp::Duration duration);
@@ -37,6 +36,7 @@ namespace orthrus_controller
 
         void OdomFilterInit(int filter_type);
         void OdomFilterUpdate();
+
         std::stringstream OdomFilterLog();
 
         Eigen::Vector3d Quaternion2Euler(Eigen::Quaterniond quat);
@@ -46,6 +46,11 @@ namespace orthrus_controller
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
         int filter_type_ = 0;
+
+        // nomal filter
+        std::vector<Eigen::Vector3d> imu_velocity_filter_list_ = std::vector<Eigen::Vector3d>(10, Eigen::Vector3d::Zero());
+        Eigen::Vector3d AverageFilter(const Eigen::Vector3d new_data, std::vector<Eigen::Vector3d> &data_list);
+        Eigen::Vector3d MediumFilter(const Eigen::Vector3d new_data, std::vector<Eigen::Vector3d> &data_list);
 
         // EKF
         struct FilterEKF
@@ -88,8 +93,8 @@ namespace orthrus_controller
 
             Eigen::MatrixXd I = Eigen::MatrixXd::Identity(6, 6);
 
-            double d_a_x = 0.01; // 加速度计方差
-            double d_a_y = 0.1;
+            double d_a_x = 2; // 加速度计方差
+            double d_a_y = 4;
         } kf;
 
         static const int EKF = 0;

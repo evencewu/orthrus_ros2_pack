@@ -17,7 +17,21 @@ namespace orthrus_controller
         auto *odom = &orthrus_interfaces_->odom_state;
         auto *robot = &orthrus_interfaces_->robot_state;
 
-        odom->imu = robot->body_imu;
+        Eigen::Vector3d acc_data = robot->body_imu.orientation * robot->body_imu.linear_acceleration + odom->gravity;
+        acc_data = AverageFilter(acc_data, imu_velocity_filter_list_); // 过一个均值滤波
+
+        for (int i = 0; i < 3; i++)
+        {
+            if (acc_data[i] <= 0.15 && acc_data[i] >= -0.15)
+            {
+                acc_data[i] = 0;
+            }
+        }
+
+        odom->imu.linear_acceleration = acc_data;
+
+        //;
+        // 原始数据滤波载入
         odom->euler = Quaternion2Euler(odom->imu.orientation);
 
         odom->dt = (double)(duration.nanoseconds()) / 1000000000;
@@ -48,7 +62,7 @@ namespace orthrus_controller
             kf.P.setIdentity(); // 将 P 初始化为单位矩阵
             kf.P *= 0.1;
 
-            kf.H << 0, 0, 1, 0, 0, 0,
+            kf.H << 0, 0, 0, 0, 1, 0,
                 0, 0, 0, 0, 0, 1;
 
             kf.R << 0.1, 0,
@@ -62,11 +76,10 @@ namespace orthrus_controller
         double dt = odom->dt;
 
         // imu Vxy数据对齐odom轴
-        orthrus_interfaces_->odom_state.imu_acceleration = orthrus_interfaces_->odom_state.imu.orientation * orthrus_interfaces_->odom_state.imu.linear_acceleration + orthrus_interfaces_->odom_state.gravity;
 
         //--
-        double a_x = odom->imu_acceleration[0];
-        double a_y = odom->imu_acceleration[1];
+        double a_x = odom->imu.linear_acceleration[0];
+        double a_y = odom->imu.linear_acceleration[1];
 
         // orthrus_interfaces_->odom_state.imu_velocity += orthrus_interfaces_->odom_state.imu_acceleration * dt;
 
@@ -77,7 +90,6 @@ namespace orthrus_controller
         }
         else if (filter_type_ == LeggedOdom::KF)
         {
-
             kf.x_last = kf.x;
             kf.P_last = kf.P;
 
@@ -102,16 +114,71 @@ namespace orthrus_controller
 
             kf.P_priori = kf.F * kf.P_last * kf.F.transpose() + kf.Q;
 
-            kf.K = kf.P_priori * kf.H.transpose() * (kf.H * kf.P_priori * kf.H.transpose() + kf.R).inverse();
+            kf.K = (kf.P_priori * kf.H.transpose()) * (kf.H * kf.P_priori * kf.H.transpose() + kf.R).inverse();
 
             kf.x = kf.x_priori + kf.K * (kf.z - kf.H * kf.x_priori);
 
-            kf.P = (kf.I - kf.K * kf.H) * kf.P_last.inverse();
+            kf.P = (kf.I - kf.K * kf.H) * kf.P_last;
 
             orthrus_interfaces_->odom_state.imu_position[0] = kf.x[0];
             orthrus_interfaces_->odom_state.imu_position[1] = kf.x[1];
             orthrus_interfaces_->odom_state.imu_position[2] = 0;
+
+            orthrus_interfaces_->odom_state.imu_velocity[0] = kf.x[2];
+            orthrus_interfaces_->odom_state.imu_velocity[1] = kf.x[3];
+            orthrus_interfaces_->odom_state.imu_velocity[2] = 0;
+
+            orthrus_interfaces_->odom_state.imu_acceleration[0] = kf.x[4];
+            orthrus_interfaces_->odom_state.imu_acceleration[1] = kf.x[5];
+            orthrus_interfaces_->odom_state.imu_acceleration[2] = 0;
         }
+    }
+
+    Eigen::Vector3d LeggedOdom::AverageFilter(const Eigen::Vector3d new_data, std::vector<Eigen::Vector3d> &data_list)
+    {
+        for (int i = (data_list.size() - 1); i > 0; i--)
+        {
+            data_list[i] = data_list[i - 1];
+        }
+
+        data_list[0] = new_data;
+
+        Eigen::Vector3d sum = Eigen::Vector3d::Zero();
+        for (int i = 0; i < data_list.size(); i++)
+        {
+            sum += data_list[i];
+        }
+
+        return sum / data_list.size();
+    }
+
+    Eigen::Vector3d LeggedOdom::MediumFilter(const Eigen::Vector3d new_data, std::vector<Eigen::Vector3d> &data_list)
+    {
+        double sort_list[3][data_list.size()];
+
+        for (int i = (data_list.size() - 1); i > 0; i--)
+        {
+            data_list[i] = data_list[i - 1];
+        }
+
+        data_list[0] = new_data;
+
+        int num = 0;
+        for (const auto &vec : data_list)
+        {
+            sort_list[0][num] = vec[0];
+            sort_list[1][num] = vec[1];
+            sort_list[2][num] = vec[2];
+            num++;
+        }
+
+        std::sort(&sort_list[0][0], &sort_list[0][data_list.size() - 1]);
+        std::sort(&sort_list[1][0], &sort_list[1][data_list.size() - 1]);
+        std::sort(&sort_list[2][0], &sort_list[2][data_list.size() - 1]);
+
+        Eigen::Vector3d medium;
+        medium << sort_list[0][data_list.size() / 2], sort_list[1][data_list.size() / 2], sort_list[2][data_list.size() / 2];
+        return medium;
     }
 
     std::stringstream LeggedOdom::OdomFilterLog()
@@ -126,10 +193,10 @@ namespace orthrus_controller
            << kf.F << std::endl;
         ss << "kf.P_last\n"
            << kf.P_last << std::endl;
+        ss << "kf.P_last.inverse()\n"
+           << kf.P_last.inverse() << std::endl;
         ss << "kf.P\n"
            << kf.P << std::endl;
-        ss << "kf.I.toDenseMatrix()\n"
-           << kf.I << std::endl;
         ss << "kf.P_priori\n"
            << kf.P_priori << std::endl;
         ss << "kf.K\n"
