@@ -275,26 +275,33 @@ namespace orthrus_controller
     RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf ", imu_handles_[0].angular_velocity[0].get().get_value(), imu_handles_[0].angular_velocity[1].get().get_value(), imu_handles_[0].angular_velocity[2].get().get_value(), imu_handles_[0].linear_acceleration[0].get().get_value(), imu_handles_[0].linear_acceleration[1].get().get_value(), imu_handles_[0].linear_acceleration[2].get().get_value(), imu_handles_[0].orientation[0].get().get_value(), imu_handles_[0].orientation[1].get().get_value(), imu_handles_[0].orientation[2].get().get_value(), imu_handles_[0].orientation[3].get().get_value());
     */
 
+    /*
     RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf ",
-                leg_imu_handles_[0].orientation[0].get().get_value(),
-                leg_imu_handles_[0].orientation[1].get().get_value(),
-                leg_imu_handles_[0].orientation[2].get().get_value(),
-                leg_imu_handles_[0].orientation[3].get().get_value(),
-                leg_imu_handles_[1].orientation[0].get().get_value(),
-                leg_imu_handles_[1].orientation[1].get().get_value(),
-                leg_imu_handles_[1].orientation[2].get().get_value(),
-                leg_imu_handles_[1].orientation[3].get().get_value(),
-                leg_imu_handles_[2].orientation[0].get().get_value(),
-                leg_imu_handles_[2].orientation[1].get().get_value(),
-                leg_imu_handles_[2].orientation[2].get().get_value(),
-                leg_imu_handles_[2].orientation[3].get().get_value(),
-                leg_imu_handles_[3].orientation[0].get().get_value(),
-                leg_imu_handles_[3].orientation[1].get().get_value(),
-                leg_imu_handles_[3].orientation[2].get().get_value(),
-                leg_imu_handles_[3].orientation[3].get().get_value());
-    
+                    leg_imu_handles_[0].orientation[0].get().get_value(),
+                    leg_imu_handles_[0].orientation[1].get().get_value(),
+                    leg_imu_handles_[0].orientation[2].get().get_value(),
+                    leg_imu_handles_[0].orientation[3].get().get_value(),
+                    leg_imu_handles_[1].orientation[0].get().get_value(),
+                    leg_imu_handles_[1].orientation[1].get().get_value(),
+                    leg_imu_handles_[1].orientation[2].get().get_value(),
+                    leg_imu_handles_[1].orientation[3].get().get_value(),
+                    leg_imu_handles_[2].orientation[0].get().get_value(),
+                    leg_imu_handles_[2].orientation[1].get().get_value(),
+                    leg_imu_handles_[2].orientation[2].get().get_value(),
+                    leg_imu_handles_[2].orientation[3].get().get_value(),
+                    leg_imu_handles_[3].orientation[0].get().get_value(),
+                    leg_imu_handles_[3].orientation[1].get().get_value(),
+                    leg_imu_handles_[3].orientation[2].get().get_value(),
+                    leg_imu_handles_[3].orientation[3].get().get_value());*/
 
     // Update imu/odom data
+    
+    test_1_++;
+
+    if(test_1_>= 0 && test_1_ < 10)
+    {
+      RCLCPP_INFO(logger,"OdomFilterLog: %s",legged_odom_->OdomFilterLog().str().c_str());
+    }
 
     //----------------------------------------
     legged_odom_->Update(now_time_, duration);

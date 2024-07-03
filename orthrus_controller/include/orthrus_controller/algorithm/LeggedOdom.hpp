@@ -29,6 +29,7 @@ namespace orthrus_controller
             node_ = node;
             RCLCPP_INFO(node->get_logger(), "Legged odom active.");
         }
+        
 
         void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
         void Update(rclcpp::Time time, rclcpp::Duration duration);
@@ -36,6 +37,7 @@ namespace orthrus_controller
 
         void OdomFilterInit(int filter_type);
         void OdomFilterUpdate();
+        std::stringstream OdomFilterLog();
 
         Eigen::Vector3d Quaternion2Euler(Eigen::Quaterniond quat);
 
@@ -60,7 +62,7 @@ namespace orthrus_controller
         struct FilterKF
         {
             // 先验估计
-            Eigen::VectorXd x_priori = Eigen::VectorXd::Zero(4);
+            Eigen::VectorXd x_priori = Eigen::VectorXd::Zero(6);
 
             // 后验估计
             Eigen::VectorXd x = Eigen::VectorXd::Zero(6);      // x_x x_y v_x v_y a_x a_yStatus vector
@@ -77,16 +79,16 @@ namespace orthrus_controller
             Eigen::MatrixXd P_last = Eigen::MatrixXd::Zero(6, 6);
             Eigen::MatrixXd P_priori = Eigen::MatrixXd::Zero(6, 6);
 
-            Eigen::MatrixXd H = Eigen::MatrixXd::Zero(6, 6);
+            Eigen::MatrixXd H = Eigen::MatrixXd::Zero(2, 6);
 
             Eigen::MatrixXd K = Eigen::MatrixXd::Zero(6, 2);
 
             Eigen::MatrixXd Q = Eigen::MatrixXd::Zero(6, 6);
             Eigen::MatrixXd R = Eigen::MatrixXd::Zero(2, 2);
 
-            Eigen::DiagonalMatrix<double, 6> I;
+            Eigen::MatrixXd I = Eigen::MatrixXd::Identity(6, 6);
 
-            double d_a_x = 0.1; // 加速度计方差
+            double d_a_x = 0.01; // 加速度计方差
             double d_a_y = 0.1;
         } kf;
 

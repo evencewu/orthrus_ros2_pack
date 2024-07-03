@@ -163,6 +163,7 @@ namespace orthrus_controller
         std::mutex mylock_;
 
         // Parameters from ROS for orthrus_controller
+        int test_1_ = 0;
 
         // received command
         bool subscriber_is_active_ = false;

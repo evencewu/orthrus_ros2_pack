@@ -25,11 +25,6 @@ namespace orthrus_controller
         double dt = odom->dt;
 
         OdomFilterUpdate();
-
-        // 积分得到速度
-
-        // 积分得到位置
-        odom->imu_position += odom->imu_velocity * dt;
     }
 
     Eigen::Vector3d LeggedOdom::Quaternion2Euler(Eigen::Quaterniond quat)
@@ -48,8 +43,10 @@ namespace orthrus_controller
         }
         else if (filter_type_ == LeggedOdom::KF)
         {
-            kf.x_last << 0, 0, 0, 0;
-            kf.x_priori << 0, 0, 0, 0;
+            kf.x_last << 0, 0, 0, 0, 0, 0;
+
+            kf.P_last.setIdentity(); // 将 P 初始化为单位矩阵
+            kf.P_last *= 0.1;
 
             kf.H << 0, 0, 1, 0, 0, 0,
                 0, 0, 0, 0, 0, 1;
@@ -71,6 +68,8 @@ namespace orthrus_controller
         double a_x = odom->imu_acceleration[0];
         double a_y = odom->imu_acceleration[1];
 
+        // orthrus_interfaces_->odom_state.imu_velocity += orthrus_interfaces_->odom_state.imu_acceleration * dt;
+
         // odom->imu.orientation;
 
         if (filter_type_ == LeggedOdom::EKF)
@@ -78,7 +77,6 @@ namespace orthrus_controller
         }
         else if (filter_type_ == LeggedOdom::KF)
         {
-            orthrus_interfaces_->odom_state.imu_velocity += orthrus_interfaces_->odom_state.imu_acceleration * dt;
 
             kf.x_last = kf.x;
             kf.P_last = kf.P;
@@ -99,7 +97,7 @@ namespace orthrus_controller
                 kf.d_a_x * std::pow(dt, 2) / 2, 0, dt, 0, kf.d_a_x, 0,
                 0, kf.d_a_y * std::pow(dt, 2) / 2, 0, dt, 0, kf.d_a_y;
 
-            kf.x_priori = kf.F * kf.x;
+            kf.x_priori = kf.F * kf.x_last;
             // kf.x_priori = kf.F * kf.x + kf.G * kf.u;
 
             kf.P_priori = kf.F * kf.P_last * kf.F.transpose() + kf.Q;
@@ -108,8 +106,35 @@ namespace orthrus_controller
 
             kf.x = kf.x_priori + kf.K * (kf.z - kf.H * kf.x_priori);
 
-            kf.P = (kf.I.toDenseMatrix() - kf.K * kf.H) * kf.P_last.inverse();
+            kf.P = (kf.I - kf.K * kf.H) * kf.P_last.inverse();
+
+            orthrus_interfaces_->odom_state.imu_velocity[0] = kf.x[0];
+            orthrus_interfaces_->odom_state.imu_velocity[1] = kf.x[1];
+            orthrus_interfaces_->odom_state.imu_velocity[2] = 0;
         }
+    }
+
+    std::stringstream LeggedOdom::OdomFilterLog()
+    {
+        std::stringstream ss;
+
+        ss << "kf.x_priori\n"
+           << kf.x_priori << std::endl;
+        ss << "kf.F\n"
+           << kf.F << std::endl;
+        ss << "kf.P_last\n"
+           << kf.P_last << std::endl;
+        ss << "kf.P\n"
+           << kf.P << std::endl;
+        ss << "kf.I.toDenseMatrix()\n"
+           << kf.I << std::endl;
+        ss << "kf.P_priori\n"
+           << kf.P_priori << std::endl;
+        ss << "kf.K\n"
+           << kf.K << std::endl;
+        // ss << kf.P_priori << std::endl;
+        // ss << kf.x << std::endl;
+        return ss;
     }
 
 }
