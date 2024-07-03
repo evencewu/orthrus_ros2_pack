@@ -45,8 +45,8 @@ namespace orthrus_controller
         {
             kf.x_last << 0, 0, 0, 0, 0, 0;
 
-            kf.P_last.setIdentity(); // 将 P 初始化为单位矩阵
-            kf.P_last *= 0.1;
+            kf.P.setIdentity(); // 将 P 初始化为单位矩阵
+            kf.P *= 0.1;
 
             kf.H << 0, 0, 1, 0, 0, 0,
                 0, 0, 0, 0, 0, 1;
@@ -108,9 +108,9 @@ namespace orthrus_controller
 
             kf.P = (kf.I - kf.K * kf.H) * kf.P_last.inverse();
 
-            orthrus_interfaces_->odom_state.imu_velocity[0] = kf.x[0];
-            orthrus_interfaces_->odom_state.imu_velocity[1] = kf.x[1];
-            orthrus_interfaces_->odom_state.imu_velocity[2] = 0;
+            orthrus_interfaces_->odom_state.imu_position[0] = kf.x[0];
+            orthrus_interfaces_->odom_state.imu_position[1] = kf.x[1];
+            orthrus_interfaces_->odom_state.imu_position[2] = 0;
         }
     }
 
@@ -120,6 +120,8 @@ namespace orthrus_controller
 
         ss << "kf.x_priori\n"
            << kf.x_priori << std::endl;
+        ss << "kf.x\n"
+           << kf.x << std::endl;
         ss << "kf.F\n"
            << kf.F << std::endl;
         ss << "kf.P_last\n"
