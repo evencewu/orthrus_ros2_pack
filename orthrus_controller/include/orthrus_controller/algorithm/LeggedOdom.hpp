@@ -34,28 +34,63 @@ namespace orthrus_controller
         void Update(rclcpp::Time time, rclcpp::Duration duration);
         void Calibration(rclcpp::Time time, rclcpp::Duration duration);
 
+        void OdomFilterInit(int filter_type);
+        void OdomFilterUpdate();
+
         Eigen::Vector3d Quaternion2Euler(Eigen::Quaterniond quat);
+
     private:
-
-        void VelocityPredict(rclcpp::Time time, rclcpp::Duration duration);
-
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
 
-        //EKF
-        struct EKF
+        int filter_type_ = 0;
+
+        // EKF
+        struct FilterEKF
         {
-            Eigen::VectorXd x(5); //x_x x_y v_x v_y w_z Status vector
+            Eigen::VectorXd x = Eigen::VectorXd::Zero(5);      // x_x x_y v_x v_y Status vector
+            Eigen::VectorXd x_last = Eigen::VectorXd::Zero(5); // x_x x_y v_x v_y Status vector
 
-            Eigen::VectorXd u(3); //a_x a_y w_z
+            Eigen::VectorXd u = Eigen::VectorXd::Zero(3); // a_x a_y w_z
 
-            Eigen::MatrixXd F = MatrixXd::Zero(5, 5); // Status transfer matrix
-            Eigen::MatrixXd G = MatrixXd::Zero(5, 3); // Status transfer matrix
+            Eigen::MatrixXd F = Eigen::MatrixXd::Zero(5, 5); // Status transfer matrix
+            Eigen::MatrixXd G = Eigen::MatrixXd::Zero(5, 3); // Status transfer matrix
+        } ekf;
 
-            std::vector<double> x;
-            std::vector<double> x;
-        }ekf;
-        
+        struct FilterKF
+        {
+            // 先验估计
+            Eigen::VectorXd x_priori = Eigen::VectorXd::Zero(4);
 
+            // 后验估计
+            Eigen::VectorXd x = Eigen::VectorXd::Zero(6);      // x_x x_y v_x v_y a_x a_yStatus vector
+            Eigen::VectorXd x_last = Eigen::VectorXd::Zero(6); // x_x x_y v_x v_y a_x a_yStatus vector
+
+            Eigen::VectorXd u = Eigen::VectorXd::Zero(2); // a_x a_y
+
+            Eigen::VectorXd z = Eigen::VectorXd::Zero(2);
+
+            Eigen::MatrixXd F = Eigen::MatrixXd::Zero(6, 6); // Status transfer matrix
+            Eigen::MatrixXd G = Eigen::MatrixXd::Zero(6, 2); // Status transfer matrix
+
+            Eigen::MatrixXd P = Eigen::MatrixXd::Zero(6, 6);
+            Eigen::MatrixXd P_last = Eigen::MatrixXd::Zero(6, 6);
+            Eigen::MatrixXd P_priori = Eigen::MatrixXd::Zero(6, 6);
+
+            Eigen::MatrixXd H = Eigen::MatrixXd::Zero(6, 6);
+
+            Eigen::MatrixXd K = Eigen::MatrixXd::Zero(6, 2);
+
+            Eigen::MatrixXd Q = Eigen::MatrixXd::Zero(6, 6);
+            Eigen::MatrixXd R = Eigen::MatrixXd::Zero(2, 2);
+
+            Eigen::DiagonalMatrix<double, 6> I;
+
+            double d_a_x = 0.1; // 加速度计方差
+            double d_a_y = 0.1;
+        } kf;
+
+        static const int EKF = 0;
+        static const int KF = 1;
     };
 }
