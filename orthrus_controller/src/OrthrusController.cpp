@@ -264,6 +264,14 @@ namespace orthrus_controller
     //             orthrus_interfaces_->odom_state.imu_position[1],
     //             orthrus_interfaces_->odom_state.imu_position[2]);
 
+    RCLCPP_INFO(logger, "target %lf %lf %lf %lf %lf %lf",
+                orthrus_interfaces_->robot_target.target_position[0],
+                orthrus_interfaces_->robot_target.target_position[1],
+                orthrus_interfaces_->robot_target.target_position[2],
+                orthrus_interfaces_->robot_target.target_euler[0],
+                orthrus_interfaces_->robot_target.target_euler[1],
+                orthrus_interfaces_->robot_target.target_euler[2]);
+    /*
     RCLCPP_INFO(logger, "odom_state.position %lf %lf %lf",
                 orthrus_interfaces_->odom_state.position[0],
                 orthrus_interfaces_->odom_state.position[1],
@@ -281,6 +289,7 @@ namespace orthrus_controller
                 orthrus_interfaces_->robot_target.target_body_force[3],
                 orthrus_interfaces_->robot_target.target_body_force[4],
                 orthrus_interfaces_->robot_target.target_body_force[5]);
+    */
 
     // orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[0]
 

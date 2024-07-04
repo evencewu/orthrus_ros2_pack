@@ -74,6 +74,7 @@ namespace orthrus_controller
             }
         }
 
+        //力分配，当z轴方向反向时不驱动，并且重新解算，接触力判定优先级高于此
         body2footforce_mat_plus_ = GetMinimumTworamTMat(body2footforce_mat_);
 
         return body2footforce_mat_plus_ * body_force;
@@ -107,7 +108,7 @@ namespace orthrus_controller
         // 计算 Mat 的伪逆 Mat+
         return output;
     }
-
+    
     void LeggedMpc::GetBodyForcePD()
     {
         double kp_position = 500;

@@ -17,7 +17,7 @@ namespace orthrus_controller
         motor_max_min_pos[1][0] = M_PI * 2 / 3;
         motor_max_min_pos[1][1] = -M_PI / 3;
         motor_max_min_pos[2][0] = -M_PI / 6;
-        motor_max_min_pos[2][1] = -(M_PI * 7) / 12;
+        motor_max_min_pos[2][1] = -(M_PI * 2) / 3;
 
         for (int i = 0; i < 12; i++)
         {
