@@ -27,6 +27,8 @@ namespace orthrus_controller
 
         void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr);
         void JoyCallback(const xbox_interfaces::msg::XboxControl::SharedPtr msg);
+
+        double RockerMapping(int input, int input_max, double output_max, int zero_zone);
         std::stringstream GetJoyTarget();
 
     private:

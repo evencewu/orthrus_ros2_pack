@@ -62,7 +62,7 @@ namespace orthrus_controller
 
     struct RobotTarget
     {
-        Eigen::Vector3d target_position = Eigen::Vector3d(0, 0, 0.3);;
+        Eigen::Vector3d target_position = Eigen::Vector3d(0, 0, 0.3);
         Eigen::Vector3d target_velocity;
 
         Eigen::Quaterniond target_attitude;

@@ -10,7 +10,7 @@ namespace orthrus_controller
     void JoyInterface::JoyCallback(const xbox_interfaces::msg::XboxControl::SharedPtr msg)
     {
         // mtx_.lock();
-        //auto *cmd = &orthrus_interfaces_->robot_cmd;
+        // auto *cmd = &orthrus_interfaces_->robot_cmd;
         // 菜单键组合键用于不常用组合键
         if (msg->start == 1)
         {
@@ -69,6 +69,10 @@ namespace orthrus_controller
                     orthrus_interfaces_->robot_target.target_position[2] -= 0.01;
                 }
             }
+
+            orthrus_interfaces_->robot_target.target_euler[0] = RockerMapping(msg->rx, 32000, M_PI/6, 2000);
+            orthrus_interfaces_->robot_target.target_euler[1] = RockerMapping(msg->ry, 32000, M_PI/6, 2000);
+            
         }
     }
 
@@ -77,5 +81,35 @@ namespace orthrus_controller
         std::stringstream ss;
         ss << "JoyInterface: " << orthrus_interfaces_->robot_target.gait_num << " " << std::endl;
         return ss;
+    }
+
+    double JoyInterface::RockerMapping(int input, int input_max, double output_max, int zero_zone)
+    {
+        double p_t = output_max / (input_max - zero_zone);
+        double output;
+        if (input > zero_zone)
+        {
+            output = p_t * (input - zero_zone);
+
+            if (output > output_max)
+            {
+                output = output_max;
+            }
+        }
+        else if (input < -zero_zone)
+        {
+            output = p_t * (input + zero_zone);
+
+            if (output < -output_max)
+            {
+                output = -output_max;
+            }
+        }
+        else
+        {
+            output = 0;
+        }
+
+        return output;
     }
 }

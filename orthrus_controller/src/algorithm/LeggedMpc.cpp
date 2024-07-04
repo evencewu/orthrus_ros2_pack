@@ -19,7 +19,7 @@ namespace orthrus_controller
 
         // 直接赋值初始化
         GetBodyForcePD();
-        orthrus_interfaces_->robot_target.target_body_force.segment<3>(0) -= orthrus_interfaces_->odom_state.gravity * 15;
+        orthrus_interfaces_->robot_target.target_body_force.segment<3>(0) -= orthrus_interfaces_->odom_state.imu.orientation * orthrus_interfaces_->odom_state.gravity * 15;
         orthrus_interfaces_->robot_target.target_body_force[5] = 0;
 
         std::vector<bool> gait = orthrus_interfaces_->robot_target.gait_sequence[orthrus_interfaces_->robot_target.gait_num];
@@ -113,7 +113,7 @@ namespace orthrus_controller
         double kp_position = 500;
         double kd_position = 100;
         double kp_angular = 100;
-        double kd_angular = 1;
+        double kd_angular = 10;
 
         // error P
         Eigen::Vector3d error_position = orthrus_interfaces_->robot_target.target_position - orthrus_interfaces_->odom_state.position;
