@@ -19,6 +19,7 @@ namespace orthrus_controller
 
         Eigen::Vector3d acc_data = robot->body_imu.orientation * robot->body_imu.linear_acceleration + odom->gravity;
         acc_data = AverageFilter(acc_data, imu_velocity_filter_list_); // 过一个均值滤波
+        odom->imu.linear_acceleration = acc_data;
 
         // for (int i = 0; i < 3; i++)
         //{
@@ -28,7 +29,8 @@ namespace orthrus_controller
         //     }
         // }
 
-        odom->imu.linear_acceleration = acc_data;
+        odom->imu.orientation = robot->body_imu.orientation;
+        odom->imu.angular_velocity = robot->body_imu.angular_velocity;
 
         //;
         // 原始数据滤波载入
@@ -39,6 +41,13 @@ namespace orthrus_controller
         double dt = odom->dt;
 
         OdomFilterUpdate();
+
+        orthrus_interfaces_->odom_state.touch_state[0].sensor =true;
+        orthrus_interfaces_->odom_state.touch_state[1].sensor =true;
+        orthrus_interfaces_->odom_state.touch_state[2].sensor =true;
+        orthrus_interfaces_->odom_state.touch_state[3].sensor =true;
+
+        LeggedFilterUpdate();
     }
 
     Eigen::Vector3d LeggedOdom::Quaternion2Euler(Eigen::Quaterniond quat)
@@ -120,9 +129,9 @@ namespace orthrus_controller
 
             kf.P = (kf.I - kf.K * kf.H) * kf.P_last;
 
-            orthrus_interfaces_->odom_state.imu_position[0] = kf.x[0];
-            orthrus_interfaces_->odom_state.imu_position[1] = kf.x[1];
-            orthrus_interfaces_->odom_state.imu_position[2] = 0;
+            //orthrus_interfaces_->odom_state.imu_position[0] = kf.x[0];
+            //orthrus_interfaces_->odom_state.imu_position[1] = kf.x[1];
+            //orthrus_interfaces_->odom_state.imu_position[2] = 0;
 
             orthrus_interfaces_->odom_state.imu_velocity[0] = kf.x[2];
             orthrus_interfaces_->odom_state.imu_velocity[1] = kf.x[3];

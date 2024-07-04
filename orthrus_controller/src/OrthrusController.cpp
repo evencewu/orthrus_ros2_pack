@@ -259,6 +259,11 @@ namespace orthrus_controller
     orthrus_interfaces_->robot_state.body_imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
     orthrus_interfaces_->robot_state.body_imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
 
+    RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf ",
+                orthrus_interfaces_->odom_state.imu_position[0],
+                orthrus_interfaces_->odom_state.imu_position[1],
+                orthrus_interfaces_->odom_state.imu_position[2]);
+
     // Update leg_imu data
     if (params_.sim_or_real == "real")
     {
@@ -295,12 +300,12 @@ namespace orthrus_controller
                     leg_imu_handles_[3].orientation[3].get().get_value());*/
 
     // Update imu/odom data
-    
+
     test_1_++;
 
-    if(test_1_>= 0 && test_1_ < 30)
+    if (test_1_ >= 0 && test_1_ < 30)
     {
-      RCLCPP_INFO(logger,"OdomFilterLog: %s",legged_odom_->OdomFilterLog().str().c_str());
+      RCLCPP_INFO(logger, "OdomFilterLog: %s", legged_odom_->OdomFilterLog().str().c_str());
     }
 
     //----------------------------------------

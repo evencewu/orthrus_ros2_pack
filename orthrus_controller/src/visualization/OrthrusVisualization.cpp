@@ -30,9 +30,9 @@ namespace orthrus_controller
         tf_stamped.header.frame_id = "odom";
         tf_stamped.child_frame_id = "base";
 
-        tf_stamped.transform.translation.x = 0.0;
-        tf_stamped.transform.translation.y = 0.0;
-        tf_stamped.transform.translation.z = 0.0;
+        tf_stamped.transform.translation.x = orthrus_interfaces_->odom_state.imu_position[0];
+        tf_stamped.transform.translation.y = orthrus_interfaces_->odom_state.imu_position[1];
+        tf_stamped.transform.translation.z = orthrus_interfaces_->odom_state.imu_position[2];
 
         tf_stamped.transform.rotation.w = orthrus_interfaces_->odom_state.imu.orientation.w();
         tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.imu.orientation.x();
