@@ -148,12 +148,13 @@ namespace orthrus_controller
     {
         // 定义机器人的配置（关节角度），速度和加速度
         Eigen::VectorXd v = Eigen::VectorXd::Zero(model_.nv); // 速度为零
-        // Eigen::VectorXd tau = Eigen::VectorXd::Zero(model_.nv); // 定义关节力矩
+        Eigen::VectorXd tau = Eigen::VectorXd::Zero(model_.nv); // 定义关节力矩
         Eigen::VectorXd a = Eigen::VectorXd::Zero(model_.nv); // 关节加速度
-        // tau[0] = 1.0;                                          // 假设第一个关节力矩为1
-        Eigen::VectorXd tau = Eigen::VectorXd::Zero(6);
-
+        //tau[0] = 0.0;                                          // 假设第一个关节力矩为1
+        //Eigen::VectorXd tau = Eigen::VectorXd::Zero(6);
+//
         //Eigen::Matrix<double, Eigen::Dynamic, 1> force;
         //force = pinocchio::rnea(model_, data_, joint_, v, a,tau);
     }
+
 }

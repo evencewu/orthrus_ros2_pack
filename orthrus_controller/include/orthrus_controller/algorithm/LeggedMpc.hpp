@@ -27,10 +27,8 @@ namespace orthrus_controller
 
         std::stringstream Logger(int log_num);
         
-        Eigen::VectorXd Foot2JointForce();
-
+        Eigen::VectorXd Foot2JointForce(); //足端力分配
         Eigen::Matrix3d VectorToSkewSymmetricMatrix(const Eigen::Vector3d &v);
-        Eigen::Matrix3d VectorToDiagonalMatrix(const Eigen::Vector3d &v);
         
         void GetBodyForcePD();
 
@@ -40,6 +38,8 @@ namespace orthrus_controller
         static const int JOINT_EFFOT_LOG = 1;
 
     private:
+        std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
+
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
         std::shared_ptr<PinocchioInterfaces> pinocchio_interfaces_; // Pinocchio接口
 
@@ -47,17 +47,11 @@ namespace orthrus_controller
 
         std::vector<std::string> foot_name_ = {"LF_FOOT", "LH_FOOT", "RF_FOOT", "RH_FOOT"};
 
-        std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;
-
         Eigen::VectorXd Body2FootForce(Eigen::VectorXd body_force, std::vector<bool> gait_touch_sequence);
         Eigen::MatrixXd body2footforce_mat_ = Eigen::MatrixXd::Zero(6, 12);
         Eigen::MatrixXd body2footforce_mat_plus_= Eigen::MatrixXd::Zero(6, 12);
 
         // 最小二乘伪逆
-        Eigen::MatrixXd GetMinimumTworamTMat(Eigen::MatrixXd input);
-
-        Eigen::MatrixXd GetTMat(Eigen::MatrixXd input);
-
-        
+        Eigen::MatrixXd GetMinimumTworamTMat(Eigen::MatrixXd input); //最小二乘伪逆
     };
 }

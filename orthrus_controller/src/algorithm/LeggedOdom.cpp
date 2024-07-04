@@ -20,13 +20,13 @@ namespace orthrus_controller
         Eigen::Vector3d acc_data = robot->body_imu.orientation * robot->body_imu.linear_acceleration + odom->gravity;
         acc_data = AverageFilter(acc_data, imu_velocity_filter_list_); // 过一个均值滤波
 
-        for (int i = 0; i < 3; i++)
-        {
-            if (acc_data[i] <= 0.15 && acc_data[i] >= -0.15)
-            {
-                acc_data[i] = 0;
-            }
-        }
+        // for (int i = 0; i < 3; i++)
+        //{
+        //     if (acc_data[i] <= 0.15 && acc_data[i] >= -0.15)
+        //     {
+        //         acc_data[i] = 0;
+        //     }
+        // }
 
         odom->imu.linear_acceleration = acc_data;
 
@@ -204,6 +204,27 @@ namespace orthrus_controller
         // ss << kf.P_priori << std::endl;
         // ss << kf.x << std::endl;
         return ss;
+    }
+
+    void LeggedOdom::LeggedFilterUpdate()
+    {
+        Eigen::Vector3d center_all = Eigen::Vector3d::Zero();
+        int leg_num = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            if (orthrus_interfaces_->odom_state.touch_state[i].sensor)
+            {
+                leg_num++;
+                center_all += orthrus_interfaces_->odom_state.touch_state[i].touch_position;
+            }
+        }
+
+
+        Eigen::Vector3d center = center_all/leg_num;
+
+        orthrus_interfaces_->odom_state.imu_position[0] = -center[0];
+        orthrus_interfaces_->odom_state.imu_position[1] = -center[1];
+        orthrus_interfaces_->odom_state.imu_position[2] = -center[2];
     }
 
 }

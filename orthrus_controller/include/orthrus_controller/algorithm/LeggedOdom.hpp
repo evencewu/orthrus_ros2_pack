@@ -37,6 +37,8 @@ namespace orthrus_controller
         void OdomFilterInit(int filter_type);
         void OdomFilterUpdate();
 
+        void LeggedFilterUpdate();
+
         std::stringstream OdomFilterLog();
 
         Eigen::Vector3d Quaternion2Euler(Eigen::Quaterniond quat);
@@ -48,7 +50,7 @@ namespace orthrus_controller
         int filter_type_ = 0;
 
         // nomal filter
-        std::vector<Eigen::Vector3d> imu_velocity_filter_list_ = std::vector<Eigen::Vector3d>(10, Eigen::Vector3d::Zero());
+        std::vector<Eigen::Vector3d> imu_velocity_filter_list_ = std::vector<Eigen::Vector3d>(5, Eigen::Vector3d::Zero());
         Eigen::Vector3d AverageFilter(const Eigen::Vector3d new_data, std::vector<Eigen::Vector3d> &data_list);
         Eigen::Vector3d MediumFilter(const Eigen::Vector3d new_data, std::vector<Eigen::Vector3d> &data_list);
 

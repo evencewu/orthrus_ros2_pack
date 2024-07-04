@@ -103,14 +103,8 @@ namespace orthrus_controller
         return output;
     }
 
-    Eigen::MatrixXd LeggedMpc::GetTMat(Eigen::MatrixXd input)
-    {
-        return input.inverse();
-    }
-
     void LeggedMpc::GetBodyForcePD()
     {
-
         double kp_position = 1;
         double kd_position = 1;
         double kp_angular = 1;
@@ -137,15 +131,6 @@ namespace orthrus_controller
         V << 0, -v(2), v(1),
             v(2), 0, -v(0),
             -v(1), v(0), 0;
-        return V;
-    }
-
-    Eigen::Matrix3d LeggedMpc::VectorToDiagonalMatrix(const Eigen::Vector3d &v)
-    {
-        Eigen::Matrix3d V;
-        V << v(0), 0, 0,
-            0, v(1), 0,
-            0, 0, v(2);
         return V;
     }
 

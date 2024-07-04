@@ -43,14 +43,15 @@ namespace orthrus_controller
 
         void FootPositionCalculation();
         void GravityCompensation();
+        
+        void GetLagrange();
 
         Eigen::VectorXd LegGravityCompensation();
 
         Eigen::MatrixXd GetJacobianMatrix(std::string frame_name);
 
         std::stringstream Logger();
-        void GetLagrange();
-
+        
         pinocchio::Model model_;
 
         pinocchio::Data data_;
