@@ -14,8 +14,8 @@ namespace orthrus_controller
         dt_ = (double)(duration.nanoseconds()) / 1000000000;
 
         // 更新pinocchio动力学参数
-        //orthrus_interfaces_->robot_target.target_position << 0, 0, 0.20;
-        //orthrus_interfaces_->robot_target.target_euler << 0, 0, 0;
+        // orthrus_interfaces_->robot_target.target_position << 0, 0, 0.20;
+        // orthrus_interfaces_->robot_target.target_euler << 0, 0, 0;
 
         // 直接赋值初始化
         GetBodyForcePD();
@@ -63,21 +63,73 @@ namespace orthrus_controller
 
     Eigen::VectorXd LeggedMpc::Body2FootForce(Eigen::VectorXd body_force, std::vector<bool> gait_touch_sequence)
     {
+        bool leg_useable[4] = {true, true, true, true};
+        bool leg_useable_last[4] = {true, true, true, true};
+
+        bool retry_flag = false;
+
+        // 力分配矩阵
+        Eigen::VectorXd finish;
+
+        // 力分配，当z轴方向反向时不驱动，并且重新解算，接触力判定优先级高于此
+
+        retry_flag = false;
         body2footforce_mat_ = Eigen::MatrixXd::Zero(6, 12);
-        body2footforce_mat_plus_ = Eigen::MatrixXd::Zero(6, 12);
+        body2footforce_mat_plus_ = Eigen::MatrixXd::Zero(12, 6);
+
         for (int foot_num = 0; foot_num < 4; foot_num++)
         {
-            if (gait_touch_sequence[foot_num])
+            if (gait_touch_sequence[foot_num] && leg_useable[foot_num])
             {
                 body2footforce_mat_.block<3, 3>(0, foot_num * 3) = Eigen::Matrix3d::Identity();
                 body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix(orthrus_interfaces_->odom_state.touch_state[foot_num].touch_position);
             }
         }
 
-        //力分配，当z轴方向反向时不驱动，并且重新解算，接触力判定优先级高于此
         body2footforce_mat_plus_ = GetMinimumTworamTMat(body2footforce_mat_);
 
-        return body2footforce_mat_plus_ * body_force;
+        finish = body2footforce_mat_plus_ * body_force;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (finish[i * 3 + 2] <= 0)
+            {
+                leg_useable[i] = false;
+            }
+        }
+
+        for (int i = 0; i < 4; ++i)
+        {
+            if (leg_useable[i] != leg_useable_last[i])
+            {
+                retry_flag = true;
+                break; // 可以选择退出循环，如果只需要知道是否相同
+            }
+            leg_useable_last[i] = leg_useable[i];
+        }
+
+        if (retry_flag == true)
+        {
+            body2footforce_mat_ = Eigen::MatrixXd::Zero(6, 12);
+            body2footforce_mat_plus_ = Eigen::MatrixXd::Zero(12, 6);
+
+            for (int foot_num = 0; foot_num < 4; foot_num++)
+            {
+                if (gait_touch_sequence[foot_num] && leg_useable[foot_num])
+                {
+                    body2footforce_mat_.block<3, 3>(0, foot_num * 3) = Eigen::Matrix3d::Identity();
+                    body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix(orthrus_interfaces_->odom_state.touch_state[foot_num].touch_position);
+                }
+            }
+
+            body2footforce_mat_plus_ = GetMinimumTworamTMat(body2footforce_mat_);
+
+            finish = body2footforce_mat_plus_ * body_force;
+        }
+
+
+
+        return finish;
     }
 
     Eigen::MatrixXd LeggedMpc::GetMinimumTworamTMat(Eigen::MatrixXd input)
@@ -108,7 +160,7 @@ namespace orthrus_controller
         // 计算 Mat 的伪逆 Mat+
         return output;
     }
-    
+
     void LeggedMpc::GetBodyForcePD()
     {
         double kp_position = 500;
