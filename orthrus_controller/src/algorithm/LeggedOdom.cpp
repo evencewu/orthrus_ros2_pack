@@ -42,18 +42,28 @@ namespace orthrus_controller
 
         OdomFilterUpdate();
 
-        orthrus_interfaces_->odom_state.touch_state[0].sensor =true;
-        orthrus_interfaces_->odom_state.touch_state[1].sensor =true;
-        orthrus_interfaces_->odom_state.touch_state[2].sensor =true;
-        orthrus_interfaces_->odom_state.touch_state[3].sensor =true;
+        orthrus_interfaces_->odom_state.touch_state[0].sensor = true;
+        orthrus_interfaces_->odom_state.touch_state[1].sensor = true;
+        orthrus_interfaces_->odom_state.touch_state[2].sensor = true;
+        orthrus_interfaces_->odom_state.touch_state[3].sensor = true;
 
         LeggedFilterUpdate();
+
+        orthrus_interfaces_->odom_state.position = orthrus_interfaces_->odom_state.foot_position;
+        //orthrus_interfaces_->velocity
+        //orthrus_interfaces_->angular_velocity
+        
     }
 
     Eigen::Vector3d LeggedOdom::Quaternion2Euler(Eigen::Quaterniond quat)
     {
         Eigen::Matrix3d rotation_matrix = quat.toRotationMatrix();
-        Eigen::Vector3d euler_angles = rotation_matrix.eulerAngles(2, 1, 0); // ZYX
+        double roll = std::atan2(rotation_matrix(2, 1), rotation_matrix(2, 2));
+        double pitch = std::asin(-rotation_matrix(2, 0));
+        double yaw = std::atan2(rotation_matrix(0, 1), rotation_matrix(0, 0));
+
+        Eigen::Vector3d euler_angles;
+        euler_angles << roll, pitch, yaw;
         return euler_angles;
     }
 
@@ -129,9 +139,9 @@ namespace orthrus_controller
 
             kf.P = (kf.I - kf.K * kf.H) * kf.P_last;
 
-            //orthrus_interfaces_->odom_state.imu_position[0] = kf.x[0];
-            //orthrus_interfaces_->odom_state.imu_position[1] = kf.x[1];
-            //orthrus_interfaces_->odom_state.imu_position[2] = 0;
+            orthrus_interfaces_->odom_state.imu_position[0] = kf.x[0];
+            orthrus_interfaces_->odom_state.imu_position[1] = kf.x[1];
+            orthrus_interfaces_->odom_state.imu_position[2] = 0;
 
             orthrus_interfaces_->odom_state.imu_velocity[0] = kf.x[2];
             orthrus_interfaces_->odom_state.imu_velocity[1] = kf.x[3];
@@ -228,12 +238,11 @@ namespace orthrus_controller
             }
         }
 
+        Eigen::Vector3d center = center_all / leg_num;
 
-        Eigen::Vector3d center = center_all/leg_num;
-
-        orthrus_interfaces_->odom_state.imu_position[0] = -center[0];
-        orthrus_interfaces_->odom_state.imu_position[1] = -center[1];
-        orthrus_interfaces_->odom_state.imu_position[2] = -center[2];
+        orthrus_interfaces_->odom_state.foot_position[0] = -center[0];
+        orthrus_interfaces_->odom_state.foot_position[1] = -center[1];
+        orthrus_interfaces_->odom_state.foot_position[2] = -center[2];
     }
 
 }

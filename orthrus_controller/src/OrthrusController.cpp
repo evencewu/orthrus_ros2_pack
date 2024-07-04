@@ -259,10 +259,30 @@ namespace orthrus_controller
     orthrus_interfaces_->robot_state.body_imu.orientation.y() = imu_handles_[0].orientation[2].get().get_value();
     orthrus_interfaces_->robot_state.body_imu.orientation.z() = imu_handles_[0].orientation[3].get().get_value();
 
-    RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf ",
-                orthrus_interfaces_->odom_state.imu_position[0],
-                orthrus_interfaces_->odom_state.imu_position[1],
-                orthrus_interfaces_->odom_state.imu_position[2]);
+    // RCLCPP_INFO(logger, "Joint position touch Limit %lf %lf %lf ",
+    //             orthrus_interfaces_->odom_state.imu_position[0],
+    //             orthrus_interfaces_->odom_state.imu_position[1],
+    //             orthrus_interfaces_->odom_state.imu_position[2]);
+
+    RCLCPP_INFO(logger, "odom_state.position %lf %lf %lf",
+                orthrus_interfaces_->odom_state.position[0],
+                orthrus_interfaces_->odom_state.position[1],
+                orthrus_interfaces_->odom_state.position[2]);
+
+    RCLCPP_INFO(logger, "odom_state.foot_position %lf %lf %lf",
+                orthrus_interfaces_->odom_state.foot_position[0],
+                orthrus_interfaces_->odom_state.foot_position[1],
+                orthrus_interfaces_->odom_state.foot_position[2]);
+
+    RCLCPP_INFO(logger, "robot_target.target_body_force %lf %lf %lf %lf %lf %lf",
+                orthrus_interfaces_->robot_target.target_body_force[0],
+                orthrus_interfaces_->robot_target.target_body_force[1],
+                orthrus_interfaces_->robot_target.target_body_force[2],
+                orthrus_interfaces_->robot_target.target_body_force[3],
+                orthrus_interfaces_->robot_target.target_body_force[4],
+                orthrus_interfaces_->robot_target.target_body_force[5]);
+
+    // orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force[0]
 
     // Update leg_imu data
     if (params_.sim_or_real == "real")
@@ -305,7 +325,7 @@ namespace orthrus_controller
 
     if (test_1_ >= 0 && test_1_ < 30)
     {
-      RCLCPP_INFO(logger, "OdomFilterLog: %s", legged_odom_->OdomFilterLog().str().c_str());
+      // RCLCPP_INFO(logger, "OdomFilterLog: %s", legged_odom_->OdomFilterLog().str().c_str());
     }
 
     //----------------------------------------

@@ -30,9 +30,9 @@ namespace orthrus_controller
         tf_stamped.header.frame_id = "odom";
         tf_stamped.child_frame_id = "base";
 
-        tf_stamped.transform.translation.x = orthrus_interfaces_->odom_state.imu_position[0];
-        tf_stamped.transform.translation.y = orthrus_interfaces_->odom_state.imu_position[1];
-        tf_stamped.transform.translation.z = orthrus_interfaces_->odom_state.imu_position[2];
+        tf_stamped.transform.translation.x = orthrus_interfaces_->odom_state.position[0];
+        tf_stamped.transform.translation.y = orthrus_interfaces_->odom_state.position[1];
+        tf_stamped.transform.translation.z = orthrus_interfaces_->odom_state.position[2];
 
         tf_stamped.transform.rotation.w = orthrus_interfaces_->odom_state.imu.orientation.w();
         tf_stamped.transform.rotation.x = orthrus_interfaces_->odom_state.imu.orientation.x();
@@ -102,9 +102,9 @@ namespace orthrus_controller
         marker.points[0].x = 0.0;
         marker.points[0].y = 0.0;
         marker.points[0].z = 0.0;
-        marker.points[1].x = orthrus_interfaces_->odom_state.imu_position[0];
-        marker.points[1].y = orthrus_interfaces_->odom_state.imu_position[1];
-        marker.points[1].z = orthrus_interfaces_->odom_state.imu_position[2];
+        marker.points[1].x = orthrus_interfaces_->odom_state.position[0];
+        marker.points[1].y = orthrus_interfaces_->odom_state.position[1];
+        marker.points[1].z = orthrus_interfaces_->odom_state.position[2];
 
         // 设置箭头的缩放（箭头的大小）
         marker.scale.x = 0.01; // 箭头的长度

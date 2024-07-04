@@ -12,8 +12,8 @@ namespace orthrus_controller
         bool flag = true;
         int motor_max_min_pos[3][2];
 
-        motor_max_min_pos[0][0] = M_PI / 3;
-        motor_max_min_pos[0][1] = -M_PI / 3;
+        motor_max_min_pos[0][0] = M_PI / 4;
+        motor_max_min_pos[0][1] = -M_PI / 4;
         motor_max_min_pos[1][0] = M_PI * 2 / 3;
         motor_max_min_pos[1][1] = -M_PI / 3;
         motor_max_min_pos[2][0] = -M_PI / 6;

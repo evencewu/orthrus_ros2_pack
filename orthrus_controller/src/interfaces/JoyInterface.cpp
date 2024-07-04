@@ -10,7 +10,7 @@ namespace orthrus_controller
     void JoyInterface::JoyCallback(const xbox_interfaces::msg::XboxControl::SharedPtr msg)
     {
         // mtx_.lock();
-
+        //auto *cmd = &orthrus_interfaces_->robot_cmd;
         // 菜单键组合键用于不常用组合键
         if (msg->start == 1)
         {
@@ -54,7 +54,21 @@ namespace orthrus_controller
         }
         else
         {
-
+            if (msg->yy < 0)
+            {
+                if (orthrus_interfaces_->robot_target.target_position[2] < 0.30)
+                {
+                    orthrus_interfaces_->robot_target.target_position[2] += 0.01;
+                }
+            }
+            
+            if (msg->yy > 0)
+            {
+                if (orthrus_interfaces_->robot_target.target_position[2] > 0.03)
+                {
+                    orthrus_interfaces_->robot_target.target_position[2] -= 0.01;
+                }
+            }
         }
     }
 

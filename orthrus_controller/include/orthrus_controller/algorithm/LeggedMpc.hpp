@@ -30,7 +30,7 @@ namespace orthrus_controller
         Eigen::VectorXd Foot2JointForce(); //足端力分配
         Eigen::Matrix3d VectorToSkewSymmetricMatrix(const Eigen::Vector3d &v);
         
-        void GetBodyForcePD();
+        
 
         //Log
 
@@ -43,6 +43,13 @@ namespace orthrus_controller
         std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_;
         std::shared_ptr<PinocchioInterfaces> pinocchio_interfaces_; // Pinocchio接口
 
+        double dt_;
+        //
+        void GetBodyForcePD();
+        Eigen::Vector3d position_last_;
+        Eigen::Vector3d angular_last_;
+
+        //
         Eigen::VectorXd torq_;
 
         std::vector<std::string> foot_name_ = {"LF_FOOT", "LH_FOOT", "RF_FOOT", "RH_FOOT"};
