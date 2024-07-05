@@ -80,13 +80,13 @@ namespace orthrus_controller
 
             if (msg->xx > 0)
             {
-                if (orthrus_interfaces_->robot_target.target_euler[0] > M_PI / 12)
+                if (orthrus_interfaces_->robot_target.target_euler[0] > - M_PI / 12)
                 {
                     orthrus_interfaces_->robot_target.target_euler[0] -= M_PI /120;
                 }
             }
 
-            orthrus_interfaces_->robot_target.target_euler[2] = RockerMapping(msg->rx, 32000, M_PI / 12, 2000);
+            orthrus_interfaces_->robot_target.target_euler[2] = RockerMapping(msg->rx, 32000, M_PI / 6, 2000);
             orthrus_interfaces_->robot_target.target_euler[1] = RockerMapping(-msg->ry, 32000, M_PI / 12, 2000);
         }
     }
