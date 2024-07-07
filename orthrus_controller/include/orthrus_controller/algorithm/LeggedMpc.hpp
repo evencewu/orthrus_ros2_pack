@@ -30,12 +30,11 @@ namespace orthrus_controller
         Eigen::VectorXd Foot2JointForce(); //足端力分配
         Eigen::Matrix3d VectorToSkewSymmetricMatrix(const Eigen::Vector3d &v);
         
-        
-
         //Log
 
         static const int BODY2FOOTFORCE_LOG = 0;
         static const int JOINT_EFFOT_LOG = 1;
+        static const int GRAVITY_EFFOT_LOG = 1;
 
     private:
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;

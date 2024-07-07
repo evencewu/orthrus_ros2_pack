@@ -146,11 +146,10 @@ namespace orthrus_controller
     legged_mpc_->Init(orthrus_interfaces_, pinocchio_interfaces_);
     RCLCPP_INFO(logger, "Init safe_code");
     safe_code_->Init(orthrus_interfaces_);
-    // RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
     RCLCPP_INFO(logger, "Init calibration_visualization");
     calibration_visualization_->Init(orthrus_interfaces_);
     RCLCPP_INFO(logger, "Init over");
-
+    RCLCPP_INFO(get_node()->get_logger(), "Init: \n%s", pinocchio_interfaces_->Logger().str().c_str());
     RCLCPP_INFO(logger, "Configure over...");
 
     return controller_interface::CallbackReturn::SUCCESS;
@@ -264,13 +263,13 @@ namespace orthrus_controller
     //             orthrus_interfaces_->odom_state.imu_position[1],
     //             orthrus_interfaces_->odom_state.imu_position[2]);
 
-    RCLCPP_INFO(logger, "target %lf %lf %lf %lf %lf %lf",
-                orthrus_interfaces_->robot_target.target_position[0],
-                orthrus_interfaces_->robot_target.target_position[1],
-                orthrus_interfaces_->robot_target.target_position[2],
-                orthrus_interfaces_->robot_target.target_euler[0],
-                orthrus_interfaces_->robot_target.target_euler[1],
-                orthrus_interfaces_->robot_target.target_euler[2]);
+    //RCLCPP_INFO(logger, "target %lf %lf %lf %lf %lf %lf",
+    //            orthrus_interfaces_->robot_target.target_position[0],
+    //            orthrus_interfaces_->robot_target.target_position[1],
+    //            orthrus_interfaces_->robot_target.target_position[2],
+    //            orthrus_interfaces_->robot_target.target_euler[0],
+    //            orthrus_interfaces_->robot_target.target_euler[1],
+    //            orthrus_interfaces_->robot_target.target_euler[2]);
     /*
     RCLCPP_INFO(logger, "odom_state.position %lf %lf %lf",
                 orthrus_interfaces_->odom_state.position[0],
@@ -349,6 +348,8 @@ namespace orthrus_controller
     }
 
     //----------------------------------------
+
+    RCLCPP_INFO(logger, "%s",legged_mpc_->Logger(LeggedMpc::GRAVITY_EFFOT_LOG).str().c_str());
 
     if (!safe_code_->PositionCheck())
     {

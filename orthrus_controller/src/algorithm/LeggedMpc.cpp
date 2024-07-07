@@ -19,8 +19,6 @@ namespace orthrus_controller
 
         // 直接赋值初始化
         GetBodyForcePD();
-        orthrus_interfaces_->robot_target.target_body_force.segment<3>(0) -= orthrus_interfaces_->odom_state.imu.orientation * orthrus_interfaces_->odom_state.gravity * 15;
-
         orthrus_interfaces_->robot_target.target_body_force[5] = -orthrus_interfaces_->robot_target.target_body_force[5];
 
         std::vector<bool> gait = orthrus_interfaces_->robot_target.gait_sequence[orthrus_interfaces_->robot_target.gait_num];
@@ -37,12 +35,13 @@ namespace orthrus_controller
         }
 
         orthrus_interfaces_->robot_cmd.effort = Foot2JointForce();
+
     }
 
     // 计算反作用力所需的关节力矩
     Eigen::VectorXd LeggedMpc::Foot2JointForce()
     {
-        Eigen::VectorXd gravity_torq = pinocchio_interfaces_->LegGravityCompensation();
+        //Eigen::VectorXd gravity_torq = pinocchio_interfaces_->LegGravityCompensation();
         Eigen::VectorXd torq(12);
 
         for (int foot_num = 0; foot_num < 4; foot_num++)
@@ -58,7 +57,7 @@ namespace orthrus_controller
             torq.segment<3>(foot_num * 3) = torq_v12.segment<3>(foot_num * 3);
         }
 
-        // return torq + gravity_torq;
+        //return (torq + gravity_torq);
         return torq;
     }
 
@@ -107,6 +106,43 @@ namespace orthrus_controller
                 break; // 可以选择退出循环，如果只需要知道是否相同
             }
             leg_useable_last[i] = leg_useable[i];
+        }
+
+        if (retry_flag == true)
+        {
+            body2footforce_mat_ = Eigen::MatrixXd::Zero(6, 12);
+            body2footforce_mat_plus_ = Eigen::MatrixXd::Zero(12, 6);
+
+            for (int foot_num = 0; foot_num < 4; foot_num++)
+            {
+                if (gait_touch_sequence[foot_num] && leg_useable[foot_num])
+                {
+                    body2footforce_mat_.block<3, 3>(0, foot_num * 3) = Eigen::Matrix3d::Identity();
+                    body2footforce_mat_.block<3, 3>(3, foot_num * 3) = VectorToSkewSymmetricMatrix(orthrus_interfaces_->odom_state.touch_state[foot_num].touch_position);
+                }
+            }
+
+            body2footforce_mat_plus_ = GetMinimumTworamTMat(body2footforce_mat_);
+
+            finish = body2footforce_mat_plus_ * body_force;
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (finish[i * 3 + 2] <= 0)
+                {
+                    leg_useable[i] = false;
+                }
+            }
+
+            for (int i = 0; i < 4; ++i)
+            {
+                if (leg_useable[i] != leg_useable_last[i])
+                {
+                    retry_flag = true;
+                    break; // 可以选择退出循环，如果只需要知道是否相同
+                }
+                leg_useable_last[i] = leg_useable[i];
+            }
         }
 
         if (retry_flag == true)
@@ -253,14 +289,20 @@ namespace orthrus_controller
     {
         std::stringstream ss;
 
-        if (log_num = BODY2FOOTFORCE_LOG)
+        if (log_num == BODY2FOOTFORCE_LOG)
         {
             ss << body2footforce_mat_ << std::endl;
             ss << body2footforce_mat_plus_ << std::endl;
         }
-        else if (JOINT_EFFOT_LOG)
+        else if (log_num == JOINT_EFFOT_LOG)
         {
             ss << orthrus_interfaces_->robot_cmd.effort << std::endl;
+        }
+        else if (log_num == GRAVITY_EFFOT_LOG)
+        {
+            const Eigen::VectorXd & tau = pinocchio_interfaces_->LegGravityCompensation();
+
+            ss << tau << std::endl;
         }
 
         return ss;

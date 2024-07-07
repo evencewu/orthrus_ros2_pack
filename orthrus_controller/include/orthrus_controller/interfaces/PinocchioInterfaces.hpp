@@ -61,7 +61,9 @@ namespace orthrus_controller
         pinocchio::GeometryModel collision_model_;
         pinocchio::GeometryModel visual_model_;
 
-        Eigen::VectorXd joint_;
+        Eigen::VectorXd joint_position_;
+        Eigen::VectorXd joint_velocity_;
+        Eigen::VectorXd joint_acceleration_;
 
     private:
 
