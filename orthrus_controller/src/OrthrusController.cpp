@@ -363,6 +363,19 @@ namespace orthrus_controller
     //RCLCPP_INFO(logger, "data_.g %s", pinocchio_interfaces_->Logger().str().c_str());
     //----------------------------------------
 
+    orthrus_interfaces_->robot_cmd.effort[0] = 0.1;
+    orthrus_interfaces_->robot_cmd.effort[1] = 0.1;
+    orthrus_interfaces_->robot_cmd.effort[2] = 0.1;
+    orthrus_interfaces_->robot_cmd.effort[3] = -0.1;
+    orthrus_interfaces_->robot_cmd.effort[4] = 0.1;
+    orthrus_interfaces_->robot_cmd.effort[5] = 0.1;
+    orthrus_interfaces_->robot_cmd.effort[6] = -0.1;
+    orthrus_interfaces_->robot_cmd.effort[7] = -0.1;
+    orthrus_interfaces_->robot_cmd.effort[8] = -0.1;
+    orthrus_interfaces_->robot_cmd.effort[9] = 0.1;
+    orthrus_interfaces_->robot_cmd.effort[10] = -0.1;
+    orthrus_interfaces_->robot_cmd.effort[11] = -0.1;
+
     if (!safe_code_->PositionCheck())
     {
       RCLCPP_INFO(logger, "Joint position touch Limit");
@@ -381,6 +394,21 @@ namespace orthrus_controller
                 orthrus_interfaces_->robot_cmd.effort[9],
                 orthrus_interfaces_->robot_cmd.effort[10],
                 orthrus_interfaces_->robot_cmd.effort[11]);
+
+    RCLCPP_INFO(logger, "effort %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+                orthrus_interfaces_->robot_state.joint.position[0],
+                orthrus_interfaces_->robot_state.joint.position[1],
+                orthrus_interfaces_->robot_state.joint.position[2],
+                orthrus_interfaces_->robot_state.joint.position[3],
+                orthrus_interfaces_->robot_state.joint.position[4],
+                orthrus_interfaces_->robot_state.joint.position[5],
+                orthrus_interfaces_->robot_state.joint.position[6],
+                orthrus_interfaces_->robot_state.joint.position[7],
+                orthrus_interfaces_->robot_state.joint.position[8],
+                orthrus_interfaces_->robot_state.joint.position[9],
+                orthrus_interfaces_->robot_state.joint.position[10],
+                orthrus_interfaces_->robot_state.joint.position[11]);
+                
 
     if (orthrus_interfaces_->robot_target.if_enable)
     {

@@ -293,6 +293,10 @@ namespace orthrus_control
             {
                 command_effort[motor_num] = -hw_commands_[motor_num];
             }
+            else if(motor_num % 3 == 1)
+            {
+               command_effort[motor_num] = -hw_commands_[motor_num]; 
+            }
             else
             {
                 command_effort[motor_num] = hw_commands_[motor_num];
