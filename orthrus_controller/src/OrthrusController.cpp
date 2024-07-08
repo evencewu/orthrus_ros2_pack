@@ -360,26 +360,38 @@ namespace orthrus_controller
       calibration_visualization_->Update(now_time_);
     }
 
-    //RCLCPP_INFO(logger, "data_.g %s", pinocchio_interfaces_->Logger().str().c_str());
+    // RCLCPP_INFO(logger, "data_.g %s", pinocchio_interfaces_->Logger().str().c_str());
     //----------------------------------------
 
-    orthrus_interfaces_->robot_cmd.effort[0] = 0.1;
-    orthrus_interfaces_->robot_cmd.effort[1] = 0.1;
-    orthrus_interfaces_->robot_cmd.effort[2] = 0.1;
-    orthrus_interfaces_->robot_cmd.effort[3] = -0.1;
-    orthrus_interfaces_->robot_cmd.effort[4] = 0.1;
-    orthrus_interfaces_->robot_cmd.effort[5] = 0.1;
-    orthrus_interfaces_->robot_cmd.effort[6] = -0.1;
-    orthrus_interfaces_->robot_cmd.effort[7] = -0.1;
-    orthrus_interfaces_->robot_cmd.effort[8] = -0.1;
-    orthrus_interfaces_->robot_cmd.effort[9] = 0.1;
-    orthrus_interfaces_->robot_cmd.effort[10] = -0.1;
-    orthrus_interfaces_->robot_cmd.effort[11] = -0.1;
+    // orthrus_interfaces_->robot_cmd.effort[0] = 0.1;
+    // orthrus_interfaces_->robot_cmd.effort[1] = 0.1;
+    // orthrus_interfaces_->robot_cmd.effort[2] = 0.1;
+    // orthrus_interfaces_->robot_cmd.effort[3] = -0.1;
+    // orthrus_interfaces_->robot_cmd.effort[4] = 0.1;
+    // orthrus_interfaces_->robot_cmd.effort[5] = 0.1;
+    // orthrus_interfaces_->robot_cmd.effort[6] = -0.1;
+    // orthrus_interfaces_->robot_cmd.effort[7] = -0.1;
+    // orthrus_interfaces_->robot_cmd.effort[8] = -0.1;
+    // orthrus_interfaces_->robot_cmd.effort[9] = 0.1;
+    // orthrus_interfaces_->robot_cmd.effort[10] = -0.1;
+    // orthrus_interfaces_->robot_cmd.effort[11] = -0.1;
 
     if (!safe_code_->PositionCheck())
     {
       RCLCPP_INFO(logger, "Joint position touch Limit");
     }
+
+    std::stringstream ss;
+    Eigen::VectorXd pos(6);
+    pos << 0, 0, 25, 0, 0, 0;
+    // ss << pinocchio_interfaces_->GetJacobianMatrix("LF_FOOT").block(0, 6, 6, 12).transpose()  * pos  << std::endl;
+    // ss << pinocchio_interfaces_->GetJacobianMatrix("LF_FOOT") << std::endl;
+    ss << pinocchio_interfaces_->GetJointEffortCompensation().transpose() << std::endl;
+    RCLCPP_INFO(logger, "Matrix \n%s", ss.str().c_str());
+
+    //"LH_FOOT"
+    //"RF_FOOT"
+    //"RH_FOOT"
 
     RCLCPP_INFO(logger, "effort %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                 orthrus_interfaces_->robot_cmd.effort[0],
@@ -395,7 +407,14 @@ namespace orthrus_controller
                 orthrus_interfaces_->robot_cmd.effort[10],
                 orthrus_interfaces_->robot_cmd.effort[11]);
 
-    RCLCPP_INFO(logger, "effort %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
+    std::stringstream ss_1;
+    
+    ss_1 << orthrus_interfaces_->odom_state.touch_state[0].touch_force << std::endl;
+    RCLCPP_INFO(logger, "touch_force \n%s", ss_1.str().c_str());
+
+
+    /*
+    RCLCPP_INFO(logger, "position %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf %lf",
                 orthrus_interfaces_->robot_state.joint.position[0],
                 orthrus_interfaces_->robot_state.joint.position[1],
                 orthrus_interfaces_->robot_state.joint.position[2],
@@ -408,7 +427,7 @@ namespace orthrus_controller
                 orthrus_interfaces_->robot_state.joint.position[9],
                 orthrus_interfaces_->robot_state.joint.position[10],
                 orthrus_interfaces_->robot_state.joint.position[11]);
-                
+    */
 
     if (orthrus_interfaces_->robot_target.if_enable)
     {
@@ -417,6 +436,11 @@ namespace orthrus_controller
       {
         joint_handles_[joint_number].cmd_effort.get().set_value(orthrus_interfaces_->robot_cmd.effort[joint_number]);
       }
+
+      // joint_handles_[0].cmd_effort.get().set_value(0);
+      // joint_handles_[3].cmd_effort.get().set_value(0);
+      // joint_handles_[6].cmd_effort.get().set_value(0);
+      // joint_handles_[9].cmd_effort.get().set_value(0);
     }
     else
     {
