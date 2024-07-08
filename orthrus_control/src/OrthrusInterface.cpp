@@ -250,7 +250,7 @@ namespace orthrus_control
         hw_sensor_states_[0] = assembly_->body_imu.unified_gyro_.x();
         hw_sensor_states_[1] = assembly_->body_imu.unified_gyro_.y();
         hw_sensor_states_[2] = assembly_->body_imu.unified_gyro_.z();
-
+        
         // for (int i = 0; i < 10; i++)
         //{
         //     hw_sensor_states_[i] = i;
@@ -279,7 +279,7 @@ namespace orthrus_control
             }
         }
 
-        // Log();
+        Log();
 
         return hardware_interface::return_type::OK;
     }

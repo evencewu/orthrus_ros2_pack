@@ -34,7 +34,7 @@ namespace orthrus_controller
 
         static const int BODY2FOOTFORCE_LOG = 0;
         static const int JOINT_EFFOT_LOG = 1;
-        static const int GRAVITY_EFFOT_LOG = 1;
+        static const int GRAVITY_EFFOT_LOG = 2;
 
     private:
         std::variant<rclcpp::Node::SharedPtr, rclcpp_lifecycle::LifecycleNode::SharedPtr> node_;

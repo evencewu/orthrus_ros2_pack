@@ -13,9 +13,9 @@
 #define IMU4 9
 #define IMU5 12
 
-#define YAW 0
+#define ROLL 0
 #define PITCH 1
-#define ROLL 2
+#define YAW 2
 
 namespace orthrus_control
 {
@@ -31,8 +31,10 @@ namespace orthrus_control
         void RotatingCoordinates(double angle, Eigen::Vector3d axis, double install_angle, Eigen::Vector3d install_axis);
 
         void CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1, double angle2, Eigen::Vector3d axis2);
-        void GetEuler(Eigen::Quaterniond input_quaterniond);
         void Correction(double standard_yaw);
+
+        Eigen::Vector3d Quaternion2Euler(Eigen::Quaterniond quat);
+        Eigen::Quaterniond Euler2Quaternion(double roll, double pitch, double yaw);
 
         Eigen::Quaterniond correction_matrix_;
 

@@ -13,16 +13,12 @@ namespace orthrus_controller
     {
         dt_ = (double)(duration.nanoseconds()) / 1000000000;
 
-        // 更新pinocchio动力学参数
-        // orthrus_interfaces_->robot_target.target_position << 0, 0, 0.20;
-        // orthrus_interfaces_->robot_target.target_euler << 0, 0, 0;
-
-        // 直接赋值初始化
+        //body位置PD得出所需前馈力矩
         GetBodyForcePD();
-        orthrus_interfaces_->robot_target.target_body_force[5] = -orthrus_interfaces_->robot_target.target_body_force[5];
 
         std::vector<bool> gait = orthrus_interfaces_->robot_target.gait_sequence[orthrus_interfaces_->robot_target.gait_num];
 
+        //orthrus_interfaces_->robot_target.target_body_force << 0,0,150,0,0,0;
         Eigen::VectorXd foot_force = Body2FootForce(orthrus_interfaces_->robot_target.target_body_force, gait);
 
         // Eigen::Vector3d foot_f;
@@ -33,7 +29,9 @@ namespace orthrus_controller
             orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.transpose() * (-foot_force.segment<3>(foot_num * 3));
             // orthrus_interfaces_->odom_state.touch_state[foot_num].touch_force = orthrus_interfaces_->odom_state.touch_state[foot_num].touch_rotation.transpose() * foot_f;
         }
-
+        
+        //站立姿态下的运动学补偿
+        
         orthrus_interfaces_->robot_cmd.effort = Foot2JointForce();
 
     }
@@ -41,7 +39,7 @@ namespace orthrus_controller
     // 计算反作用力所需的关节力矩
     Eigen::VectorXd LeggedMpc::Foot2JointForce()
     {
-        //Eigen::VectorXd gravity_torq = pinocchio_interfaces_->LegGravityCompensation();
+        Eigen::VectorXd gravity_torq = pinocchio_interfaces_->GetJointEffortCompensation();
         Eigen::VectorXd torq(12);
 
         for (int foot_num = 0; foot_num < 4; foot_num++)
@@ -57,8 +55,8 @@ namespace orthrus_controller
             torq.segment<3>(foot_num * 3) = torq_v12.segment<3>(foot_num * 3);
         }
 
-        //return (torq + gravity_torq);
-        return torq;
+        return (torq + gravity_torq);
+        //return torq;
     }
 
     Eigen::VectorXd LeggedMpc::Body2FootForce(Eigen::VectorXd body_force, std::vector<bool> gait_touch_sequence)
@@ -253,8 +251,8 @@ namespace orthrus_controller
 
     void LeggedMpc::GetBodyForcePD()
     {
-        double kp_position = 1000;
-        double kd_position = 100;
+        double kp_position = 500;
+        double kd_position = 40;
         double kp_angular = 100;
         double kd_angular = 50;
 
@@ -269,8 +267,13 @@ namespace orthrus_controller
         Eigen::Vector3d position = error_position * kp_position - error_velocity * kd_position;
         Eigen::Vector3d angular = error_angular * kp_angular - error_angular_velocity * kd_angular;
 
+        //叠加重力补偿向量
+        Eigen::VectorXd comp = pinocchio_interfaces_->GetGravityCompensation();
+
         orthrus_interfaces_->robot_target.target_body_force.segment<3>(0) = position;
         orthrus_interfaces_->robot_target.target_body_force.segment<3>(3) = angular;
+
+        orthrus_interfaces_->robot_target.target_body_force += comp;
 
         position_last_ = orthrus_interfaces_->odom_state.position;
         angular_last_ = orthrus_interfaces_->odom_state.euler;
@@ -300,9 +303,7 @@ namespace orthrus_controller
         }
         else if (log_num == GRAVITY_EFFOT_LOG)
         {
-            const Eigen::VectorXd & tau = pinocchio_interfaces_->LegGravityCompensation();
-
-            ss << tau << std::endl;
+            ss << pinocchio_interfaces_->GetJointEffortCompensation() << std::endl;
         }
 
         return ss;

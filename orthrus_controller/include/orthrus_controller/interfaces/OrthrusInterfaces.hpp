@@ -67,6 +67,7 @@ namespace orthrus_controller
 
         Eigen::Quaterniond target_attitude;
         Eigen::Vector3d target_euler;
+        double zero_yaw;
         Eigen::Vector3d target_angular_velocity;
 
         Eigen::VectorXd target_body_force = Eigen::VectorXd::Zero(6);

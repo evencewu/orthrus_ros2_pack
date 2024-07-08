@@ -45,28 +45,28 @@ namespace orthrus_control
         double imu_pos_0;
         double imu_pos_1;
 
-        imu_pos_0 = -(assembly_->body_imu.euler_(ROLL) - assembly_->leg[0].imu.euler_(PITCH));
+        imu_pos_0 = (assembly_->body_imu.euler_(ROLL) - assembly_->leg[0].imu.euler_(PITCH));
         imu_pos_1 = (assembly_->body_imu.euler_(PITCH) - assembly_->leg[0].imu.euler_(ROLL)) + theta2 * M_PI / 180;
 
         dealta_real_position_[0][0] = -assembly_->leg[0].motor[0].Pos_ / 9.1 + imu_pos_0;
         dealta_real_position_[0][1] = assembly_->leg[0].motor[1].Pos_ / 9.1 - imu_pos_1;
         dealta_real_position_[0][2] = assembly_->leg[0].motor[2].Pos_ / 9.1 - assembly_->leg[0].angle.Pos_ - (30 * M_PI / 180 - theta1 * M_PI / 180);
 
-        imu_pos_0 = (assembly_->body_imu.euler_(ROLL) - assembly_->leg[1].imu.euler_(PITCH));
+        imu_pos_0 = -(assembly_->body_imu.euler_(ROLL) - assembly_->leg[1].imu.euler_(PITCH));
         imu_pos_1 = (assembly_->body_imu.euler_(PITCH) - assembly_->leg[1].imu.euler_(ROLL)) - theta2 * M_PI / 180;
 
         dealta_real_position_[1][0] = -assembly_->leg[1].motor[0].Pos_ / 9.1 + imu_pos_0;
         dealta_real_position_[1][1] = assembly_->leg[1].motor[1].Pos_ / 9.1 - imu_pos_1;
         dealta_real_position_[1][2] = assembly_->leg[1].motor[2].Pos_ / 9.1 - assembly_->leg[1].angle.Pos_ + (30 * M_PI / 180 - theta1 * M_PI / 180);
 
-        imu_pos_0 = assembly_->body_imu.euler_(ROLL) - assembly_->leg[2].imu.euler_(PITCH);
+        imu_pos_0 = -(assembly_->body_imu.euler_(ROLL) - assembly_->leg[2].imu.euler_(PITCH));
         imu_pos_1 = assembly_->body_imu.euler_(PITCH) - assembly_->leg[2].imu.euler_(ROLL) + theta2 * M_PI / 180;
 
         dealta_real_position_[2][0] = -assembly_->leg[2].motor[0].Pos_ / 9.1 + imu_pos_0;
         dealta_real_position_[2][1] = assembly_->leg[2].motor[1].Pos_ / 9.1 - imu_pos_1;
         dealta_real_position_[2][2] = assembly_->leg[2].motor[2].Pos_ / 9.1 - assembly_->leg[2].angle.Pos_ - (30 * M_PI / 180 - theta1 * M_PI / 180); //
 
-        imu_pos_0 = -(assembly_->body_imu.euler_(ROLL) - assembly_->leg[3].imu.euler_(PITCH));
+        imu_pos_0 = (assembly_->body_imu.euler_(ROLL) - assembly_->leg[3].imu.euler_(PITCH));
         imu_pos_1 = (assembly_->body_imu.euler_(PITCH) - assembly_->leg[3].imu.euler_(ROLL)) - theta2 * M_PI / 180;
 
         dealta_real_position_[3][0] = -assembly_->leg[3].motor[0].Pos_ / 9.1 + imu_pos_0;

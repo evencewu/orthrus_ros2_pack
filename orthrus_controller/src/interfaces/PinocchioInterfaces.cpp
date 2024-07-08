@@ -22,7 +22,7 @@ namespace orthrus_controller
         // Sample a random configuration
         data_ = pinocchio::Data(model_);
         joint_position_ = pinocchio::neutral(model_);
-        joint_velocity_ = Eigen::VectorXd::Zero(model_.nv); // 速度为零
+        joint_velocity_ = Eigen::VectorXd::Zero(model_.nv);     // 速度为零
         joint_acceleration_ = Eigen::VectorXd::Zero(model_.nv); // 关节加速度
 
         // 设置重力方向
@@ -36,6 +36,8 @@ namespace orthrus_controller
 
         // 广义重力项计算
         pinocchio::computeGeneralizedGravity(model_, data_, joint_position_);
+        pinocchio::nonLinearEffects(model_, data_, joint_position_, joint_velocity_);
+        pinocchio::computeCoriolisMatrix(model_, data_, joint_position_, joint_velocity_);
 
         // 雅可比矩阵计算
         pinocchio::computeJointJacobians(model_, data_, joint_position_);
@@ -51,7 +53,7 @@ namespace orthrus_controller
         joint_position_.segment<12>(7) = Eigen::VectorXd::Map(orthrus_interfaces_->robot_state.joint.position.data(), orthrus_interfaces_->robot_state.joint.position.size());
 
         // 执行正向运动学
-        pinocchio::forwardKinematics(model_, data_, joint_position_, joint_velocity_, joint_acceleration_);
+        pinocchio::forwardKinematics(model_, data_, joint_position_);
         pinocchio::framesForwardKinematics(model_, data_, joint_position_);
 
         // 更新模型中所有关节的位姿
@@ -59,6 +61,8 @@ namespace orthrus_controller
 
         // 广义重力项计算
         pinocchio::computeGeneralizedGravity(model_, data_, joint_position_);
+        pinocchio::nonLinearEffects(model_, data_, joint_position_, joint_velocity_);
+        pinocchio::computeCoriolisMatrix(model_, data_, joint_position_, joint_velocity_);
         // 雅可比矩阵计算
         pinocchio::computeJointJacobians(model_, data_, joint_position_);
 
@@ -67,35 +71,6 @@ namespace orthrus_controller
         // 设置重力向量，假设沿着 -z 方向
 
         // LegGravityCompensation();
-    }
-
-    std::stringstream PinocchioInterfaces::Logger()
-    {
-        std::stringstream ss;
-
-        ss << "model_.nv: " << model_.nv << std::endl;
-        for (size_t i = 0; i < model_.frames.size(); ++i)
-        {
-            const pinocchio::Frame &frame = model_.frames[i];
-            ss << "Frame " << i << ": " << std::endl;
-            ss << "  Name: " << frame.name << std::endl;
-            ss << "  Parent joint ID: " << frame.parent << std::endl;
-            ss << "  Frame type: " << frame.type << std::endl;
-        }
-
-        for (int joint_id = 1; joint_id < 14; joint_id++)
-        {
-            ss << joint_id << " " << model_.names[joint_id] << std::endl;
-        }
-
-        for (int joint_id = 0; joint_id < 19; joint_id++)
-        {
-            ss << joint_id << " " << joint_position_[joint_id] << std::endl;
-        }
-
-        ss << data_.g << std::endl;
-
-        return ss;
     }
 
     void PinocchioInterfaces::FootPositionCalculation()
@@ -127,16 +102,53 @@ namespace orthrus_controller
         return J;
     }
 
-    Eigen::VectorXd PinocchioInterfaces::LegGravityCompensation()
+    Eigen::VectorXd PinocchioInterfaces::GetJointEffortCompensation()
     {
-        Eigen::VectorXd target_acceleration = Eigen::VectorXd::Zero(model_.nv); // 关节加速度
-        target_acceleration[2] = -9.81;
-        const Eigen::VectorXd & tau = pinocchio::rnea(model_, data_, joint_position_, joint_velocity_, target_acceleration);
-        return tau.transpose();
+        return this->data_.g.segment<12>(6);
+    }
+
+    Eigen::VectorXd PinocchioInterfaces::GetGravityCompensation()
+    {
+        return this->data_.g.segment<6>(0);
     }
 
     void PinocchioInterfaces::GetLagrange()
     {
+    }
 
+    std::stringstream PinocchioInterfaces::InitLogger()
+    {
+        std::stringstream ss;
+
+        ss << "model_.nv: " << model_.nv << std::endl;
+        for (size_t i = 0; i < model_.frames.size(); ++i)
+        {
+            const pinocchio::Frame &frame = model_.frames[i];
+            ss << "Frame " << i << ": " << std::endl;
+            ss << "  Name: " << frame.name << std::endl;
+            ss << "  Parent joint ID: " << frame.parent << std::endl;
+            ss << "  Frame type: " << frame.type << std::endl;
+        }
+
+        for (int joint_id = 1; joint_id < 14; joint_id++)
+        {
+            ss << joint_id << " " << model_.names[joint_id] << std::endl;
+        }
+
+        for (int joint_id = 0; joint_id < 19; joint_id++)
+        {
+            ss << joint_id << " " << joint_position_[joint_id] << std::endl;
+        }
+
+        ss << data_.g << std::endl;
+
+        return ss;
+    }
+
+    std::stringstream PinocchioInterfaces::Logger()
+    {
+        std::stringstream ss;
+        ss << data_.g << std::endl;
+        return ss;
     }
 }

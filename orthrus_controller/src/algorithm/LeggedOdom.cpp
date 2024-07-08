@@ -50,9 +50,8 @@ namespace orthrus_controller
         LeggedFilterUpdate();
 
         orthrus_interfaces_->odom_state.position = orthrus_interfaces_->odom_state.foot_position;
-        //orthrus_interfaces_->velocity
-        //orthrus_interfaces_->angular_velocity
-        
+        // orthrus_interfaces_->velocity
+        // orthrus_interfaces_->angular_velocity
     }
 
     Eigen::Vector3d LeggedOdom::Quaternion2Euler(Eigen::Quaterniond quat)
@@ -60,7 +59,7 @@ namespace orthrus_controller
         Eigen::Matrix3d rotation_matrix = quat.toRotationMatrix();
         double roll = std::atan2(rotation_matrix(2, 1), rotation_matrix(2, 2));
         double pitch = std::asin(-rotation_matrix(2, 0));
-        double yaw = std::atan2(rotation_matrix(0, 1), rotation_matrix(0, 0));
+        double yaw = std::atan2(rotation_matrix(1, 0), rotation_matrix(0, 0));
 
         Eigen::Vector3d euler_angles;
         euler_angles << roll, pitch, yaw;

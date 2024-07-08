@@ -26,18 +26,33 @@ namespace orthrus_control
 
         Eigen::Matrix3d rotation_matrix = correction_matrix_.toRotationMatrix();
 
-        GetEuler(unified_gyro_);
+        euler_ = Quaternion2Euler(unified_gyro_);
 
-        Eigen::Vector3d eulerAngles(euler_(ROLL), euler_(PITCH), standard_yaw);
-
-        standard_acc_ = rotation_matrix.transpose() * original_acc_; // 
-        standard_angle_speed_ = rotation_matrix.transpose() * original_angle_speed_;//correction_matrix_ * 
-        standard_gyro_ = Eigen::Quaterniond(Eigen::AngleAxisd(eulerAngles.z(), Eigen::Vector3d::UnitZ()) * Eigen::AngleAxisd(eulerAngles.y(), Eigen::Vector3d::UnitY()) * Eigen::AngleAxisd(eulerAngles.x(), Eigen::Vector3d::UnitX()));
+        standard_acc_ = rotation_matrix.transpose() * original_acc_;                 //
+        standard_angle_speed_ = rotation_matrix.transpose() * original_angle_speed_; // correction_matrix_ *
+        standard_gyro_ = Euler2Quaternion(euler_(ROLL), euler_(PITCH), standard_yaw);
     }
 
-    void Imu::GetEuler(Eigen::Quaterniond input_quaterniond)
+    Eigen::Vector3d Imu::Quaternion2Euler(Eigen::Quaterniond quat)
     {
-        euler_ = input_quaterniond.toRotationMatrix().eulerAngles(ROLL, PITCH, YAW);
+        Eigen::Matrix3d rotation_matrix = quat.toRotationMatrix();
+        double roll = std::atan2(rotation_matrix(2, 1), rotation_matrix(2, 2));
+        double pitch = std::asin(-rotation_matrix(2, 0));
+        double yaw = std::atan2(rotation_matrix(1, 0), rotation_matrix(0, 0));
+
+        Eigen::Vector3d euler_angles;
+        euler_angles << roll, pitch, yaw;
+        return euler_angles;
+    }
+
+    Eigen::Quaterniond Imu::Euler2Quaternion(double roll, double pitch, double yaw)
+    {
+        Eigen::AngleAxisd rollAngle(roll, Eigen::Vector3d::UnitX());
+        Eigen::AngleAxisd pitchAngle(pitch, Eigen::Vector3d::UnitY());
+        Eigen::AngleAxisd yawAngle(yaw, Eigen::Vector3d::UnitZ());
+
+        Eigen::Quaterniond quaternion = yawAngle * pitchAngle * rollAngle;
+        return quaternion;
     }
 
     void Imu::CorrectionMatrixSet(double angle1, Eigen::Vector3d axis1, double angle2, Eigen::Vector3d axis2)

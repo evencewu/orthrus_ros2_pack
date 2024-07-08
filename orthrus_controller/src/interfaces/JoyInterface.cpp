@@ -86,7 +86,7 @@ namespace orthrus_controller
                 }
             }
 
-            orthrus_interfaces_->robot_target.target_euler[2] = RockerMapping(msg->rx, 32000, M_PI / 6, 2000);
+            orthrus_interfaces_->robot_target.target_euler[2] = RockerMapping(msg->rx, 32000, M_PI / 6, 2000) + orthrus_interfaces_->robot_target.zero_yaw;
             orthrus_interfaces_->robot_target.target_euler[1] = RockerMapping(-msg->ry, 32000, M_PI / 12, 2000);
         }
     }
