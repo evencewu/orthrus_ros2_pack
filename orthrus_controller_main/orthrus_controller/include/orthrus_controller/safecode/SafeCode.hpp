@@ -1,6 +1,6 @@
 #pragma once
 
-#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
+#include "orthrus_pinocchio_interface/OrthrusInterface.hpp"
 
 namespace orthrus_controller
 {

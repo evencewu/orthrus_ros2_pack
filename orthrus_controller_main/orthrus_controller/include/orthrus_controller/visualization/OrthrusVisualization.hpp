@@ -11,7 +11,7 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 
-#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
+#include "orthrus_pinocchio_interface/OrthrusInterface.hpp"
 
 #include <visualization_msgs/msg/marker.hpp>
 #include "visualization_msgs/msg/marker_array.hpp"

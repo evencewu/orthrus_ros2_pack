@@ -9,7 +9,7 @@
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
-#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
+#include "orthrus_pinocchio_interface/OrthrusInterface.hpp"
 
 
 namespace orthrus_controller

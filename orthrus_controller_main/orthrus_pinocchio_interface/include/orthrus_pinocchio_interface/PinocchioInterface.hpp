@@ -4,8 +4,6 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "controller_interface/controller_interface.hpp"
 
-#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
-
 #include <iostream>
 
 #include <pinocchio/multibody/joint/fwd.hpp>

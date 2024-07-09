@@ -28,6 +28,7 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   pinocchio
   xbox_interfaces
   visualization_msgs
+  orthrus_pinocchio_interface
 )
 
 # find dependencies
@@ -69,7 +70,6 @@ add_library(orthrus_controller SHARED
   src/OrthrusController.cpp
   src/visualization/CalibrationVisualization.cpp
   src/visualization/OrthrusVisualization.cpp
-  src/interfaces/PinocchioInterfaces.cpp
   src/interfaces/JoyInterface.cpp
   src/interfaces/OrthrusController_Config.cpp
   src/algorithm/LeggedOdom.cpp

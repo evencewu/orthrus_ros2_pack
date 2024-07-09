@@ -5,7 +5,7 @@
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "controller_interface/controller_interface.hpp"
 
-#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
+#include "orthrus_pinocchio_interface/OrthrusInterface.hpp"
 
 #include <chrono>
 #include <cmath>

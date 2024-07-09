@@ -1,4 +1,4 @@
-#include "orthrus_controller/interfaces/PinocchioInterfaces.hpp"
+#include "orthrus_pinocchio_interface/PinocchioInterface.hpp"
 
 namespace orthrus_controller
 {

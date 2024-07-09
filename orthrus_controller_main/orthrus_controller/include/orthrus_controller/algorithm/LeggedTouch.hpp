@@ -21,6 +21,7 @@ namespace orthrus_controller
         void Init(std::shared_ptr<OrthrusInterfaces> orthrus_interfaces_ptr,
                   std::shared_ptr<PinocchioInterfaces> pinocchio_ptr);
 
+        void Update();
         
 
     private:

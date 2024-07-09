@@ -21,7 +21,7 @@
 #include "tf2_msgs/msg/tf_message.hpp"
 
 #include "orthrus_controller/visibility_control.h"
-#include "orthrus_controller/interfaces/OrthrusInterfaces.hpp"
+#include "orthrus_pinocchio_interface/OrthrusInterface.hpp"
 #include "orthrus_controller/interfaces/JoyInterface.hpp"
 #include "orthrus_controller/visualization/OrthrusVisualization.hpp"
 #include "orthrus_controller/visualization/CalibrationVisualization.hpp"
