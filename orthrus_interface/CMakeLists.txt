@@ -6,6 +6,8 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   rclcpp
   rclcpp_lifecycle
   pinocchio
+  rsf_robot_interface
+  rsf_pinocchio_interface
 )
 
 find_package(ament_cmake REQUIRED)
