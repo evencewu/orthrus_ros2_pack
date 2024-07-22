@@ -1,190 +1,243 @@
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
-#include <algorithm>
-
-#include "hardware_interface/types/hardware_interface_type_values.hpp"
-#include "lifecycle_msgs/msg/state.hpp"
-#include "rclcpp/logging.hpp"
-
-#include "orthrus_controller/OrthrusController.hpp"
+#include <orthrus_controller/controller_base/OrthrusControllerBase.hpp>
 
 namespace orthrus_controller
 {
-  using namespace std::chrono_literals;
-  using controller_interface::interface_configuration_type;
-  using controller_interface::InterfaceConfiguration;
-  using lifecycle_msgs::msg::State;
-
-  OrthrusController::OrthrusController() : controller_interface::ControllerInterface() {}
-
-  controller_interface::CallbackReturn OrthrusController::on_init()
+  controller_interface::CallbackReturn OrthrusControllerBase::configure_joint(
+      const std::vector<std::string> &joint_names,
+      std::vector<JointHandle> &registered_handles)
   {
     auto logger = get_node()->get_logger();
-    RCLCPP_INFO(get_node()->get_logger(), "Loading orthrus controller...");
-    try
+
+    if (joint_names.empty())
     {
-      // Create the parameter listener and get the parameters
-      param_listener_ = std::make_shared<ParamListener>(get_node());
-      params_ = param_listener_->get_params();
-    }
-    catch (const std::exception &e)
-    {
-      fprintf(stderr, "Exception thrown during init stage with message: %s \n", e.what());
+      RCLCPP_ERROR(logger, "No motor names specified");
       return controller_interface::CallbackReturn::ERROR;
     }
 
-    return controller_interface::CallbackReturn::SUCCESS;
-  }
-
-  InterfaceConfiguration OrthrusController::command_interface_configuration() const
-  {
-    std::vector<std::string> conf_names;
-    for (const auto &joint_name : params_.leg_joint_names)
+    // register handles
+    registered_handles.reserve(joint_names.size());
+    for (const auto &joint_name : joint_names)
     {
-      conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
-    }
+      const auto position_handle = std::find_if(
+          state_interfaces_.cbegin(), state_interfaces_.cend(),
+          [&joint_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == joint_name &&
+                   interface.get_interface_name() == hardware_interface::HW_IF_POSITION;
+          });
 
-    if (params_.sim_or_real == "real")
-    {
-      conf_names.push_back("flag/enable_power");
-      conf_names.push_back("flag/calibration_position");
-      conf_names.push_back("flag/calibration_encoder");
-    }
-
-    return {interface_configuration_type::INDIVIDUAL, conf_names};
-  }
-
-  InterfaceConfiguration OrthrusController::state_interface_configuration() const
-  {
-    std::vector<std::string> conf_names;
-    for (const auto &joint_name : params_.leg_joint_names)
-    {
-      conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
-      conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_POSITION);
-      conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_VELOCITY);
-    }
-
-    if (params_.sim_or_real == "real")
-    {
-      for (const auto &leg_imu_name : params_.leg_imu_names)
+      if (position_handle == state_interfaces_.cend())
       {
-        conf_names.push_back(leg_imu_name + "/" + "orientation.w");
-        conf_names.push_back(leg_imu_name + "/" + "orientation.x");
-        conf_names.push_back(leg_imu_name + "/" + "orientation.y");
-        conf_names.push_back(leg_imu_name + "/" + "orientation.z");
+        RCLCPP_ERROR(logger, "Unable to obtain motor state handle for %s", joint_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
       }
-    }
 
-    conf_names.push_back("imu_sensor/angular_velocity.x");
-    conf_names.push_back("imu_sensor/angular_velocity.y");
-    conf_names.push_back("imu_sensor/angular_velocity.z");
-    conf_names.push_back("imu_sensor/linear_acceleration.x");
-    conf_names.push_back("imu_sensor/linear_acceleration.y");
-    conf_names.push_back("imu_sensor/linear_acceleration.z");
-    conf_names.push_back("imu_sensor/orientation.w");
-    conf_names.push_back("imu_sensor/orientation.x");
-    conf_names.push_back("imu_sensor/orientation.y");
-    conf_names.push_back("imu_sensor/orientation.z");
+      const auto velocity_handle = std::find_if(
+          state_interfaces_.cbegin(), state_interfaces_.cend(),
+          [&joint_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == joint_name &&
+                   interface.get_interface_name() == hardware_interface::HW_IF_VELOCITY;
+          });
 
-    return {interface_configuration_type::INDIVIDUAL, conf_names};
-  }
+      if (velocity_handle == state_interfaces_.cend())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor state handle for %s", joint_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
 
-  controller_interface::CallbackReturn OrthrusController::on_configure(
-      const rclcpp_lifecycle::State &)
-  {
-    now_time_ = get_node()->now();
-    last_time_ = now_time_;
+      const auto effort_handle = std::find_if(
+          state_interfaces_.cbegin(), state_interfaces_.cend(),
+          [&joint_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == joint_name &&
+                   interface.get_interface_name() == hardware_interface::HW_IF_EFFORT;
+          });
 
-    auto logger = get_node()->get_logger();
-    RCLCPP_INFO(logger, "Configuring controller...");
+      if (effort_handle == state_interfaces_.cend())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor state handle for %s", joint_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
 
-    // update parameters if they have changed
-    if (param_listener_->is_old(params_))
-    {
-      params_ = param_listener_->get_params();
-      RCLCPP_INFO(logger, "Parameters were updated");
-    }
+      const auto command_handle = std::find_if(
+          command_interfaces_.begin(), command_interfaces_.end(),
+          [&joint_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == joint_name &&
+                   interface.get_interface_name() == hardware_interface::HW_IF_EFFORT;
+          });
 
-    if (!reset())
-    {
-      return controller_interface::CallbackReturn::ERROR;
-    }
+      if (command_handle == command_interfaces_.end())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor command handle for %s", joint_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
 
-    return controller_interface::CallbackReturn::SUCCESS;
-  }
-
-  controller_interface::CallbackReturn OrthrusController::on_activate(
-      const rclcpp_lifecycle::State &)
-  {
-    configure_joint(params_.leg_joint_names, joint_handles_);
-    configure_imu(params_.imu_data_types, params_.imu_names, imu_handles_);
-    if (params_.sim_or_real == "real")
-    {
-      configure_flag(params_.flag_data_types, params_.flag_names, flag_handles_);
-      configure_leg_imu(params_.leg_imu_data_types, params_.leg_imu_names, leg_imu_handles_);
-    }
-    return controller_interface::CallbackReturn::SUCCESS;
-  }
-
-  controller_interface::CallbackReturn OrthrusController::on_cleanup(
-      const rclcpp_lifecycle::State &)
-  {
-    /*
-    if (!reset())
-    {
-      return controller_interface::CallbackReturn::ERROR;
-    }
-
-    received_velocity_msg_ptr_.set(std::make_shared<Twist>());
-    */
-    return controller_interface::CallbackReturn::SUCCESS;
-  }
-
-  controller_interface::CallbackReturn OrthrusController::on_error(
-      const rclcpp_lifecycle::State &)
-  {
-    if (!reset())
-    {
-      return controller_interface::CallbackReturn::ERROR;
+      registered_handles.emplace_back(
+          JointHandle{std::ref(*position_handle), std::ref(*velocity_handle), std::ref(*effort_handle), std::ref(*command_handle)});
     }
 
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
-  controller_interface::CallbackReturn OrthrusController::on_deactivate(
-      const rclcpp_lifecycle::State &)
+  controller_interface::CallbackReturn OrthrusControllerBase::configure_imu(
+      const std::vector<std::string> &imu_data_types,
+      const std::vector<std::string> &imu_names,
+      std::vector<ImuHandle> &registered_handles)
   {
-    /*
-    subscriber_is_active_ = false;
-    if (!is_halted)
-    {
-      halt();
-      is_halted = true;
-    }
-    */
-    return controller_interface::CallbackReturn::SUCCESS;
-  }
-
-  controller_interface::CallbackReturn OrthrusController::on_shutdown(
-      const rclcpp_lifecycle::State &)
-  {
-    return controller_interface::CallbackReturn::SUCCESS;
-  }
-
-  controller_interface::return_type OrthrusController::update(
-      const rclcpp::Time &time, const rclcpp::Duration &period)
-  {
-    now_time_ = get_node()->now();
-    last_time_ = now_time_;
-
-    // orthrus_interfaces_->robot_target.gait_num = 0 ;
-
-    rclcpp::Duration duration = period;
-
     auto logger = get_node()->get_logger();
 
-    return controller_interface::return_type::OK;
+    if (imu_names.empty())
+    {
+      RCLCPP_ERROR(logger, "No motor names specified");
+      return controller_interface::CallbackReturn::ERROR;
+    }
+
+    // register handles
+    registered_handles.reserve(imu_names.size());
+
+    for (const auto &imu_name : imu_names)
+    {
+      std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> angular_velocity;
+      std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> linear_acceleration;
+      std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
+
+      for (const auto &imu_data_type : imu_data_types)
+      {
+        const auto imu_handle = std::find_if(
+            state_interfaces_.cbegin(), state_interfaces_.cend(),
+            [&imu_name, &imu_data_type](const auto &interface)
+            {
+              return interface.get_prefix_name() == imu_name &&
+                     interface.get_interface_name() == imu_data_type;
+            });
+
+        if (imu_handle == state_interfaces_.cend())
+        {
+          RCLCPP_ERROR(logger, "Unable to obtain motor state handle for %s", imu_name.c_str());
+          return controller_interface::CallbackReturn::ERROR;
+        }
+
+        RCLCPP_INFO(logger, "%s %s", imu_name.c_str(), imu_data_type.c_str());
+
+        if (imu_data_type == "angular_velocity.x" || imu_data_type == "angular_velocity.y" || imu_data_type == "angular_velocity.z")
+        {
+          // RCLCPP_INFO(get_node()->get_logger(), "imu %lf", *imu_handle.get().get_value());
+          angular_velocity.emplace_back(std::ref(*imu_handle));
+        }
+
+        if (imu_data_type == "linear_acceleration.x" || imu_data_type == "linear_acceleration.y" || imu_data_type == "linear_acceleration.z")
+        {
+          linear_acceleration.emplace_back(std::ref(*imu_handle));
+        }
+
+        if (imu_data_type == "orientation.w" || imu_data_type == "orientation.x" || imu_data_type == "orientation.y" || imu_data_type == "orientation.z")
+        {
+          orientation.emplace_back(std::ref(*imu_handle));
+        }
+      }
+      registered_handles.emplace_back(ImuHandle{angular_velocity, linear_acceleration, orientation});
+    }
+
+    return controller_interface::CallbackReturn::SUCCESS;
   }
-} // namespace diff_test_controller
+
+  controller_interface::CallbackReturn OrthrusControllerBase::configure_leg_imu(
+      const std::vector<std::string> &leg_imu_data_types,
+      const std::vector<std::string> &leg_imu_names,
+      std::vector<LegImuHandle> &registered_handles)
+  {
+    auto logger = get_node()->get_logger();
+
+    if (leg_imu_names.empty())
+    {
+      RCLCPP_ERROR(logger, "No motor names specified");
+      return controller_interface::CallbackReturn::ERROR;
+    }
+
+    registered_handles.reserve(leg_imu_names.size());
+
+    for (const auto &leg_imu_name : leg_imu_names)
+    {
+      std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
+      for (const auto &leg_imu_data_type : leg_imu_data_types)
+      {
+        const auto imu_handle = std::find_if(
+            state_interfaces_.cbegin(), state_interfaces_.cend(),
+            [&leg_imu_name, &leg_imu_data_type](const auto &interface)
+            {
+              return interface.get_prefix_name() == leg_imu_name &&
+                     interface.get_interface_name() == leg_imu_data_type;
+            });
+
+        RCLCPP_INFO(logger, "%s %s", leg_imu_name.c_str(), leg_imu_data_type.c_str());
+
+        if (leg_imu_data_type == "orientation.w" || leg_imu_data_type == "orientation.x" || leg_imu_data_type == "orientation.y" || leg_imu_data_type == "orientation.z")
+        {
+          orientation.emplace_back(std::ref(*imu_handle));
+        }
+      }
+      registered_handles.emplace_back(LegImuHandle{orientation});
+    }
+
+    return controller_interface::CallbackReturn::SUCCESS;
+  }
+
+  controller_interface::CallbackReturn OrthrusControllerBase::configure_flag(
+      const std::vector<std::string> &flag_data_types,
+      const std::vector<std::string> &flag_names,
+      std::vector<FlagHandle> &registered_handles)
+  {
+    auto logger = get_node()->get_logger();
+
+    for (const auto &flag_name : flag_names)
+    {
+      const auto enable_power_command_handle = std::find_if(
+          command_interfaces_.begin(), command_interfaces_.end(),
+          [&flag_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == flag_name &&
+                   interface.get_interface_name() == "enable_power";
+          });
+
+      if (enable_power_command_handle == command_interfaces_.end())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor command handle for %s", flag_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
+
+      //--
+      const auto calibration_position_handle = std::find_if(
+          command_interfaces_.begin(), command_interfaces_.end(),
+          [&flag_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == flag_name &&
+                   interface.get_interface_name() == "calibration_position";
+          });
+
+      if (calibration_position_handle == command_interfaces_.end())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor command handle for %s", flag_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
+
+      //--
+      const auto calibration_encoder_handle = std::find_if(
+          command_interfaces_.begin(), command_interfaces_.end(),
+          [&flag_name](const auto &interface)
+          {
+            return interface.get_prefix_name() == flag_name &&
+                   interface.get_interface_name() == "calibration_encoder";
+          });
+
+      if (calibration_encoder_handle == command_interfaces_.end())
+      {
+        RCLCPP_ERROR(logger, "Unable to obtain motor command handle for %s", flag_name.c_str());
+        return controller_interface::CallbackReturn::ERROR;
+      }
+
+      registered_handles.emplace_back(FlagHandle{std::ref(*enable_power_command_handle), std::ref(*calibration_position_handle), std::ref(*calibration_encoder_handle)});
+    }
+  }
+}

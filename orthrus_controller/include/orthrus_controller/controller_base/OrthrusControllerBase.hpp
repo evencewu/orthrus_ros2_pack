@@ -22,52 +22,57 @@
 
 #include <ament_index_cpp/get_package_share_directory.hpp>
 
+#include <orthrus_controller/controller_base/visibility_control.h>
+
+#include "orthrus_controller_parameters.hpp"
+
 namespace orthrus_controller
 {
+    /// @brief 定义ros2_control的接口和变量映射句柄
     class OrthrusControllerBase : public controller_interface::ControllerInterface
     {
 
     public:
-        //virtual
-        DIFF_TEST_CONTROLLER_PUBLIC
-        OrthrusControllerBase();
+        // virtual
+        //ORTHRUS_CONTROLLER_PUBLIC
+        //OrthrusControllerBase();
 
-        DIFF_TEST_CONTROLLER_PUBLIC
+        ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::InterfaceConfiguration command_interface_configuration() const override;
 
-        DIFF_TEST_CONTROLLER_PUBLIC
+        ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::InterfaceConfiguration state_interface_configuration() const override;
 
-        DIFF_TEST_CONTROLLER_PUBLIC
+        ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::return_type update(
             const rclcpp::Time &time,
             const rclcpp::Duration &period) override;
 
-        DIFF_TEST_CONTROLLER_PUBLIC
+        ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::CallbackReturn on_init() override;
 
-        DIFF_TEST_CONTROLLER_PUBLIC
+        ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::CallbackReturn on_configure(const rclcpp_lifecycle::State &previous_state)
             override;
 
-        DIFF_TEST_CONTROLLER_PUBLIC
-        
+        ORTHRUS_CONTROLLER_PUBLIC
+
         controller_interface::CallbackReturn on_activate(const rclcpp_lifecycle::State &previous_state)
             override;
 
-        DIFF_TEST_CONTROLLER_PUBLIC
+        ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &previous_state)
             override;
 
-        DIFF_TEST_CONTROLLER_PUBLIC
+        ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State &previous_state)
             override;
 
-        DIFF_TEST_CONTROLLER_PUBLIC
+        ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::CallbackReturn on_error(const rclcpp_lifecycle::State &previous_state)
             override;
 
-        DIFF_TEST_CONTROLLER_PUBLIC
+        ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::CallbackReturn on_shutdown(const rclcpp_lifecycle::State &previous_state)
             override;
 
@@ -75,6 +80,7 @@ namespace orthrus_controller
         rclcpp::Time last_time_;
         rclcpp::Time now_time_;
 
+        /*JointHandle*/
         struct JointHandle
         {
             std::reference_wrapper<const hardware_interface::LoanedStateInterface> state_position;
@@ -89,6 +95,7 @@ namespace orthrus_controller
             const std::vector<std::string> &joint_names,
             std::vector<JointHandle> &registered_handles);
 
+        /*ImuHandle*/
         struct ImuHandle
         {
             std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> angular_velocity;
@@ -103,6 +110,7 @@ namespace orthrus_controller
             const std::vector<std::string> &imu_names,
             std::vector<ImuHandle> &registered_handles);
 
+        /*LegImuHandle*/
         struct LegImuHandle
         {
             std::vector<std::reference_wrapper<const hardware_interface::LoanedStateInterface>> orientation;
@@ -115,6 +123,7 @@ namespace orthrus_controller
             const std::vector<std::string> &flag_names,
             std::vector<LegImuHandle> &registered_handles);
 
+        /*FlagHandle*/
         struct FlagHandle
         {
             std::reference_wrapper<hardware_interface::LoanedCommandInterface> enable_power;
@@ -128,10 +137,8 @@ namespace orthrus_controller
             const std::vector<std::string> &flag_data_types,
             const std::vector<std::string> &flag_names,
             std::vector<FlagHandle> &registered_handles);
-        // SafeCode
-        std::shared_ptr<SafeCode> safe_code_;
 
-        // parma
+        /*Parma*/
         std::shared_ptr<orthrus_controller::ParamListener> param_listener_;
         orthrus_controller::Params params_;
     };
