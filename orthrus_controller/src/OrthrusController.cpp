@@ -22,14 +22,56 @@ namespace orthrus_controller
         return controller_interface::CallbackReturn::SUCCESS;
     }
 
-    InterfaceConfiguration OrthrusController::command_interface_configuration() const
+    controller_interface::InterfaceConfiguration OrthrusController::command_interface_configuration() const
     {
-        //return {interface_configuration_type::INDIVIDUAL, conf_names};
+        std::vector<std::string> conf_names;
+        for (const auto &joint_name : params_.leg_joint_names)
+        {
+            conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
+        }
+
+        if (params_.sim_or_real == "real")
+        {
+            conf_names.push_back("flag/enable_power");
+            conf_names.push_back("flag/calibration_position");
+            conf_names.push_back("flag/calibration_encoder");
+        }
+
+        return {interface_configuration_type::INDIVIDUAL, conf_names};
     }
 
-    InterfaceConfiguration OrthrusController::state_interface_configuration() const
+    controller_interface::InterfaceConfiguration OrthrusController::state_interface_configuration() const
     {
-        //return {interface_configuration_type::INDIVIDUAL, conf_names};
+        std::vector<std::string> conf_names;
+        for (const auto &joint_name : params_.leg_joint_names)
+        {
+            conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
+            conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_POSITION);
+            conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_VELOCITY);
+        }
+
+        if (params_.sim_or_real == "real")
+        {
+            for (const auto &leg_imu_name : params_.leg_imu_names)
+            {
+                conf_names.push_back(leg_imu_name + "/" + "orientation.w");
+                conf_names.push_back(leg_imu_name + "/" + "orientation.x");
+                conf_names.push_back(leg_imu_name + "/" + "orientation.y");
+                conf_names.push_back(leg_imu_name + "/" + "orientation.z");
+            }
+        }
+
+        conf_names.push_back("imu_sensor/angular_velocity.x");
+        conf_names.push_back("imu_sensor/angular_velocity.y");
+        conf_names.push_back("imu_sensor/angular_velocity.z");
+        conf_names.push_back("imu_sensor/linear_acceleration.x");
+        conf_names.push_back("imu_sensor/linear_acceleration.y");
+        conf_names.push_back("imu_sensor/linear_acceleration.z");
+        conf_names.push_back("imu_sensor/orientation.w");
+        conf_names.push_back("imu_sensor/orientation.x");
+        conf_names.push_back("imu_sensor/orientation.y");
+        conf_names.push_back("imu_sensor/orientation.z");
+        return {interface_configuration_type::INDIVIDUAL, conf_names};
     }
 
     controller_interface::CallbackReturn OrthrusController::on_configure(
