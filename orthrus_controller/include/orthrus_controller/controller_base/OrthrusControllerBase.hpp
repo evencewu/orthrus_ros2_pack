@@ -33,9 +33,9 @@ namespace orthrus_controller
     {
 
     public:
-        // virtual
-        //ORTHRUS_CONTROLLER_PUBLIC
-        //OrthrusControllerBase();
+        //virtual
+        ORTHRUS_CONTROLLER_PUBLIC
+        OrthrusControllerBase();
 
         ORTHRUS_CONTROLLER_PUBLIC
         controller_interface::InterfaceConfiguration command_interface_configuration() const override;
