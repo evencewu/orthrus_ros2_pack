@@ -16,7 +16,7 @@ from launch.actions import TimerAction
 use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
 urdf = os.path.join(
-    get_package_share_directory('orthrus_interfaces'),
+    get_package_share_directory('orthrus_description'),
     "models", "orthrus", "urdf", "orthrus.urdf.xacro")
 with open(urdf, 'r') as infp:
     robot_desc = infp.read()

@@ -32,7 +32,7 @@ def generate_launch_description():
             " ",
             PathJoinSubstitution(
                 [
-                    FindPackageShare("orthrus_interfaces"),
+                    FindPackageShare("orthrus_description"),
                     "models",
                     "orthrus",
                     "urdf",

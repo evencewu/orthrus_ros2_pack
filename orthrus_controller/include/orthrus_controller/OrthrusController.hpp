@@ -13,7 +13,7 @@ namespace orthrus_controller
         ORTHRUS_CONTROLLER_PUBLIC
         OrthrusController();
 
-    protected:
+    private:
         
     };
 

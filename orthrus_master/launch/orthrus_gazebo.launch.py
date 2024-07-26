@@ -6,31 +6,11 @@ import launch_ros.actions
 from launch.actions import ExecuteProcess, RegisterEventHandler
 from launch.substitutions import LaunchConfiguration
 
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_prefix,get_package_share_directory
 
 from launch.launch_description_sources import AnyLaunchDescriptionSource
 
 use_sim_time = LaunchConfiguration("use_sim_time", default="true")
-
-urdf = os.path.join(
-    get_package_share_directory("orthrus_interfaces"),
-    "models",
-    "orthrus",
-    "urdf",
-    "orthrus.urdf",
-)
-with open(urdf, "r") as infp:
-    robot_desc = infp.read()
-
-
-def get_orthrus_ctrl(package, executable, name):
-    return launch_ros.actions.Node(
-        package=package,  # 替换为你的包名
-        executable=executable,  # 替换为你的可执行文件名
-        name=name,
-        parameters=[{"use_sim_time": use_sim_time}],
-    )
-
 
 def get_orthrus_gazebo_sim(package, executable):
     return launch.actions.IncludeLaunchDescription(
@@ -38,12 +18,6 @@ def get_orthrus_gazebo_sim(package, executable):
             [os.path.join(get_package_share_directory(package), "launch/"), executable]
         )
     )
-
-    # ros2 launch foxglove_bridge foxglove_bridge_launch.xml
-
-    # foxglove_bridge_share_dir = get_package_share_directory('foxglove_bridge')
-    # xml_launch_file = os.path.join(foxglove_bridge_share_dir, 'launch', 'foxglove_bridge_launch.xml','use_compression:=true')
-    # foxglove = launch.actions.IncludeLaunchDescription(AnyLaunchDescriptionSource(xml_launch_file))
 
 foxglove = ExecuteProcess(
     cmd=[

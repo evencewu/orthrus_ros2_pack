@@ -1,6 +1,6 @@
 import os
 
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_prefix,get_package_share_directory
 
 
 from launch import LaunchDescription
@@ -20,7 +20,7 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/gzserver.launch.py']),
              )
 
-    pkg_dir = get_package_share_directory('orthrus_interfaces')
+    pkg_dir = get_package_prefix('orthrus_description')
     simulation_description_path = os.path.join(pkg_dir)
 
     robot_description_content = Command(

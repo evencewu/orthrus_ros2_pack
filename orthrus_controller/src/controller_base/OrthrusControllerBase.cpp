@@ -1,7 +1,11 @@
 #include <orthrus_controller/controller_base/OrthrusControllerBase.hpp>
 
+#include <hardware_interface/types/hardware_interface_type_values.hpp>
 namespace orthrus_controller
 {
+  /******************************************************************************************************/
+  /******************************************************************************************************/
+  /******************************************************************************************************/
   controller_interface::CallbackReturn OrthrusControllerBase::configure_joint(
       const std::vector<std::string> &joint_names,
       std::vector<JointHandle> &registered_handles)
@@ -81,6 +85,9 @@ namespace orthrus_controller
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
+  /******************************************************************************************************/
+  /******************************************************************************************************/
+  /******************************************************************************************************/
   controller_interface::CallbackReturn OrthrusControllerBase::configure_imu(
       const std::vector<std::string> &imu_data_types,
       const std::vector<std::string> &imu_names,
@@ -143,6 +150,9 @@ namespace orthrus_controller
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
+  /******************************************************************************************************/
+  /******************************************************************************************************/
+  /******************************************************************************************************/
   controller_interface::CallbackReturn OrthrusControllerBase::configure_leg_imu(
       const std::vector<std::string> &leg_imu_data_types,
       const std::vector<std::string> &leg_imu_names,
@@ -184,6 +194,9 @@ namespace orthrus_controller
     return controller_interface::CallbackReturn::SUCCESS;
   }
 
+  /******************************************************************************************************/
+  /******************************************************************************************************/
+  /******************************************************************************************************/
   controller_interface::CallbackReturn OrthrusControllerBase::configure_flag(
       const std::vector<std::string> &flag_data_types,
       const std::vector<std::string> &flag_names,
