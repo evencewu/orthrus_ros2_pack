@@ -13,6 +13,8 @@ namespace orthrus_controller
     using controller_interface::InterfaceConfiguration;
     using lifecycle_msgs::msg::State;
 
+    //OrthrusController::OrthrusController() : OrthrusControllerBase() {}
+
     OrthrusController::OrthrusController() : controller_interface::ControllerInterface() {}
 
     controller_interface::CallbackReturn OrthrusController::on_init()
@@ -25,17 +27,10 @@ namespace orthrus_controller
     controller_interface::InterfaceConfiguration OrthrusController::command_interface_configuration() const
     {
         std::vector<std::string> conf_names;
-        for (const auto &joint_name : params_.leg_joint_names)
-        {
-            conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
-        }
-
-        if (params_.sim_or_real == "real")
-        {
-            conf_names.push_back("flag/enable_power");
-            conf_names.push_back("flag/calibration_position");
-            conf_names.push_back("flag/calibration_encoder");
-        }
+        //for (const auto &joint_name : params_.leg_joint_names)
+        //{
+        //    conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
+        //}
 
         return {interface_configuration_type::INDIVIDUAL, conf_names};
     }
@@ -43,23 +38,6 @@ namespace orthrus_controller
     controller_interface::InterfaceConfiguration OrthrusController::state_interface_configuration() const
     {
         std::vector<std::string> conf_names;
-        for (const auto &joint_name : params_.leg_joint_names)
-        {
-            conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_EFFORT);
-            conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_POSITION);
-            conf_names.push_back(joint_name + "/" + hardware_interface::HW_IF_VELOCITY);
-        }
-
-        if (params_.sim_or_real == "real")
-        {
-            for (const auto &leg_imu_name : params_.leg_imu_names)
-            {
-                conf_names.push_back(leg_imu_name + "/" + "orientation.w");
-                conf_names.push_back(leg_imu_name + "/" + "orientation.x");
-                conf_names.push_back(leg_imu_name + "/" + "orientation.y");
-                conf_names.push_back(leg_imu_name + "/" + "orientation.z");
-            }
-        }
 
         conf_names.push_back("imu_sensor/angular_velocity.x");
         conf_names.push_back("imu_sensor/angular_velocity.y");
@@ -118,7 +96,6 @@ namespace orthrus_controller
     controller_interface::return_type OrthrusController::update(
         const rclcpp::Time &time, const rclcpp::Duration &period)
     {
-
         return controller_interface::return_type::OK;
     }
 }
